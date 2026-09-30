@@ -1,26 +1,340 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f2f1ff;
+  --foreground: #172033;
+  --border: #e7eaf1;
+  --muted: #68738a;
+  --primary: #5146d8;
+  --primary-foreground: #ffffff;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* ===== Flowdesk auth layout ===== */
+.login-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  background: #f2f1ff;
+}
+
+.login-card {
+  width: min(920px, calc(100vw - 64px));
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 46% minmax(0, 54%);
+  overflow: hidden;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 24px 70px #3030781f;
+}
+
+.login-visual {
+  min-height: 570px;
+  padding: 48px;
+  background: linear-gradient(145deg, #5949d6, #4031a9);
+}
+
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.login-brand .brand-mark {
+  width: 31px;
+  height: 31px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: #5949d6;
+  border-radius: 9px;
+}
+
+.login-content {
+  min-width: 0;
+  padding: 108px 64px 45px;
+}
+
+.login-content > .eyebrow {
+  margin: 0 0 15px;
+}
+
+.login-content > h1 {
+  margin: 0;
+  overflow-wrap: break-word;
+}
+
+.eyebrow {
+  margin: 0;
+  color: #655bd6;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.login-content > h1 {
+  color: #202940;
+  font-size: 31px;
+  letter-spacing: -0.045em;
+}
+
+.login-subtitle {
+  margin: 12px 0 26px;
+  color: #8992a4;
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: break-word;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+}
+
+.login-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+  color: #4c5870;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.login-form input {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  height: 40px;
+  padding: 0 12px;
+  color: #4c5870;
+  border: 1px solid #e0e4eb;
+  border-radius: 7px;
+  outline: none;
+  font: inherit;
+  font-size: 13px;
+}
+
+.login-form input::placeholder {
+  color: #b2b8c3;
+}
+
+.login-form input:focus {
+  border-color: #6459d7;
+  box-shadow: 0 0 0 3px #6459d71c;
+}
+
+.login-form .field-error {
+  color: #d64545;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.password-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.password-label-row a {
+  color: #6258d4;
+  font-size: 9px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.password-label-row a:hover {
+  color: #4438ba;
+  text-decoration: underline;
+}
+
+.login-submit {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 7px;
+  color: #fff;
+  background: #5549d2;
+  border: 0;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.login-submit:hover {
+  background: #4539bd;
+}
+
+.login-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.login-access {
+  margin: 17px 0 0;
+  color: #9aa2b0;
+  font-size: 10px;
+  text-align: center;
+}
+
+.login-access a {
+  color: #6258d4;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.login-access a:hover {
+  text-decoration: underline;
+}
+
+.login-note {
+  margin: 9px 0 0;
+  color: #a4abb8;
+  font-size: 9px;
+  text-align: center;
+}
+
+/* ===== Forgot password extras ===== */
+.recovery-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 48px;
+  color: #6258d4;
+  font-size: 10px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.recovery-back:hover {
+  text-decoration: underline;
+}
+
+.recovery-card .login-content {
+  padding-top: 56px;
+}
+
+.recovery-action {
+  width: 100%;
+  margin-top: 22px;
+  text-decoration: none;
+}
+
+.recovery-resend {
+  display: block;
+  margin: 16px auto 0;
+  color: #6258d4;
+  background: transparent;
+  border: 0;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.recovery-resend:hover {
+  text-decoration: underline;
+}
+
+.recovery-success {
+  padding-top: 46px;
+}
+
+.recovery-success-icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 22px;
+  color: #3b996b;
+  background: #e7f7ed;
+  border-radius: 50%;
+}
+
+@media (max-width: 700px) {
+  .login-page {
+    padding: 16px;
+    overflow-x: hidden;
+  }
+
+  .login-card {
+    width: 100%;
+    min-height: 0;
+    display: block;
+  }
+
+  .login-visual {
+    min-height: 105px;
+    padding: 28px;
+  }
+
+  .login-brand {
+    margin: 0;
+  }
+
+  .login-content {
+    padding: 48px 28px 28px;
+  }
+
+  .login-content > h1 {
+    font-size: 27px;
+  }
+
+  .login-note {
+    margin: 24px 0 0;
+  }
+
+  .recovery-card .login-content {
+    padding-top: 32px;
+  }
+
+  .recovery-back {
+    margin-bottom: 34px;
+  }
+
+  .recovery-success {
+    padding-top: 22px;
+  }
 }
