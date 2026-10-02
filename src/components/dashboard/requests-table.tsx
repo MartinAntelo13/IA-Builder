@@ -82,44 +82,48 @@ export function RequestsTable({
     <div className="requests-card">
       <div className="section-header">
         <div>
-          <h2 className="text-lg font-semibold">Solicitudes recientes</h2>
+          <h2 className="m-0 text-[15px] font-semibold tracking-[-0.02em] text-[#253047]">Solicitudes recientes</h2>
           {isDashboard && (
-            <p className="text-sm text-muted-foreground">
+            <p className="mt-[6px] mb-0 text-[11px] text-[#8b94a5]">
               Gestiona y da seguimiento a las solicitudes de tu equipo.
             </p>
           )}
         </div>
-        <div className="flex items-center gap-2">
-          <Search className="h-4 w-4 text-muted-foreground" />
+      </div>
+
+      {/* Toolbar: buscador + tabs en la misma fila (desktop) o apilados (mobile) */}
+      <div className="mt-3 pb-3 border-b border-[#eef0f4] flex flex-wrap items-center gap-2.5">
+        {/* Buscador — estilo .search-field del v0 */}
+        <div className="flex items-center gap-2 h-8 px-2.5 bg-[#fafbfc] border border-[#e6e9ef] rounded-[6px] w-full sm:w-[218px]">
+          <Search className="h-3.5 w-3.5 flex-shrink-0 text-[#9ca5b4]" />
           <input
             type="text"
             placeholder="Buscar por nombre o ID..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="input-field w-48 rounded-md border border-gray-300 px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full border-0 outline-none bg-transparent text-[10px] text-[#485269] placeholder:text-[#9ca5b4]"
           />
         </div>
-      </div>
 
-      {/* Tabs de filtro por status */}
-      {isDashboard && (
-        <div className="mt-3 flex gap-1">
-          {statusTabs.map((tab) => (
-            <button
-              key={tab.value}
-              className={`
-                flex-1 rounded-md border border-transparent px-3 py-1.5 text-sm font-medium 
-                ${statusFilter === tab.value 
-                  ? 'border-primary text-primary bg-primary/10' 
-                  : 'border-transparent text-muted-foreground hover:border-muted hover:bg-muted/50'}
-              `}
-              onClick={() => handleStatusFilterChange(tab.value)}
-            >
-              {tab.label} <span className="text-xs">{tab.count}</span>
-            </button>
-          ))}
-        </div>
-      )}
+        {/* Tabs de filtro por status — estilo .filter-tabs del v0 */}
+        {isDashboard && (
+          <div className="flex gap-[3px]">
+            {statusTabs.map((tab) => (
+              <button
+                key={tab.value}
+                className={`text-[10px] px-[9px] py-2 rounded-[5px] border-0 transition-colors ${
+                  statusFilter === tab.value
+                    ? 'text-[#5047c8] bg-[#efeeff] font-bold'
+                    : 'text-[#8992a4] bg-transparent'
+                }`}
+                onClick={() => handleStatusFilterChange(tab.value)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Tabla de solicitudes */}
       <div className="overflow-x-auto mt-4">
