@@ -1,3 +1,5 @@
+// 'use client' - requires useState for form state and step management,
+// plus form submission handling with react-hook-form
 'use client';
 
 import * as React from 'react';
@@ -7,7 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { forgotPasswordSchema } from '@/lib/validations/auth.schema';
 import { ROUTES } from '@/constants';
-import { supabase } from '@/lib/supabase/client';
+import { forgotPassword } from '@/app/(auth)/forgot-password/actions';
 import { ArrowLeft, ArrowRight, CheckCircle2, Mail } from 'lucide-react';
 
 export const ForgotPasswordForm: React.FC = () => {
@@ -26,11 +28,12 @@ export const ForgotPasswordForm: React.FC = () => {
   const onSubmit = async (data: z.infer<typeof forgotPasswordSchema>) => {
     setLoading(true);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
-        redirectTo: `${window.location.origin}/auth/reset-password`,
-      });
+      const formData = new FormData();
+      formData.append('email', data.email);
 
-      if (error) {
+      const result = await forgotPassword(formData);
+
+      if (result?.error) {
         // Error is shown inline via react-hook-form
         return;
       }

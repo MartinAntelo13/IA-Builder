@@ -1,17 +1,17 @@
+// 'use client' - requires useState for form state and password visibility toggle,
+// plus form submission handling with react-hook-form
 'use client';
 
 import * as React from 'react';
-import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { loginSchema } from '@/lib/validations/auth.schema';
 import { ROUTES } from '@/constants';
-import { supabase } from '@/lib/supabase/client';
+import { signIn } from '@/app/(auth)/login/actions';
 import { ArrowRight, Eye, EyeOff, Loader2 } from 'lucide-react';
 
 export const LoginForm: React.FC = () => {
-  const router = useRouter();
   const [showPassword, setShowPassword] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [authError, setAuthError] = React.useState('');
@@ -28,19 +28,17 @@ export const LoginForm: React.FC = () => {
     setAuthError('');
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: data.email,
-        password: data.password,
-      });
+      const formData = new FormData();
+      formData.append('email', data.email);
+      formData.append('password', data.password);
 
-      if (error) {
-        setAuthError(error.message);
-        return;
+      const result = await signIn(formData);
+
+      // En éxito, signIn() ejecuta redirect() en el servidor y Next.js
+      // realiza la navegación automáticamente; este código no continúa.
+      if (result?.error) {
+        setAuthError(result.error);
       }
-
-      // TEMPORARILY: refresh current page to show "Ya iniciaste sesión" div
-      // router.push(ROUTES.HOME);
-      router.refresh();
     } catch {
       setAuthError('Ocurrió un error inesperado. Intentá de nuevo.');
     } finally {

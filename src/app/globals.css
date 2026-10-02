@@ -338,3 +338,121 @@ button {
     padding-top: 22px;
   }
 }
+
+/* ===== Flowdesk dashboard shell ===== */
+.page-wrap {
+  max-width: 1420px;
+  margin: 0 auto;
+  padding: 34px 39px 60px;
+}
+
+.hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 29px;
+}
+
+.hero .eyebrow {
+  margin: 0 0 8px;
+  color: #8c96aa;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  margin: 0;
+  color: #202940;
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.04em;
+}
+
+.hero h1 .hero-dash {
+  margin-left: 8px;
+  color: #aab2c2;
+}
+
+.hero-subtitle {
+  margin: 12px 0 0;
+  color: #8c96aa;
+  font-size: 13px;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 8px;
+  border: 1px solid #e1e5ee;
+  background: #fff;
+  color: #4c5870;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.hero-button:hover {
+  background: #f6f7fb;
+}
+
+.hero-button--primary {
+  color: #fff;
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.hero-button--primary:hover {
+  background: #4539bd;
+}
+
+/* MetricsCards ya trae su propio grid interno */
+.metric-grid {
+  margin-bottom: 25px;
+}
+
+.requests-card {
+  overflow: hidden;
+  padding: 18px 20px;
+  background: #fff;
+  border: 1px solid #eaecf2;
+  border-radius: 9px;
+  box-shadow: 0 2px 8px #27335b05;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 767px) {
+  .page-wrap {
+    padding: 26px 17px 50px;
+  }
+
+  .hero {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .hero h1 {
+    font-size: 26px;
+  }
+}

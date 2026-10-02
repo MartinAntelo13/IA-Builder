@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Navbar } from "@/components/shared/navbar";
-import { Footer } from "@/components/shared/footer";
-import { APP_NAME, APP_DESCRIPTION } from "@/constants";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -16,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: APP_NAME,
-  description: APP_DESCRIPTION,
+  title: "Flowdesk",
+  description: "Sistema de gestión de solicitudes y aprobaciones",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -27,9 +24,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Navbar />
         {children}
-        <Footer />
       </body>
     </html>
   );
