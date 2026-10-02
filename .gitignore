@@ -145,3 +145,5 @@ vite.config.ts.timestamp-*
 # Material de referencia y documentos de elaboración (no es código de producción)
 /documentos_elaboracion/
 /_design-reference/
+ARCHITECTURE_RULES.md
+ARCHITECTURE_RULES.md
