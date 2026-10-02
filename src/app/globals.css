@@ -28,13 +28,15 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-button,
-input {
-  font: inherit;
-}
+@layer base {
+  button,
+  input {
+    font: inherit;
+  }
 
-button {
-  cursor: pointer;
+  button {
+    cursor: pointer;
+  }
 }
 
 /* ===== Flowdesk auth layout ===== */

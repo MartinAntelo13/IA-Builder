@@ -147,3 +147,4 @@ vite.config.ts.timestamp-*
 /_design-reference/
 ARCHITECTURE_RULES.md
 ARCHITECTURE_RULES.md
+ARCHITECTURE_RULES_EXPLICIT_STYLES.md
