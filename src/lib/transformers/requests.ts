@@ -23,6 +23,7 @@ type ListRequestsRowSubset = Pick<
   | 'currency_symbol'
   | 'status'
   | 'submitted_at'
+  | 'created_at'
   | 'current_step_label'
 >;
 
@@ -46,7 +47,7 @@ export function transformRequestRow(data: ListRequestsRowSubset) {
     amount: data.amount ?? null,
     currencySymbol: data.currency_symbol ?? null,
     status: data.status ?? 'unknown',
-    submittedAt: data.submitted_at ?? null,
+    submittedAt: data.submitted_at ?? data.created_at ?? null,
     currentStepLabel: data.current_step_label ?? null,
   };
 }
@@ -82,7 +83,6 @@ export function transformRequestRows(data: ListRequestsRowSubset[]) {
       }
     }).filter((row): row is ReturnType<typeof transformRequestRow> => row !== null);
     
-    console.log('[transformRequestRows] Transformed', data.length, 'rows to', transformed.length, 'rows');
     return transformed;
   } catch (error) {
     console.error('[transformRequestRows] Error transforming rows:', error);
