@@ -2,7 +2,6 @@
 
 import { redirect } from 'next/navigation';
 import { createSupabaseServerClient, getCurrentProfile } from '@/lib/supabase/server';
-import { createSupabaseAdminClient } from '@/lib/supabase/admin';
 import { ROUTES } from '@/constants';
 import type { Database } from '@/types/database.types';
 
@@ -64,18 +63,21 @@ async function insertRequest(
     return { error: insertError?.message ?? 'Error al crear la solicitud' };
   }
 
-  const adminClient = createSupabaseAdminClient();
   const files = formData.getAll('attachments') as File[];
+  const failedFiles: string[] = [];
 
   for (const file of files) {
-    const storagePath = `${profile.organizationId}/${request.id}/${Date.now()}-${file.name}`;
+    const safeName = file.name.replace(/[^A-Za-z0-9._-]/g, '_');
+    const storagePath = `${profile.organizationId}/${request.id}/${crypto.randomUUID()}-${safeName}`;
 
-    const { error: uploadError } = await adminClient.storage
-      .from('attachments')
+    // Usamos el cliente del usuario (no admin): la policy "request attachments: upload"
+    // exige org match + owns_editable_request, condición que cumple un borrador propio.
+    const { error: uploadError } = await supabase.storage
+      .from('request-attachments')
       .upload(storagePath, file);
 
     if (uploadError) {
-      console.error('[insertRequest] Storage upload error:', uploadError);
+      failedFiles.push(file.name);
       continue;
     }
 
@@ -88,7 +90,19 @@ async function insertRequest(
       storage_path: storagePath,
       checksum: null,
     };
-    await supabase.from('attachments').insert(attachmentPayload);
+    const { error: attError } = await supabase.from('attachments').insert(attachmentPayload);
+    if (attError) {
+      failedFiles.push(file.name);
+      // Borramos el objeto subido para no dejar huérfanos en Storage
+      await supabase.storage.from('request-attachments').remove([storagePath]);
+    }
+  }
+
+  if (failedFiles.length > 0) {
+    return {
+      requestId: request.id,
+      error: `La solicitud se guardó como borrador, pero no se pudieron adjuntar los siguientes archivos: ${failedFiles.join(', ')}. Podés reintentar la carga desde el detalle de la solicitud.`,
+    };
   }
 
   return { requestId: request.id };
