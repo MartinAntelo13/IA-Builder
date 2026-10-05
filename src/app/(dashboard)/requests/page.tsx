@@ -37,11 +37,6 @@ export default async function RequestsPage() {
   if (requestsError) {
     console.error('[RequestsPage] Error fetching user requests:', requestsError);
   }
-  
-  console.log('[RequestsPage] requestsData type:', typeof requestsData, 'is array:', Array.isArray(requestsData), 'length:', requestsData?.length);
-  if (requestsData && requestsData.length > 0) {
-    console.log('[RequestsPage] First request:', JSON.stringify(requestsData[0], null, 2));
-  }
 
   return (
     <div className="page-wrap">

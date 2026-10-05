@@ -42,11 +42,6 @@ export default async function DashboardPage() {
   if (requestsError) {
     console.error('[DashboardPage] Error fetching recent requests:', requestsError);
   }
-  
-  console.log('[DashboardPage] requestsData type:', typeof requestsData, 'is array:', Array.isArray(requestsData), 'length:', requestsData?.length);
-  if (requestsData && requestsData.length > 0) {
-    console.log('[DashboardPage] First request:', JSON.stringify(requestsData[0], null, 2));
-  }
 
   return (
     <div className="page-wrap">
