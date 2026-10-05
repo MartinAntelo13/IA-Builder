@@ -7,6 +7,17 @@
   --muted: #68738a;
   --primary: #5146d8;
   --primary-foreground: #ffffff;
+
+  /* Semantic feedback colors — used by request detail timeline and status icons */
+  --success: #3f9d75;
+  --success-bg: #e6f6ee;
+  --warning: #bc8c35;
+  --warning-bg: #fff5df;
+  --danger: #c65660;
+  --danger-bg: #fcebee;
+  --accent: #e5a43b;
+  --surface: #fbfbfd;
+  --primary-muted: #8d87db;
 }
 
 @theme inline {
@@ -14,8 +25,20 @@
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
+  --color-warning: var(--warning);
+  --color-warning-bg: var(--warning-bg);
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --color-accent: var(--accent);
+  --color-surface: var(--surface);
+  --color-primary-muted: var(--primary-muted);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --text-2xs: 0.625rem;
 }
 
 html {
