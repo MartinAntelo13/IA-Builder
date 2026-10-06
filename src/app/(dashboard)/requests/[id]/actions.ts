@@ -10,6 +10,7 @@ export type ActionResult = { ok: true } | { ok: false; error: string };
 function revalidateRequest(requestId: string) {
   revalidatePath(`${ROUTES.REQUESTS}/${requestId}`);
   revalidatePath(ROUTES.REQUESTS);
+  revalidatePath(ROUTES.INBOX);
   revalidatePath('/');
 }
 

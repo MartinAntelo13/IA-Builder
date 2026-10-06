@@ -93,6 +93,14 @@ export function formatDate(dateString: string | null): string {
   return date.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
+export function formatCurrency(amount: number, symbol: string): string {
+  const formatted = amount.toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+  return `${symbol} ${formatted}`;
+}
+
 export function formatPriority(priority: string): string {
   const priorityMap: Record<string, string> = {
     low: 'Baja',
