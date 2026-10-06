@@ -61,6 +61,16 @@ export async function cancelRequest(requestId: string, reason?: string): Promise
   return { ok: true };
 }
 
+export async function submitDraft(requestId: string): Promise<ActionResult> {
+  if (!/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i.test(requestId))
+    return { ok: false, error: 'ID de solicitud inválido' };
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.rpc('submit_request', { p_request_id: requestId });
+  if (error) return { ok: false, error: error.message };
+  revalidateRequest(requestId);
+  return { ok: true };
+}
+
 // EXCEPTION (Regla 10): insert directo — no existe RPC create_comment.
 // grant insert (request_id, body) on public.comments; author_id y organization_id
 // los completa el trigger comments_before_insert. Igual que el borrador en Fase 3.

@@ -12,10 +12,12 @@ import { RequestCancelMenu } from '@/components/requests/request-cancel-menu';
 
 export default async function RequestDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const { id } = await params;
+  const [{ id }, sp] = await Promise.all([params, searchParams]);
 
   const profile = await getCurrentProfile();
   if (!profile?.organization) return notFound();
@@ -30,6 +32,9 @@ export default async function RequestDetailPage({
   const detail = data as RequestDetailData;
   const statusStyle = REQUEST_STATUS_STYLES[detail.request.status];
   const changesComment = findChangesComment(detail.approvals);
+  const submitError = detail.request.status === 'draft' && typeof sp.submit_error === 'string'
+    ? sp.submit_error
+    : null;
   const userInitials = profile.fullName
     .split(' ')
     .map((n) => n[0])
@@ -81,11 +86,18 @@ export default async function RequestDetailPage({
         </div>
         <aside className="w-full lg:w-72 flex flex-col gap-4 shrink-0">
           <RequestWorkflowCard detail={detail} />
-          {(detail.viewer.can_decide || detail.viewer.can_resubmit) && (
+          {submitError && (
+            <div role="alert" className="p-3 bg-danger-bg border border-border rounded-lg text-2xs">
+              <p className="m-0 text-danger">{submitError}</p>
+              <p className="m-0 mt-1 text-muted">El borrador quedó guardado. Podés volver a enviarlo desde acá.</p>
+            </div>
+          )}
+          {(detail.viewer.can_decide || detail.viewer.can_resubmit || detail.viewer.can_submit) && (
             <RequestActionsPanel
               requestId={detail.request.id}
               canDecide={detail.viewer.can_decide}
               canResubmit={detail.viewer.can_resubmit}
+              canSubmit={detail.viewer.can_submit}
               changesComment={changesComment}
             />
           )}
