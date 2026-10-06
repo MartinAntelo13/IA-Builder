@@ -3,6 +3,8 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { ROUTES } from '@/constants';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FileText, ArrowRight, Loader2 } from 'lucide-react';
@@ -35,6 +37,7 @@ const PRIORITIES = [
 ] as const;
 
 export function NewRequestForm({ requestTypes, costCenters, currencySymbol }: NewRequestFormProps) {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [actionError, setActionError] = useState('');
   const [requiresAmount, setRequiresAmount] = useState(false);
@@ -64,7 +67,9 @@ export function NewRequestForm({ requestTypes, costCenters, currencySymbol }: Ne
     try {
       const fd = buildRequestFormData(values ?? getValues());
       const result = mode === 'draft' ? await createRequest(fd) : await submitRequest(fd);
-      if (result?.error) setActionError(result.error);
+      if (result?.error && result.requestId)
+        router.push(`${ROUTES.REQUESTS}/${result.requestId}?submit_error=${encodeURIComponent(result.error.slice(0, 200))}`);
+      else if (result?.error) setActionError(result.error);
     } catch {
       setActionError(`Error inesperado al ${mode === 'draft' ? 'guardar el borrador' : 'enviar la solicitud'}.`);
     } finally {

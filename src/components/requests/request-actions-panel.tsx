@@ -2,14 +2,15 @@
 // Client Component: uses useState for dialog open states and useTransition for server action loading
 
 import { useState, useTransition } from 'react';
-import { Check, XCircle, RotateCcw, ShieldCheck, Info } from 'lucide-react';
-import { approveRequest, requestChanges, resubmitRequest } from '@/app/(dashboard)/requests/[id]/actions';
+import { Check, XCircle, RotateCcw, ShieldCheck, Info, ArrowRight } from 'lucide-react';
+import { approveRequest, requestChanges, resubmitRequest, submitDraft } from '@/app/(dashboard)/requests/[id]/actions';
 import { RequestActionDialog } from '@/components/requests/request-action-dialog';
 
 interface RequestActionsPanelProps {
   requestId: string;
   canDecide: boolean;
   canResubmit: boolean;
+  canSubmit?: boolean;
   changesComment?: { comment: string; decidedByName: string } | null;
 }
 
@@ -20,13 +21,13 @@ const BTN_PRIMARY =
 const BTN_SECONDARY =
   'w-full flex items-center justify-center gap-2 min-h-10 px-4 rounded-md border border-border text-muted text-xs font-bold cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed';
 
-export function RequestActionsPanel({ requestId, canDecide, canResubmit, changesComment }: RequestActionsPanelProps) {
+export function RequestActionsPanel({ requestId, canDecide, canResubmit, canSubmit, changesComment }: RequestActionsPanelProps) {
   const [isPending, startTransition] = useTransition();
   const [changesOpen, setChangesOpen] = useState(false);
   const [resubmitOpen, setResubmitOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  if (!canDecide && !canResubmit) return null;
+  if (!canDecide && !canResubmit && !canSubmit) return null;
 
   function handleApprove() {
     setError(null);
@@ -42,6 +43,14 @@ export function RequestActionsPanel({ requestId, canDecide, canResubmit, changes
       const result = await requestChanges(requestId, comment);
       if (!result.ok) setError(result.error);
       else setChangesOpen(false);
+    });
+  }
+
+  function handleSubmitDraft() {
+    setError(null);
+    startTransition(async () => {
+      const result = await submitDraft(requestId);
+      if (!result.ok) setError(result.error);
     });
   }
 
@@ -66,6 +75,19 @@ export function RequestActionsPanel({ requestId, canDecide, canResubmit, changes
           <div role="alert" className="mb-3 p-2.5 bg-danger-bg rounded text-2xs text-danger">
             {error}
           </div>
+        )}
+
+        {canSubmit && (
+          <>
+            <div className="flex items-start gap-2 p-3 mb-3 bg-warning-bg rounded-md text-2xs text-warning">
+              <Info size={14} className="shrink-0 mt-px" />
+              <span>Este borrador todavía no fue enviado.</span>
+            </div>
+            <button className={BTN_PRIMARY} onClick={handleSubmitDraft} disabled={isPending}>
+              <ArrowRight size={14} />
+              {isPending ? 'Enviando…' : 'Enviar a revisión'}
+            </button>
+          </>
         )}
 
         {canDecide && (
