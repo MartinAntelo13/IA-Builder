@@ -7,6 +7,7 @@ import type { RequestDetailData } from '@/types/request-detail';
 import { RequestInfo } from '@/components/requests/request-info';
 import { RequestWorkflowCard, RequestActivityCard } from '@/components/requests/request-history';
 import { RequestActionsPanel } from '@/components/requests/request-actions-panel';
+import { findChangesComment } from '@/lib/transformers/requests';
 import { RequestCancelMenu } from '@/components/requests/request-cancel-menu';
 
 export default async function RequestDetailPage({
@@ -28,6 +29,7 @@ export default async function RequestDetailPage({
 
   const detail = data as RequestDetailData;
   const statusStyle = REQUEST_STATUS_STYLES[detail.request.status];
+  const changesComment = findChangesComment(detail.approvals);
   const userInitials = profile.fullName
     .split(' ')
     .map((n) => n[0])
@@ -84,6 +86,7 @@ export default async function RequestDetailPage({
               requestId={detail.request.id}
               canDecide={detail.viewer.can_decide}
               canResubmit={detail.viewer.can_resubmit}
+              changesComment={changesComment}
             />
           )}
           <RequestActivityCard detail={detail} />

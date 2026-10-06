@@ -1,4 +1,5 @@
 import type { Database } from '@/types/database.types';
+import type { RequestDetailData } from '@/types/request-detail';
 
 /**
  * Fila completa devuelta por el RPC list_requests (tipo generado por Supabase).
@@ -58,6 +59,19 @@ export function transformRequestRow(data: ListRequestsRowSubset) {
  * manual duplicada (Regla 7).
  */
 export type RequestRow = ReturnType<typeof transformRequestRow>;
+
+type Approval = RequestDetailData['approvals'][number];
+
+// Devuelve el comentario de la decisión 'changes_requested' más reciente, o null.
+export function findChangesComment(
+  approvals: Approval[],
+): { comment: string; decidedByName: string } | null {
+  const match = approvals
+    .filter((a) => a.decision === 'changes_requested' && a.comment)
+    .sort((a, b) => b.decided_at.localeCompare(a.decided_at))[0];
+  if (!match?.comment) return null;
+  return { comment: match.comment, decidedByName: match.decided_by_name };
+}
 
 /**
  * Transforma un array de datos del RPC al formato esperado

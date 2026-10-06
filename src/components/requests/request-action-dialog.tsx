@@ -8,14 +8,15 @@ interface RequestActionDialogProps {
   onClose: () => void;
   title: string;
   description: string;
-  fieldLabel: string;
-  required: boolean;
+  fieldLabel?: string;
+  required?: boolean;
   confirmText: string;
   onConfirm: (comment: string) => void;
   isPending: boolean;
   error?: string | null;
   cancelLabel?: string;
   destructive?: boolean;
+  hideField?: boolean;
 }
 
 const BTN_BASE =
@@ -26,14 +27,15 @@ export function RequestActionDialog({
   onClose,
   title,
   description,
-  fieldLabel,
-  required,
+  fieldLabel = '',
+  required = false,
   confirmText,
   onConfirm,
   isPending,
   error,
   cancelLabel = 'Cancelar',
   destructive = false,
+  hideField = false,
 }: RequestActionDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [text, setText] = useState('');
@@ -48,7 +50,7 @@ export function RequestActionDialog({
     }
   }, [open]);
 
-  const canConfirm = !isPending && (!required || text.trim().length > 0);
+  const canConfirm = !isPending && (hideField || !required || text.trim().length > 0);
 
   return (
     <dialog
@@ -68,20 +70,22 @@ export function RequestActionDialog({
         </div>
       )}
 
-      <label className="block mb-4">
-        <span className="block mb-1.5 text-2xs font-bold text-muted">
-          {fieldLabel}
-          {required && <span className="text-danger ml-0.5">*</span>}
-        </span>
-        <textarea
-          className="w-full min-h-24 px-3 py-2 border border-border rounded-md text-2xs text-foreground resize-y outline-none focus:border-primary"
-          maxLength={5000}
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          disabled={isPending}
-          aria-required={required}
-        />
-      </label>
+      {!hideField && (
+        <label className="block mb-4">
+          <span className="block mb-1.5 text-2xs font-bold text-muted">
+            {fieldLabel}
+            {required && <span className="text-danger ml-0.5">*</span>}
+          </span>
+          <textarea
+            className="w-full min-h-24 px-3 py-2 border border-border rounded-md text-2xs text-foreground resize-y outline-none focus:border-primary"
+            maxLength={5000}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            disabled={isPending}
+            aria-required={required}
+          />
+        </label>
+      )}
 
       <div className="flex flex-col gap-2">
         <button

@@ -6,22 +6,8 @@ import { useState } from 'react';
 import { FileText, MoreHorizontal, Search, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { REQUEST_STATUS_STYLES } from '@/constants';
-// Regla 7: RequestRow se deriva del transformer (que a su vez deriva del tipo
-// generado por Supabase para list_requests), en vez de redefinirse a mano aquí.
 import type { RequestRow } from '@/lib/transformers/requests';
-
-/**
- * Formatea un número como moneda sin depender de locale del navegador
- * Evita hydration mismatch entre servidor y cliente
- */
-function formatCurrency(amount: number, symbol: string): string {
-  // Formato simple: símbolo + número con separador de miles
-  const formatted = amount.toLocaleString('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  });
-  return `${symbol} ${formatted}`;
-}
+import { formatCurrency } from '@/lib/format-helpers';
 
 interface RequestsTableProps {
   requests: RequestRow[];

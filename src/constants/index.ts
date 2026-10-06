@@ -77,6 +77,8 @@ export const PRIORITY_STYLES: Record<string, {
   high: { label: 'Alta', badge: 'bg-rose-50 text-rose-700' },
 };
 
+export const INBOX_PAGE_SIZE = 10;
+
 export const NAV_ITEMS = [
   { label: 'Resumen', href: ROUTES.DASHBOARD, icon: 'LayoutDashboard' },
   { label: 'Mis solicitudes', href: ROUTES.REQUESTS, icon: 'FileText' },

@@ -10,6 +10,7 @@ interface RequestActionsPanelProps {
   requestId: string;
   canDecide: boolean;
   canResubmit: boolean;
+  changesComment?: { comment: string; decidedByName: string } | null;
 }
 
 const CARD = 'bg-white border border-border rounded-lg shadow-sm px-6 py-5 max-md:px-4 max-md:py-4';
@@ -19,7 +20,7 @@ const BTN_PRIMARY =
 const BTN_SECONDARY =
   'w-full flex items-center justify-center gap-2 min-h-10 px-4 rounded-md border border-border text-muted text-xs font-bold cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed';
 
-export function RequestActionsPanel({ requestId, canDecide, canResubmit }: RequestActionsPanelProps) {
+export function RequestActionsPanel({ requestId, canDecide, canResubmit, changesComment }: RequestActionsPanelProps) {
   const [isPending, startTransition] = useTransition();
   const [changesOpen, setChangesOpen] = useState(false);
   const [resubmitOpen, setResubmitOpen] = useState(false);
@@ -99,6 +100,12 @@ export function RequestActionsPanel({ requestId, canDecide, canResubmit }: Reque
               <Info size={14} className="shrink-0 mt-px" />
               <span>Se solicitaron cambios sobre esta solicitud.</span>
             </div>
+            {changesComment && (
+              <div className="mb-3 p-3 bg-background border border-border rounded-md">
+                <p className="m-0 text-2xs font-medium text-foreground">{changesComment.decidedByName}</p>
+                <p className="m-0 mt-1 text-2xs text-muted whitespace-pre-wrap break-words">{changesComment.comment}</p>
+              </div>
+            )}
             <button
               className={BTN_PRIMARY}
               onClick={() => { setError(null); setResubmitOpen(true); }}
