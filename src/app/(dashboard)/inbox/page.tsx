@@ -6,7 +6,7 @@ import { InboxMetricsCards } from '@/components/inbox/inbox-metrics-cards';
 import { InboxTabs } from '@/components/inbox/inbox-tabs';
 import { InboxFilters } from '@/components/inbox/inbox-filters';
 import { InboxList } from '@/components/inbox/inbox-list';
-import { InboxPagination } from '@/components/inbox/inbox-pagination';
+import { Pagination } from '@/components/shared/pagination';
 import { Inbox } from 'lucide-react';
 
 interface PageProps {
@@ -106,14 +106,18 @@ export default async function InboxPage({ searchParams }: PageProps) {
         <InboxList rows={rows} tab={tab} />
 
         <div className="px-4 py-3 border-t border-border">
-          <InboxPagination
-            tab={tab}
-            sort={sort}
-            q={q}
+          <Pagination
+            basePath={ROUTES.INBOX}
+            params={{
+              tab,
+              ...(sort !== 'newest' ? { sort } : {}),
+              ...(q ? { q } : {}),
+            }}
             page={page}
             totalCount={totalCount}
             totalPages={totalPages}
             pageSize={INBOX_PAGE_SIZE}
+            itemLabel="solicitudes"
           />
         </div>
       </div>
