@@ -14,13 +14,28 @@ export type RoleCatalog = Pick<
   'id' | 'code' | 'name'
 >;
 
+export type DepartmentOption = Pick<
+  Database['public']['Tables']['departments']['Row'],
+  'id' | 'name'
+>;
+
+export type ManagerOption = { id: string; fullName: string };
+
+export type ProfileExtras = {
+  departmentId: Database['public']['Tables']['profiles']['Row']['department_id'];
+  managerId: Database['public']['Tables']['profiles']['Row']['manager_id'];
+};
+
 const STATUS_LABELS: Record<ProfileStatus, string> = {
   active: 'Activo',
   invited: 'Pendiente',
   disabled: 'Deshabilitado',
 };
 
-export function transformTeamMember(row: TeamMemberRow) {
+export function transformTeamMember(
+  row: TeamMemberRow,
+  extrasByUserId: Map<string, ProfileExtras>,
+) {
   const words = (row.full_name ?? '').trim().split(/\s+/).filter(Boolean);
   const initials = words
     .slice(0, 2)
@@ -40,6 +55,8 @@ export function transformTeamMember(row: TeamMemberRow) {
     lastActivityLabel = '—';
   }
 
+  const extras = extrasByUserId.get(row.id);
+
   return {
     id: row.id,
     fullName: row.full_name,
@@ -50,6 +67,10 @@ export function transformTeamMember(row: TeamMemberRow) {
     status: row.status,
     statusLabel,
     lastActivityLabel,
+    jobTitle: row.job_title ?? '',
+    roleCodes: row.role_codes,
+    departmentId: extras?.departmentId ?? null,
+    managerId: extras?.managerId ?? null,
   };
 }
 
