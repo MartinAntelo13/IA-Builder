@@ -79,6 +79,10 @@ export const PRIORITY_STYLES: Record<string, {
 
 export const INBOX_PAGE_SIZE = 10;
 
+export const PERMISSIONS = {
+  WORKFLOW_MANAGE: 'workflow.manage',
+} as const;
+
 export const NAV_ITEMS = [
   { label: 'Resumen', href: ROUTES.DASHBOARD, icon: 'LayoutDashboard' },
   { label: 'Mis solicitudes', href: ROUTES.REQUESTS, icon: 'FileText' },
