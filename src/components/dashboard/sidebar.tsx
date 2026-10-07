@@ -11,6 +11,7 @@ import type { CurrentProfile } from '@/lib/supabase/server';
 
 interface SidebarProps {
   user: CurrentProfile;
+  canManageWorkflows?: boolean;
   activeItem?: string;
   className?: string;
 }
@@ -20,7 +21,7 @@ interface SidebarProps {
  * No hace fetch propio, los datos vienen del layout.
  * Soporta colapso responsive: w-[68px] en mobile (solo íconos), w-64 en desktop (íconos + texto).
  */
-export function Sidebar({ user, activeItem = 'Resumen', className }: SidebarProps) {
+export function Sidebar({ user, canManageWorkflows = false, activeItem = 'Resumen', className }: SidebarProps) {
   const initials = user.fullName
     .split(' ')
     .map((n) => n[0])
@@ -86,7 +87,7 @@ export function Sidebar({ user, activeItem = 'Resumen', className }: SidebarProp
           Gestión
         </p>
         <ul className="space-y-1">
-          {MANAGEMENT_NAV_ITEMS.map((item) => {
+          {MANAGEMENT_NAV_ITEMS.filter((item) => item.href !== ROUTES.WORKFLOWS || canManageWorkflows).map((item) => {
             const ICON_MAP: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
               'Workflow': Workflow,
               'Users': Users,
