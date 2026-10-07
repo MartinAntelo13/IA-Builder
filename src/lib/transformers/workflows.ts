@@ -16,6 +16,7 @@ export function transformWorkflow(row: WorkflowFromQuery) {
     description: row.description,
     isActive: row.is_active,
     updatedAt: formatRelativeTime(row.updated_at),
+    updatedAtRaw: row.updated_at,
     stepCount: (row.workflow_steps as Array<{ count: number }> | null)?.[0]?.count ?? 0,
   };
 }
@@ -53,6 +54,8 @@ export function transformWorkflowStep(
     label: row.label,
     approverType: row.approver_type,
     approverTypeLabel,
+    roleId: row.role_id,
+    userId: row.user_id,
     responsibleName,
     slaHours: row.sla_hours,
   };

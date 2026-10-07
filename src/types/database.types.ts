@@ -1414,6 +1414,30 @@ export type Database = {
         Args: { p_invitation_id: string }
         Returns: undefined
       }
+      save_workflow: {
+        Args: {
+          p_description: string
+          p_name: string
+          p_steps: Json
+          p_workflow_id: string
+        }
+        Returns: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          organization_id: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "workflows"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       submit_request: {
         Args: { p_request_id: string }
         Returns: {
