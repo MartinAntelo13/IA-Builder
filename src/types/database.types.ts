@@ -1470,6 +1470,38 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      update_member: {
+        Args: {
+          p_department_id?: string
+          p_job_title?: string
+          p_manager_id?: string
+          p_role_codes: string[]
+          p_status: Database["public"]["Enums"]["profile_status"]
+          p_user_id: string
+        }
+        Returns: {
+          avatar_url: string | null
+          created_at: string
+          department_id: string | null
+          email: string
+          full_name: string
+          id: string
+          invited_by: string | null
+          job_title: string | null
+          last_active_at: string | null
+          manager_id: string | null
+          organization_id: string
+          status: Database["public"]["Enums"]["profile_status"]
+          timezone: string | null
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "profiles"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
       approver_type: "role" | "requester_manager" | "user"

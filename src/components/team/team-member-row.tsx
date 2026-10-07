@@ -1,5 +1,11 @@
 import type { Database } from '@/types/database.types';
-import type { TeamMember } from '@/lib/transformers/team';
+import type {
+  TeamMember,
+  RoleCatalog,
+  DepartmentOption,
+  ManagerOption,
+} from '@/lib/transformers/team';
+import { TeamMemberMenu } from '@/components/team/team-member-menu';
 
 type ProfileStatus = Database['public']['Enums']['profile_status'];
 
@@ -33,10 +39,30 @@ function StatusBadge({ status, label }: { status: ProfileStatus; label: string }
 
 interface TeamMemberRowProps {
   member: TeamMember;
+  currentUserId: string | null;
+  roles: RoleCatalog[];
+  departments: DepartmentOption[];
+  managerOptions: ManagerOption[];
 }
 
-export function TeamMemberRow({ member }: TeamMemberRowProps) {
+export function TeamMemberRow({
+  member,
+  currentUserId,
+  roles,
+  departments,
+  managerOptions,
+}: TeamMemberRowProps) {
   const avatarClass = getAvatarClass(member.id);
+
+  const menu = (
+    <TeamMemberMenu
+      member={member}
+      currentUserId={currentUserId}
+      roles={roles}
+      departments={departments}
+      managerOptions={managerOptions}
+    />
+  );
 
   return (
     <div className="hover:bg-surface transition-colors">
@@ -63,6 +89,7 @@ export function TeamMemberRow({ member }: TeamMemberRowProps) {
           <StatusBadge status={member.status} label={member.statusLabel} />
         </div>
         <div className="w-40 shrink-0 text-2xs text-muted">{member.lastActivityLabel}</div>
+        <div className="w-10 shrink-0 flex justify-end">{menu}</div>
       </div>
 
       {/* Mobile */}
@@ -83,6 +110,7 @@ export function TeamMemberRow({ member }: TeamMemberRowProps) {
             <StatusBadge status={member.status} label={member.statusLabel} />
           </div>
         </div>
+        {menu}
       </div>
     </div>
   );
