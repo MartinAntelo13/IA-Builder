@@ -1,27 +1,27 @@
-// 'use client' is not needed here - this is a Server Component
-// that receives user data via props from the layout
+'use client';
+// Regla 3: 'use client' — usePathname para derivar el item activo del sidebar.
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { LayoutDashboard, FileText, Inbox, Workflow, Users, Settings, Plus, ShieldCheck, MoreHorizontal } from 'lucide-react';
 import { NAV_ITEMS, MANAGEMENT_NAV_ITEMS, ROUTES } from '@/constants';
-// Regla 7: el shape combinado (profiles + roles + organizations) no es una tabla
-// ni una RPC — es el tipo que arma y exporta getCurrentProfile() en server.ts a
-// partir de los tipos reales de cada tabla. Se importa desde ahí en vez de
-// redefinirlo a mano aquí.
 import type { CurrentProfile } from '@/lib/supabase/server';
 
 interface SidebarProps {
   user: CurrentProfile;
   canManageWorkflows?: boolean;
-  activeItem?: string;
+  canManageTeam?: boolean;
   className?: string;
 }
 
-/**
- * Sidebar del dashboard - Server Component que recibe el usuario por props.
- * No hace fetch propio, los datos vienen del layout.
- * Soporta colapso responsive: w-[68px] en mobile (solo íconos), w-64 en desktop (íconos + texto).
- */
-export function Sidebar({ user, canManageWorkflows = false, activeItem = 'Resumen', className }: SidebarProps) {
+function isActive(itemHref: string, pathname: string): boolean {
+  if (itemHref === '/') return pathname === '/';
+  return pathname === itemHref || pathname.startsWith(itemHref + '/');
+}
+
+export function Sidebar({ user, canManageWorkflows = false, canManageTeam = false, className }: SidebarProps) {
+  const pathname = usePathname();
+
   const initials = user.fullName
     .split(' ')
     .map((n) => n[0])
@@ -63,6 +63,7 @@ export function Sidebar({ user, canManageWorkflows = false, activeItem = 'Resume
                'Inbox': Inbox,
              };
              const Icon = ICON_MAP[item.icon] ?? LayoutDashboard;
+             const active = isActive(item.href, pathname);
 
              return (
               <li key={item.label}>
@@ -70,7 +71,7 @@ export function Sidebar({ user, canManageWorkflows = false, activeItem = 'Resume
                   href={item.href}
                   className={`
                     flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
-                    ${activeItem === item.label
+                    ${active
                       ? 'bg-primary/10 text-primary'
                       : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}
                   `}
@@ -87,13 +88,18 @@ export function Sidebar({ user, canManageWorkflows = false, activeItem = 'Resume
           Gestión
         </p>
         <ul className="space-y-1">
-          {MANAGEMENT_NAV_ITEMS.filter((item) => item.href !== ROUTES.WORKFLOWS || canManageWorkflows).map((item) => {
+          {MANAGEMENT_NAV_ITEMS.filter((item) => {
+            if (item.href === ROUTES.WORKFLOWS && !canManageWorkflows) return false;
+            if (item.href === ROUTES.TEAM && !canManageTeam) return false;
+            return true;
+          }).map((item) => {
             const ICON_MAP: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
               'Workflow': Workflow,
               'Users': Users,
               'Settings': Settings,
             };
             const Icon = ICON_MAP[item.icon] ?? Workflow;
+            const active = isActive(item.href, pathname);
 
             return (
               <li key={item.label}>
@@ -101,7 +107,7 @@ export function Sidebar({ user, canManageWorkflows = false, activeItem = 'Resume
                   href={item.href}
                   className={`
                     flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
-                    ${activeItem === item.label
+                    ${active
                       ? 'bg-primary/10 text-primary'
                       : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}
                   `}
