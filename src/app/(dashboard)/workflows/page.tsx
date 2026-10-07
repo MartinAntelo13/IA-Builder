@@ -21,24 +21,54 @@ export default async function WorkflowsPage({ searchParams }: PageProps) {
 
   const supabase = await createSupabaseServerClient();
 
-  // EXCEPTION (Regla 10): no existe RPC de lectura de workflows.
-  // workflows_select y request_types_select permiten SELECT para authenticated.
-  const [workflowsResult, requestTypesResult] = await Promise.all([
-    supabase
-      .from('workflows')
-      .select('id, name, description, is_active, updated_at, workflow_steps(count)')
-      .order('name'),
-    supabase
-      .from('request_types')
-      .select('id, name, workflow_id'),
-  ]);
+  // EXCEPTION (Regla 10): no existe RPC de lectura de workflows ni de catálogos
+  // (roles / profiles activos / user_roles). RLS filtra por organización.
+  const [workflowsResult, requestTypesResult, rolesResult, profilesResult, userRolesResult] =
+    await Promise.all([
+      supabase
+        .from('workflows')
+        .select('id, name, description, is_active, updated_at, workflow_steps(count)')
+        .order('name'),
+      supabase
+        .from('request_types')
+        .select('id, name, workflow_id'),
+      supabase
+        .from('roles')
+        .select('id, name')
+        .order('name'),
+      supabase
+        .from('profiles')
+        .select('id, full_name')
+        .eq('status', 'active')
+        .order('full_name'),
+      supabase
+        .from('user_roles')
+        .select('role_id, user_id'),
+    ]);
 
   if (workflowsResult.error) throw new Error(workflowsResult.error.message);
   if (requestTypesResult.error) throw new Error(requestTypesResult.error.message);
+  if (rolesResult.error) throw new Error(rolesResult.error.message);
+  if (profilesResult.error) throw new Error(profilesResult.error.message);
+  if (userRolesResult.error) throw new Error(userRolesResult.error.message);
 
   const rawWorkflows = (workflowsResult.data ?? []) as WorkflowFromQuery[];
   const workflows = rawWorkflows.map(transformWorkflow);
   const requestTypes = requestTypesResult.data ?? [];
+  const roleOptions = (rolesResult.data ?? []).map((r) => ({ id: r.id, name: r.name }));
+  const userOptions = (profilesResult.data ?? []).map((u) => ({
+    id: u.id,
+    name: u.full_name,
+  }));
+
+  const activeUserIds = new Set((profilesResult.data ?? []).map((u) => u.id));
+  const roleIdsWithActiveUsers = [
+    ...new Set(
+      (userRolesResult.data ?? [])
+        .filter((ur) => activeUserIds.has(ur.user_id))
+        .map((ur) => ur.role_id),
+    ),
+  ];
 
   const usedByMap: Record<string, string[]> = {};
   for (const rt of requestTypes) {
@@ -121,6 +151,9 @@ export default async function WorkflowsPage({ searchParams }: PageProps) {
                 workflow={selectedWorkflow}
                 steps={steps}
                 usedByTypes={usedByTypes}
+                roleOptions={roleOptions}
+                userOptions={userOptions}
+                roleIdsWithActiveUsers={roleIdsWithActiveUsers}
               />
             ) : (
               <p className="text-2xs text-muted">Seleccioná un workflow para ver su detalle.</p>
