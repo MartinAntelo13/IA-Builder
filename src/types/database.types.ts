@@ -1414,6 +1414,7 @@ export type Database = {
         Args: { p_invitation_id: string }
         Returns: undefined
       }
+      revoke_invited_member: { Args: { p_user_id: string }; Returns: undefined }
       save_workflow: {
         Args: {
           p_description: string

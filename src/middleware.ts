@@ -45,6 +45,17 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // /set-password requiere sesión: el usuario la obtiene vía verifyOtp en
+  // /auth/confirm. Sin sesión → al login. /auth/confirm sigue público
+  // (no está en la condición de arriba y tampoco acá).
+  if (request.nextUrl.pathname === ROUTES.SET_PASSWORD && !user) {
+    const url = request.nextUrl.clone();
+    url.pathname = ROUTES.LOGIN;
+    return NextResponse.redirect(url);
+  }
+
+  // TODO: migrar middleware → proxy del nuevo API de Next.js (deuda).
+
   // If user is logged in and tries to access auth pages, redirect to home
   // TEMPORARILY COMMENTED OUT to allow login page to handle authenticated users
   // const isAuthRoute =

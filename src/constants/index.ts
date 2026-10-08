@@ -10,6 +10,8 @@ export const APP_DESCRIPTION =
 export const ROUTES = {
   LOGIN: '/login',
   FORGOT_PASSWORD: '/forgot-password',
+  AUTH_CONFIRM: '/auth/confirm',
+  SET_PASSWORD: '/set-password',
   HOME: '/',
   DASHBOARD: '/',
   INBOX: '/inbox',

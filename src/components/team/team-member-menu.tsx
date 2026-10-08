@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { MoreHorizontal } from 'lucide-react';
 import { MemberEditDialog } from '@/components/team/member-edit-dialog';
 import { MemberStatusDialog } from '@/components/team/member-status-dialog';
+import { MemberRevokeDialog } from '@/components/team/member-revoke-dialog';
 import type {
   TeamMember,
   RoleCatalog,
@@ -21,7 +22,7 @@ interface TeamMemberMenuProps {
   managerOptions: ManagerOption[];
 }
 
-type DialogKind = null | 'edit' | 'disable' | 'enable';
+type DialogKind = null | 'edit' | 'disable' | 'enable' | 'revoke';
 
 export function TeamMemberMenu({
   member,
@@ -57,6 +58,8 @@ export function TeamMemberMenu({
   const toggleLabel = toggleAction === 'disable' ? 'Deshabilitar' : 'Reactivar';
   // No podés deshabilitarte a vos mismo (lo rechaza el RPC); el item queda inhabilitado.
   const selfDisableBlocked = toggleAction === 'disable' && currentUserId === member.id;
+  // Revocar solo aplica a invitaciones pendientes y no para uno mismo.
+  const canRevokeInvitation = member.status === 'invited' && currentUserId !== member.id;
 
   return (
     <div ref={wrapperRef} className="relative shrink-0">
@@ -100,6 +103,18 @@ export function TeamMemberMenu({
               {toggleLabel}
             </button>
           )}
+          {canRevokeInvitation && (
+            <button
+              type="button"
+              className="w-full px-4 py-2 text-left text-2xs text-danger hover:bg-danger-bg cursor-pointer"
+              onClick={() => {
+                setMenuOpen(false);
+                setDialog('revoke');
+              }}
+            >
+              Revocar invitación
+            </button>
+          )}
         </div>
       )}
 
@@ -125,6 +140,12 @@ export function TeamMemberMenu({
           onClose={() => setDialog(null)}
           member={member}
           action="enable"
+        />
+      )}
+      {dialog === 'revoke' && (
+        <MemberRevokeDialog
+          onClose={() => setDialog(null)}
+          member={member}
         />
       )}
     </div>
