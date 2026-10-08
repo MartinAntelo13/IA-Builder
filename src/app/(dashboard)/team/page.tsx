@@ -6,6 +6,7 @@ import type { ProfileExtras } from '@/lib/transformers/team';
 import type { Database } from '@/types/database.types';
 import { TeamMetricsCards } from '@/components/team/team-metrics-cards';
 import { TeamList } from '@/components/team/team-list';
+import { InviteMemberButton } from '@/components/team/invite-member-button';
 
 // Fila devuelta por el RPC list_team_members (Regla 7 — tipo generado).
 type TeamMemberRow = Database['public']['Functions']['list_team_members']['Returns'][number];
@@ -109,14 +110,21 @@ export default async function TeamPage({ searchParams }: PageProps) {
 
   return (
     <div className="max-w-6xl mx-auto px-10 pt-6 pb-16 max-md:px-4 max-md:pt-5 max-md:pb-12">
-      <header className="mb-6">
-        <p className="text-2xs font-bold tracking-wider text-muted uppercase">
-          GESTIÓN DEL ESPACIO
-        </p>
-        <h1 className="text-foreground text-2xl font-semibold tracking-tight mt-0.5">Equipo</h1>
-        <p className="text-2xs text-muted mt-1">
-          Administra los miembros y sus permisos en tu espacio de trabajo.
-        </p>
+      <header className="mb-6 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+        <div className="min-w-0">
+          <p className="text-2xs font-bold tracking-wider text-muted uppercase">
+            GESTIÓN DEL ESPACIO
+          </p>
+          <h1 className="text-foreground text-2xl font-semibold tracking-tight mt-0.5">Equipo</h1>
+          <p className="text-2xs text-muted mt-1">
+            Administra los miembros y sus permisos en tu espacio de trabajo.
+          </p>
+        </div>
+        <InviteMemberButton
+          roles={roles}
+          departments={departments}
+          managerOptions={managerOptions}
+        />
       </header>
 
       {summaryRow && <TeamMetricsCards summary={summaryRow} />}

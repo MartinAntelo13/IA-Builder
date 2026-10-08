@@ -11,10 +11,14 @@ import { ROUTES } from '@/constants';
 import { signIn } from '@/app/(auth)/login/actions';
 import { ArrowRight, Eye, EyeOff, Loader2 } from 'lucide-react';
 
-export const LoginForm: React.FC = () => {
+interface LoginFormProps {
+  initialError?: string;
+}
+
+export const LoginForm: React.FC<LoginFormProps> = ({ initialError = '' }) => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const [authError, setAuthError] = React.useState('');
+  const [authError, setAuthError] = React.useState(initialError);
 
   const {
     register,

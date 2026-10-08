@@ -12,7 +12,20 @@ import { LoginForm } from '@/components/auth/login-form';
 
 export const dynamic = 'force-dynamic';
 
-export default async function LoginPage() {
+interface LoginPageProps {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
+
+// Mapea los flags de error que vienen por querystring (p. ej. desde el route
+// handler /auth/confirm) a mensajes en español mostrables al usuario.
+function mapQueryError(code: string | undefined): string {
+  if (code === 'invitacion_invalida') {
+    return 'El link de invitación es inválido o expiró. Pedile a un administrador que te invite de nuevo.';
+  }
+  return '';
+}
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
   const supabase = await createSupabaseServerClient();
 
   const {
@@ -27,6 +40,10 @@ export default async function LoginPage() {
     </div>
   );
   }
+
+  const params = await searchParams;
+  const errorParam = typeof params.error === 'string' ? params.error : undefined;
+  const initialError = mapQueryError(errorParam);
 
   return (
     <main className="login-page">
@@ -43,7 +60,7 @@ export default async function LoginPage() {
           <p className="eyebrow">ESPACIO DE TRABAJO</p>
           <h1 id="login-title">Bienvenida de nuevo</h1>
           <p className="login-subtitle">Accede a tu espacio para gestionar solicitudes y aprobaciones.</p>
-          <LoginForm />
+          <LoginForm initialError={initialError} />
         </div>
       </section>
     </main>
