@@ -4,8 +4,9 @@ import { createSupabaseServerClient, getCurrentProfile } from "@/lib/supabase/se
 import { redirect } from "next/navigation";
 import { FileText, Plus, SlidersHorizontal } from "lucide-react";
 import { MetricsCards } from "@/components/dashboard/metrics-cards";
-import { RequestsTable } from "@/components/dashboard/requests-table";
+import { RequestsSection } from "@/components/requests/requests-section";
 import { Greeting } from '@/components/dashboard/greeting';
+import { ROUTES } from "@/constants";
 import type { Database } from "@/types/database.types";
 import { transformRequestRows } from "@/lib/transformers/requests";
 
@@ -33,7 +34,7 @@ export default async function DashboardPage() {
   }
 
   // Obtener solicitudes recientes (scope='visible', page_size=4)
-  const { data: requestsData, error: requestsError, count } = await supabase
+  const { data: requestsData, error: requestsError } = await supabase
     .rpc('list_requests', {
       p_scope: 'visible',
       p_page_size: 4
@@ -93,15 +94,10 @@ export default async function DashboardPage() {
       <section>
         {requestsData && requestsData.length > 0 ? (
           <>
-            {/* RequestsTable ya renderiza su propia tarjeta y encabezado */}
-            <RequestsTable
-              requests={transformRequestRows(requestsData)}
-              totalCount={count ?? 0}
-              isDashboard={true}
-            />
+            <RequestsSection requests={transformRequestRows(requestsData)} variant="dashboard" />
             <div className="mt-3 text-right">
               <Link
-                href="/requests"
+                href={ROUTES.REQUESTS}
                 className="text-sm font-medium text-primary hover:underline"
               >
                 Ver todas
@@ -109,15 +105,15 @@ export default async function DashboardPage() {
             </div>
           </>
         ) : (
-          <div className="requests-card">
-            <div className="flex flex-col items-center justify-center py-12">
-              <FileText className="h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-center text-muted-foreground">
+          <div className="overflow-hidden bg-white border border-border rounded-lg shadow-sm">
+            <div className="flex flex-col items-center justify-center py-12 px-4">
+              <FileText className="h-12 w-12 text-muted mb-4" />
+              <p className="text-center text-muted">
                 Aún no se han subido solicitudes
               </p>
               <Link
-                href="/requests/new"
-                className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                href={ROUTES.REQUESTS_NEW}
+                className="mt-4 inline-flex items-center px-4 py-2 text-sm font-medium rounded-md shadow-sm text-primary-foreground bg-primary hover:bg-primary/80"
               >
                 Crear solicitud
               </Link>

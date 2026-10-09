@@ -101,6 +101,16 @@ export function formatCurrency(amount: number, symbol: string): string {
   return `${symbol} ${formatted}`;
 }
 
+export function formatAmountOrFree(
+  amount: number | null,
+  symbol: string | null,
+): string {
+  if (amount !== null && amount > 0 && symbol) {
+    return formatCurrency(amount, symbol);
+  }
+  return 'Sin coste';
+}
+
 export function formatPriority(priority: string): string {
   const priorityMap: Record<string, string> = {
     low: 'Baja',
