@@ -7,25 +7,16 @@
 import { redirect } from 'next/navigation';
 import { ShieldCheck } from 'lucide-react';
 import { ROUTES } from '@/constants';
-import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { getCurrentProfile } from '@/lib/supabase/server';
 import { ForgotPasswordForm } from '@/components/auth/forgot-password-form';
 
 export const dynamic = 'force-dynamic';
 
 export default async function ForgotPasswordPage() {
-  const supabase = await createSupabaseServerClient();
+  const profile = await getCurrentProfile();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (user) {
-    //redirect(ROUTES.HOME);
-    return (
-      <div>
-        Ya iniciaste sesión.
-      </div>
-    );
+  if (profile) {
+    redirect(ROUTES.HOME);
   }
 
   return (

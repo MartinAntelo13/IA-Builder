@@ -7,7 +7,7 @@
 import { redirect } from 'next/navigation';
 import { ShieldCheck } from 'lucide-react';
 import { ROUTES } from '@/constants';
-import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { getCurrentProfile } from '@/lib/supabase/server';
 import { LoginForm } from '@/components/auth/login-form';
 
 export const dynamic = 'force-dynamic';
@@ -26,19 +26,10 @@ function mapQueryError(code: string | undefined): string {
 }
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
-  const supabase = await createSupabaseServerClient();
+  const profile = await getCurrentProfile();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (user) {
-   // redirect(ROUTES.HOME);
-   return (
-    <div>
-      Ya iniciaste sesión.
-    </div>
-  );
+  if (profile) {
+    redirect(ROUTES.HOME);
   }
 
   const params = await searchParams;

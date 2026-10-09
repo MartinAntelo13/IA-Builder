@@ -24,8 +24,5 @@ export async function signIn(formData: FormData): Promise<SignInResult> {
     return { error: error.message };
   }
   
-  // Redirigir al home si el login es exitoso
-  // TEMPORARILY: redirect to /login to show "Ya iniciaste sesión" div
-  // redirect(ROUTES.HOME);
-  redirect(ROUTES.LOGIN);
+  redirect(ROUTES.HOME);
 }
