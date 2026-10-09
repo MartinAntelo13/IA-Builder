@@ -148,3 +148,4 @@ vite.config.ts.timestamp-*
 ARCHITECTURE_RULES.md
 ARCHITECTURE_RULES.md
 ARCHITECTURE_RULES_EXPLICIT_STYLES.md
+next-env.d.ts
