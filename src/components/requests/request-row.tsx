@@ -1,11 +1,18 @@
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 import { FileText, Clock, ChevronRight } from 'lucide-react';
-import { REQUEST_STATUS_STYLES, ROUTES } from '@/constants';
-import { formatCurrency, formatRelativeTime } from '@/lib/format-helpers';
-import type { RequestRow } from '@/lib/transformers/requests';
 
 interface RequestRowItemProps {
-  row: RequestRow;
+  code: string;
+  title: string;
+  detailHref: string;
+  requesterName: string;
+  timeStr: string;
+  amountStr: string;
+  description?: string | null;
+  badge?: ReactNode;
+  // undefined → chevron por defecto; null → sin acción (p. ej. inbox reviewed).
+  rightAction?: ReactNode | null;
 }
 
 function RequesterAvatar({ name }: { name: string }) {
@@ -21,15 +28,30 @@ function RequesterAvatar({ name }: { name: string }) {
   );
 }
 
-export function RequestRowItem({ row }: RequestRowItemProps) {
-  const amountStr =
-    row.amount !== null && row.amount > 0 && row.currencySymbol
-      ? formatCurrency(row.amount, row.currencySymbol)
-      : 'Sin coste';
-
-  const timeStr = formatRelativeTime(row.submittedAt);
-  const status = REQUEST_STATUS_STYLES[row.status];
-  const detailHref = `${ROUTES.REQUESTS}/${row.id}`;
+export function RequestRowItem({
+  code,
+  title,
+  detailHref,
+  requesterName,
+  timeStr,
+  amountStr,
+  description,
+  badge,
+  rightAction,
+}: RequestRowItemProps) {
+  const showAction = rightAction !== null;
+  const actionContent =
+    rightAction === undefined ? (
+      <Link
+        href={detailHref}
+        aria-label={`Ver detalle de ${code}`}
+        className="h-9 w-9 grid place-items-center rounded-md text-muted hover:bg-surface hover:text-foreground transition-colors"
+      >
+        <ChevronRight size={16} />
+      </Link>
+    ) : (
+      rightAction
+    );
 
   return (
     <div className="relative flex items-center gap-3 px-4 py-4 border-b border-border last:border-b-0">
@@ -43,39 +65,33 @@ export function RequestRowItem({ row }: RequestRowItemProps) {
             href={detailHref}
             className="text-xs font-semibold text-foreground hover:text-primary hover:underline focus-visible:underline truncate after:absolute after:inset-0"
           >
-            {row.title}
+            {title}
           </Link>
-          <span className="text-2xs text-muted shrink-0">{row.code}</span>
+          <span className="text-2xs text-muted shrink-0">{code}</span>
         </div>
+
+        {description && (
+          <p className="mt-0.5 text-2xs text-muted line-clamp-1">{description}</p>
+        )}
 
         <div className="flex items-center gap-3 mt-1.5 flex-wrap">
           <span className="flex items-center gap-1.5">
-            <RequesterAvatar name={row.requesterName} />
-            <span className="text-2xs text-muted">{row.requesterName}</span>
+            <RequesterAvatar name={requesterName} />
+            <span className="text-2xs text-muted">{requesterName}</span>
           </span>
           <span className="flex items-center gap-1 text-2xs text-muted">
             <Clock size={11} />
             {timeStr}
           </span>
-          {status && (
-            <span
-              className={`inline-flex items-center px-2 py-1 rounded text-2xs font-bold whitespace-nowrap ring-1 ring-inset ${status.badge}`}
-            >
-              {status.label}
-            </span>
-          )}
+          {badge}
         </div>
       </div>
 
       <div className="flex items-center gap-2 shrink-0 ml-2">
         <span className="text-sm font-semibold text-foreground whitespace-nowrap">{amountStr}</span>
-        <Link
-          href={detailHref}
-          aria-label={`Ver detalle de ${row.code}`}
-          className="relative z-10 h-9 w-9 grid place-items-center rounded-md text-muted hover:bg-surface hover:text-foreground transition-colors"
-        >
-          <ChevronRight size={16} />
-        </Link>
+        {showAction && (
+          <div className="relative z-10 flex items-center">{actionContent}</div>
+        )}
       </div>
     </div>
   );

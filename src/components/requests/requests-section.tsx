@@ -4,6 +4,8 @@
 
 import { useState } from 'react';
 import { Search, FileText } from 'lucide-react';
+import { REQUEST_STATUS_STYLES, ROUTES } from '@/constants';
+import { formatAmountOrFree, formatRelativeTime } from '@/lib/format-helpers';
 import type { RequestRow } from '@/lib/transformers/requests';
 import { RequestRowItem } from '@/components/requests/request-row';
 
@@ -20,6 +22,18 @@ const STATUS_TABS = [
   { value: 'approved', label: 'Aprobadas' },
   { value: 'rejected', label: 'Rechazadas' },
 ];
+
+function StatusBadge({ status }: { status: string }) {
+  const style = REQUEST_STATUS_STYLES[status];
+  if (!style) return null;
+  return (
+    <span
+      className={`inline-flex items-center px-2 py-1 rounded text-2xs font-bold whitespace-nowrap ring-1 ring-inset ${style.badge}`}
+    >
+      {style.label}
+    </span>
+  );
+}
 
 export function RequestsSection({ requests, variant = 'list' }: RequestsSectionProps) {
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
@@ -87,7 +101,16 @@ export function RequestsSection({ requests, variant = 'list' }: RequestsSectionP
       {filtered.length > 0 ? (
         <div>
           {filtered.map((row) => (
-            <RequestRowItem key={row.id} row={row} />
+            <RequestRowItem
+              key={row.id}
+              code={row.code}
+              title={row.title}
+              detailHref={`${ROUTES.REQUESTS}/${row.id}`}
+              requesterName={row.requesterName}
+              timeStr={formatRelativeTime(row.submittedAt)}
+              amountStr={formatAmountOrFree(row.amount, row.currencySymbol)}
+              badge={<StatusBadge status={row.status} />}
+            />
           ))}
         </div>
       ) : (
