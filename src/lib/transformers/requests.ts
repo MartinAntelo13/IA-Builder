@@ -55,7 +55,7 @@ export function transformRequestRow(data: ListRequestsRowSubset) {
 
 /**
  * Tipo de salida de transformRequestRow, exportado para que los componentes
- * (p. ej. requests-table.tsx) lo importen en vez de redefinir una interface
+ * (p. ej. request-row.tsx) lo importen en vez de redefinir una interface
  * manual duplicada (Regla 7).
  */
 export type RequestRow = ReturnType<typeof transformRequestRow>;

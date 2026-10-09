@@ -3,9 +3,9 @@ import Link from "next/link";
 import { createSupabaseServerClient, getCurrentProfile } from "@/lib/supabase/server";
 import { FileText, Plus, SlidersHorizontal } from "lucide-react";
 import { redirect } from "next/navigation";
-import { RequestsTable } from "@/components/dashboard/requests-table";
-import type { Database } from "@/types/database.types";
+import { RequestsSection } from "@/components/requests/requests-section";
 import { Greeting } from '@/components/dashboard/greeting';
+import { ROUTES } from "@/constants";
 import { transformRequestRows } from "@/lib/transformers/requests";
 
 export const metadata: Metadata = {
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default async function RequestsPage() {
   // Verificar sesión y obtener perfil
   const profile = await getCurrentProfile();
-  
+
   if (!profile) {
     return redirect("/login");
   }
@@ -27,7 +27,7 @@ export default async function RequestsPage() {
   const pageSize = 20;
 
   // Obtener solicitudes del usuario (scope='mine', paginado)
-  const { data: requestsData, error: requestsError, count } = await supabase
+  const { data: requestsData, error: requestsError } = await supabase
     .rpc('list_requests', {
       p_scope: 'mine',
       p_page: page,
@@ -40,7 +40,7 @@ export default async function RequestsPage() {
 
   return (
     <div className="page-wrap">
-    <section className="hero">
+      <section className="hero">
         <div>
           <p className="eyebrow">MI ESPACIO DE TRABAJO</p>
           <Greeting
@@ -49,11 +49,11 @@ export default async function RequestsPage() {
             email={profile.email ?? null}
           />
           <p className="hero-subtitle">
-          Todas tus solicitudes enviadas y su estado actual.
+            Todas tus solicitudes enviadas y su estado actual.
           </p>
         </div>
         <div className="hero-actions">
-          <Link href="/requests/new" className="hero-button hero-button--primary">
+          <Link href={ROUTES.REQUESTS_NEW} className="hero-button hero-button--primary">
             <Plus className="h-4 w-4" />
             Nueva solicitud
           </Link>
@@ -63,30 +63,25 @@ export default async function RequestsPage() {
           </button>
         </div>
       </section>
+
       {requestsData && requestsData.length > 0 ? (
-          <RequestsTable
-            requests={transformRequestRows(requestsData)}
-            totalCount={count ?? 0}
-          />
-        ) : (
-          <div className="flex flex-col items-center justify-center py-12">
-            <FileText className="h-12 w-12 text-muted-foreground mb-4" />
-            <p className="text-center text-muted-foreground">
+        <RequestsSection requests={transformRequestRows(requestsData)} />
+      ) : (
+        <div className="overflow-hidden bg-white border border-border rounded-lg shadow-sm">
+          <div className="flex flex-col items-center justify-center py-12 px-4">
+            <FileText className="h-12 w-12 text-muted mb-4" />
+            <p className="text-center text-muted">
               Aún no se han subido solicitudes
             </p>
-            <a 
-              href="/requests/new" 
-              className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+            <Link
+              href={ROUTES.REQUESTS_NEW}
+              className="mt-4 inline-flex items-center px-4 py-2 text-sm font-medium rounded-md shadow-sm text-primary-foreground bg-primary hover:bg-primary/80"
             >
               Crear solicitud
-            </a>
+            </Link>
           </div>
-        )}
-</div>
-
-    
-        
-       
-    
+        </div>
+      )}
+    </div>
   );
 }
