@@ -85,6 +85,7 @@ export const TEAM_PAGE_SIZE = 10;
 export const PERMISSIONS = {
   WORKFLOW_MANAGE: 'workflow.manage',
   TEAM_MANAGE: 'team.manage',
+  ORG_MANAGE: 'org.manage',
 } as const;
 
 export const NAV_ITEMS = [

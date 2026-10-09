@@ -31,6 +31,7 @@ function getBreadcrumbTitle(pathname: string): string {
   if (pathname.startsWith('/inbox')) return 'Bandeja de entrada';
   if (pathname.startsWith('/workflows')) return 'Workflows';
   if (pathname.startsWith('/team')) return 'Equipo';
+  if (pathname.startsWith('/settings')) return 'Configuración';
   return 'Resumen';
 }
 
