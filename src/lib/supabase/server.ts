@@ -43,12 +43,13 @@ export type CurrentProfile = {
   email: Database['public']['Tables']['profiles']['Row']['email'];
   fullName: Database['public']['Tables']['profiles']['Row']['full_name'];
   jobTitle: Database['public']['Tables']['profiles']['Row']['job_title'];
+  timezone: Database['public']['Tables']['profiles']['Row']['timezone'];
   organizationId: Database['public']['Tables']['profiles']['Row']['organization_id'];
   status: Database['public']['Tables']['profiles']['Row']['status'];
   roles: Array<Pick<Database['public']['Tables']['roles']['Row'], 'code' | 'name'>>;
   organization: Pick<
     Database['public']['Tables']['organizations']['Row'],
-    'id' | 'name' | 'currency_code' | 'currency_symbol'
+    'id' | 'name' | 'currency_code' | 'currency_symbol' | 'timezone'
   > | null;
 };
 
@@ -81,7 +82,7 @@ export const getCurrentProfile = cache(async (): Promise<CurrentProfile | null> 
   const [profileResult, userRolesResult] = await Promise.all([
     supabase
       .from('profiles')
-      .select('id, email, full_name, job_title, organization_id, status')
+      .select('id, email, full_name, job_title, timezone, organization_id, status')
       .eq('id', user.id)
       .single(),
     supabase
@@ -108,7 +109,7 @@ export const getCurrentProfile = cache(async (): Promise<CurrentProfile | null> 
   const [organizationResult, rolesResult] = await Promise.all([
     supabase
       .from('organizations')
-      .select('id, name, currency_code, currency_symbol')
+      .select('id, name, currency_code, currency_symbol, timezone')
       .eq('id', profile.organization_id)
       .single(),
     rolesQuery,
@@ -122,6 +123,7 @@ export const getCurrentProfile = cache(async (): Promise<CurrentProfile | null> 
     email: profile.email,
     fullName: profile.full_name,
     jobTitle: profile.job_title,
+    timezone: profile.timezone,
     organizationId: profile.organization_id,
     status: profile.status,
     roles,

@@ -4,20 +4,8 @@ import { redirect } from 'next/navigation';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { ROUTES } from '@/constants';
 import { passwordSchema, type PasswordFormValues } from '@/lib/schemas/password.schema';
+import { mapPasswordError } from '@/lib/auth/map-password-error';
 import type { ActionResult } from '@/types/action-result';
-
-// Traducción de errores de supabase.auth.updateUser. Supabase devuelve el
-// mensaje en inglés con palabras clave sobre la política de contraseña.
-function mapPasswordError(message: string): string {
-  const m = message.toLowerCase();
-  if (m.includes('weak') || m.includes('short') || m.includes('at least')) {
-    return 'La contraseña no cumple los requisitos de seguridad. Elegí una más robusta.';
-  }
-  if (m.includes('same') || m.includes('previous')) {
-    return 'La nueva contraseña no puede ser igual a la anterior.';
-  }
-  return message || 'No se pudo guardar la contraseña.';
-}
 
 export async function setInitialPassword(
   input: PasswordFormValues,
