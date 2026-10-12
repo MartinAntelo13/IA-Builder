@@ -1,6 +1,8 @@
 import { CheckCircle2, Clock, XCircle, AlertCircle, SkipBack, Activity } from 'lucide-react';
 import type { RequestDetailData } from '@/types/request-detail';
 import { formatStepStatus, formatEventType, formatRelativeTime, formatDate } from '@/lib/format-helpers';
+import { ActivityEventList } from '@/components/requests/activity-event-list';
+import type { ActivityItem } from '@/components/requests/activity-event-list';
 
 interface RequestHistoryProps {
   detail: RequestDetailData;
@@ -30,10 +32,15 @@ const SIDE_TITLE = 'flex items-center justify-between gap-2 pb-4 mb-4 border-b b
 const ICON_BASE = 'relative z-10 w-6 h-6 grid place-items-center rounded-full shrink-0';
 
 export function RequestWorkflowCard({ detail }: RequestHistoryProps) {
+  const approvedCount = detail.steps.filter((s) => s.status === 'approved').length;
+  const totalSteps = detail.steps.length;
   return (
     <article className={CARD}>
       <div className={SIDE_TITLE}>
         <h2 className="m-0 text-foreground text-sm tracking-tight">Flujo de aprobación</h2>
+        {totalSteps > 0 && (
+          <span className="text-muted text-2xs">{approvedCount} de {totalSteps}</span>
+        )}
       </div>
       <div className="flex flex-col">
         <div className="relative flex gap-2.5 min-h-14">
@@ -83,32 +90,24 @@ export function RequestWorkflowCard({ detail }: RequestHistoryProps) {
 }
 
 export function RequestActivityCard({ detail }: RequestHistoryProps) {
-  const recentEvents = detail.events.slice(-5);
+  const items: ActivityItem[] = detail.events.map((event) => ({
+    id: event.id,
+    title: formatEventType(event.event_type),
+    meta: `${event.actor_name} · ${formatRelativeTime(event.created_at)}`,
+  }));
   return (
     <article className={CARD}>
       <div className={SIDE_TITLE}>
         <h2 className="m-0 text-foreground text-sm tracking-tight">Actividad reciente</h2>
       </div>
-      <div className="flex flex-col">
-        {recentEvents.length > 0 ? (
-          recentEvents.map((event) => (
-            <div key={event.id} className="flex gap-2.5 py-3.5 border-b border-border first:pt-0 last:pb-0 last:border-b-0">
-              <div className="w-1.5 h-1.5 mt-1 rounded-full bg-primary shrink-0" />
-              <div>
-                <strong className="block text-foreground text-2xs font-bold">{formatEventType(event.event_type)}</strong>
-                <small className="block mt-0.5 text-muted text-2xs">
-                  {event.actor_name} · {formatRelativeTime(event.created_at)}
-                </small>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p className="flex items-center justify-center gap-1.5 m-0 py-5 text-muted text-2xs">
-            <Activity size={14} />
-            Sin actividad aún
-          </p>
-        )}
-      </div>
+      {items.length > 0 ? (
+        <ActivityEventList items={items} />
+      ) : (
+        <p className="flex items-center justify-center gap-1.5 m-0 py-5 text-muted text-2xs">
+          <Activity size={14} />
+          Sin actividad aún
+        </p>
+      )}
     </article>
   );
 }
