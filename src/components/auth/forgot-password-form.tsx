@@ -6,42 +6,44 @@ import * as React from 'react';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { forgotPasswordSchema } from '@/lib/validations/auth.schema';
+import { forgotPasswordSchema, type ForgotPasswordInput } from '@/lib/validations/auth.schema';
 import { ROUTES } from '@/constants';
 import { forgotPassword } from '@/app/(auth)/forgot-password/actions';
 import { ArrowLeft, ArrowRight, CheckCircle2, Mail } from 'lucide-react';
 
-export const ForgotPasswordForm: React.FC = () => {
+interface ForgotPasswordFormProps {
+  initialError?: string;
+}
+
+export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ initialError = '' }) => {
   const [loading, setLoading] = React.useState(false);
   const [step, setStep] = React.useState<'form' | 'confirmation'>('form');
   const [email, setEmail] = React.useState('');
+  const [authError, setAuthError] = React.useState(initialError);
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<z.infer<typeof forgotPasswordSchema>>({
+  } = useForm<ForgotPasswordInput>({
     resolver: zodResolver(forgotPasswordSchema),
   });
 
-  const onSubmit = async (data: z.infer<typeof forgotPasswordSchema>) => {
+  const onSubmit = async (data: ForgotPasswordInput) => {
+    setAuthError('');
     setLoading(true);
     try {
-      const formData = new FormData();
-      formData.append('email', data.email);
+      const result = await forgotPassword(data);
 
-      const result = await forgotPassword(formData);
-
-      if (result?.error) {
-        // Error is shown inline via react-hook-form
+      if (!result.ok) {
+        setAuthError(result.error);
         return;
       }
 
       setEmail(data.email);
       setStep('confirmation');
     } catch {
-      // Error will be shown inline
+      setAuthError('Ocurrió un error inesperado. Intentá de nuevo.');
     } finally {
       setLoading(false);
     }
@@ -88,11 +90,12 @@ export const ForgotPasswordForm: React.FC = () => {
           />
           {errors.email && <span className="field-error">{errors.email.message}</span>}
         </label>
+        {authError && <span className="field-error" role="alert">{authError}</span>}
         <button className="login-submit" type="submit" disabled={isSubmitting || loading}>
           {loading ? 'Enviando...' : 'Enviar enlace'} <Mail size={16} />
         </button>
       </form>
-      <p className="login-note">El enlace será válido durante 30 minutos</p>
+      <p className="login-note">El enlace vence después de un tiempo y solo puede usarse una vez.</p>
     </>
   );
 };

@@ -45,10 +45,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // /set-password requiere sesión: el usuario la obtiene vía verifyOtp en
-  // /auth/confirm. Sin sesión → al login. /auth/confirm sigue público
-  // (no está en la condición de arriba y tampoco acá).
-  if (request.nextUrl.pathname === ROUTES.SET_PASSWORD && !user) {
+  // /set-password y /reset-password requieren sesión: el usuario la obtiene
+  // vía verifyOtp en /auth/confirm (type=invite o type=recovery). Sin sesión
+  // → al login. /auth/confirm sigue público (no está en ninguna condición).
+  const requiresSession =
+    request.nextUrl.pathname === ROUTES.SET_PASSWORD ||
+    request.nextUrl.pathname === ROUTES.RESET_PASSWORD;
+  if (requiresSession && !user) {
     const url = request.nextUrl.clone();
     url.pathname = ROUTES.LOGIN;
     return NextResponse.redirect(url);
