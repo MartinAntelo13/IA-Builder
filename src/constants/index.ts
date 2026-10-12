@@ -12,6 +12,7 @@ export const ROUTES = {
   FORGOT_PASSWORD: '/forgot-password',
   AUTH_CONFIRM: '/auth/confirm',
   SET_PASSWORD: '/set-password',
+  RESET_PASSWORD: '/reset-password',
   HOME: '/',
   DASHBOARD: '/',
   INBOX: '/inbox',

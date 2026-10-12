@@ -21,7 +21,7 @@ export async function setInitialPassword(
   // getUser garantiza que haya una sesión válida (puesta por verifyOtp).
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
-    return { ok: false, error: 'Tu sesión expiró. Volvé a abrir el link de invitación.' };
+    return { ok: false, error: 'Tu sesión expiró. Volvé a abrir el link que te enviamos por email.' };
   }
 
   const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
