@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Pencil } from 'lucide-react';
 import Link from 'next/link';
 import { createSupabaseServerClient, getCurrentProfile } from '@/lib/supabase/server';
 import { ROUTES, REQUEST_STATUS_STYLES } from '@/constants';
@@ -76,9 +76,20 @@ export default async function RequestDetailPage({
             por {detail.requester.full_name}
           </p>
         </div>
-        {detail.viewer.can_cancel && (
-          <RequestCancelMenu requestId={detail.request.id} />
-        )}
+        <div className="flex items-center gap-1 shrink-0">
+          {detail.viewer.can_edit && (
+            <Link
+              href={`${ROUTES.REQUESTS}/${detail.request.id}/edit`}
+              className="grid place-items-center w-8 h-8 rounded-md text-muted hover:bg-border cursor-pointer"
+              aria-label="Editar solicitud"
+            >
+              <Pencil size={16} />
+            </Link>
+          )}
+          {detail.viewer.can_cancel && (
+            <RequestCancelMenu requestId={detail.request.id} />
+          )}
+        </div>
       </div>
 
       <section className="flex flex-col lg:flex-row gap-5 items-start w-full">

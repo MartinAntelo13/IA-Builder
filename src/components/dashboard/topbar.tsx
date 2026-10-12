@@ -27,6 +27,7 @@ function getInitials(fullName: string | null, email: string | null): string {
 function getBreadcrumbTitle(pathname: string): string {
   if (pathname === '/' || pathname === '') return 'Resumen';
   if (pathname === '/requests') return 'Mis solicitudes';
+  if (pathname.startsWith('/requests/') && pathname.endsWith('/edit')) return 'Editar solicitud';
   if (pathname.startsWith('/requests/')) return 'Detalle de solicitud';
   if (pathname.startsWith('/inbox')) return 'Bandeja de entrada';
   if (pathname.startsWith('/workflows')) return 'Workflows';
