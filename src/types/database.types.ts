@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5"
+    PostgrestVersion: "14.17"
   }
   public: {
     Tables: {
@@ -1178,6 +1178,38 @@ export type Database = {
           p_decision: Database["public"]["Enums"]["decision_type"]
           p_request_id: string
         }
+        Returns: {
+          amount: number | null
+          code: string | null
+          completed_at: string | null
+          cost_center_id: string | null
+          created_at: string
+          currency_code: string
+          current_step_id: string | null
+          description: string | null
+          id: string
+          organization_id: string
+          priority: Database["public"]["Enums"]["priority_level"]
+          request_seq: number
+          request_type_id: string
+          requester_id: string
+          required_date: string | null
+          revision: number
+          status: Database["public"]["Enums"]["request_status"]
+          submitted_at: string | null
+          title: string
+          updated_at: string
+          workflow_id: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "requests"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      duplicate_request: {
+        Args: { p_request_id: string }
         Returns: {
           amount: number | null
           code: string | null
