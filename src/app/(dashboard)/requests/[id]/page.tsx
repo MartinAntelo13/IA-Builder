@@ -9,6 +9,7 @@ import { RequestWorkflowCard, RequestActivityCard } from '@/components/requests/
 import { RequestActionsPanel } from '@/components/requests/request-actions-panel';
 import { findChangesComment, findDecisionComment } from '@/lib/transformers/requests';
 import { RequestCancelMenu } from '@/components/requests/request-cancel-menu';
+import { DuplicateRequestButton } from '@/components/requests/duplicate-request-button';
 
 export default async function RequestDetailPage({
   params,
@@ -77,6 +78,9 @@ export default async function RequestDetailPage({
           </p>
         </div>
         <div className="flex items-center gap-1 shrink-0">
+          {profile.id === detail.requester.id && (
+            <DuplicateRequestButton requestId={detail.request.id} />
+          )}
           {detail.viewer.can_edit && (
             <Link
               href={`${ROUTES.REQUESTS}/${detail.request.id}/edit`}
