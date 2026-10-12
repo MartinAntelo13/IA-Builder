@@ -104,7 +104,7 @@ export function InviteMemberDialog({ onClose, roles, departments, managerOptions
             {roles.map((r) => <option key={r.id} value={r.code}>{r.name}</option>)}
           </select>
           <p className="mt-1 text-2xs text-muted">
-            Podés agregarle más roles después desde "Editar miembro".
+            Podés agregarle más roles después desde &quot;Editar miembro&quot;.
           </p>
           {errors.roleCode && <p role="alert" className="mt-1 text-2xs text-danger">{errors.roleCode.message}</p>}
         </div>

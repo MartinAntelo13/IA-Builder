@@ -46,7 +46,6 @@ export function RequestActionDialog({
       dialogRef.current?.showModal();
     } else {
       dialogRef.current?.close();
-      setText('');
     }
   }, [open]);
 
@@ -57,7 +56,7 @@ export function RequestActionDialog({
       ref={dialogRef}
       aria-labelledby={titleId}
       className="m-auto w-11/12 max-w-md rounded-xl border border-border bg-white shadow-xl p-6 backdrop:bg-black/50"
-      onClose={onClose}
+      onClose={() => { onClose(); setText(''); }}
     >
       <h2 id={titleId} className="m-0 mb-2 text-foreground text-sm font-semibold tracking-tight">
         {title}
