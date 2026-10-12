@@ -5,6 +5,8 @@ import { useState, useTransition } from 'react';
 import { Check, XCircle, RotateCcw, ShieldCheck, Info, ArrowRight } from 'lucide-react';
 import { approveRequest, requestChanges, resubmitRequest, submitDraft } from '@/app/(dashboard)/requests/[id]/actions';
 import { RequestActionDialog } from '@/components/requests/request-action-dialog';
+import { RejectRequestButton } from '@/components/requests/reject-request-button';
+import { DecisionComment } from '@/components/requests/decision-comment';
 
 interface RequestActionsPanelProps {
   requestId: string;
@@ -12,6 +14,7 @@ interface RequestActionsPanelProps {
   canResubmit: boolean;
   canSubmit?: boolean;
   changesComment?: { comment: string; decidedByName: string } | null;
+  rejectionComment?: { comment: string; decidedByName: string } | null;
 }
 
 const CARD = 'bg-white border border-border rounded-lg shadow-sm px-6 py-5 max-md:px-4 max-md:py-4';
@@ -21,13 +24,13 @@ const BTN_PRIMARY =
 const BTN_SECONDARY =
   'w-full flex items-center justify-center gap-2 min-h-10 px-4 rounded-md border border-border text-muted text-xs font-bold cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed';
 
-export function RequestActionsPanel({ requestId, canDecide, canResubmit, canSubmit, changesComment }: RequestActionsPanelProps) {
+export function RequestActionsPanel({ requestId, canDecide, canResubmit, canSubmit, changesComment, rejectionComment }: RequestActionsPanelProps) {
   const [isPending, startTransition] = useTransition();
   const [changesOpen, setChangesOpen] = useState(false);
   const [resubmitOpen, setResubmitOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  if (!canDecide && !canResubmit && !canSubmit) return null;
+  if (!canDecide && !canResubmit && !canSubmit && !rejectionComment) return null;
 
   function handleApprove() {
     setError(null);
@@ -109,6 +112,7 @@ export function RequestActionsPanel({ requestId, canDecide, canResubmit, canSubm
                 <XCircle size={14} />
                 Solicitar cambios
               </button>
+              <RejectRequestButton requestId={requestId} />
             </div>
             <p className="mt-3 m-0 text-2xs text-muted text-center">
               Al aprobar, la solicitud pasará al siguiente nivel del flujo.
@@ -136,6 +140,15 @@ export function RequestActionsPanel({ requestId, canDecide, canResubmit, canSubm
               <RotateCcw size={14} />
               {isPending ? 'Enviando…' : 'Reenviar solicitud'}
             </button>
+          </>
+        )}
+        {rejectionComment && !canDecide && !canResubmit && !canSubmit && (
+          <>
+            <div className="flex items-start gap-2 p-3 mb-3 bg-danger-bg rounded-md text-2xs text-danger">
+              <Info size={14} className="shrink-0 mt-px" />
+              <span>Esta solicitud fue rechazada.</span>
+            </div>
+            <DecisionComment comment={rejectionComment.comment} decidedByName={rejectionComment.decidedByName} />
           </>
         )}
       </article>

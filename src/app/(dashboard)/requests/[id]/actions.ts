@@ -39,6 +39,20 @@ export async function requestChanges(requestId: string, comment: string): Promis
   return { ok: true };
 }
 
+export async function rejectRequest(requestId: string, comment: string): Promise<ActionResult> {
+  const trimmed = comment.trim();
+  if (!trimmed) return { ok: false, error: 'Se requiere un comentario para esta decisión' };
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.rpc('decide_request', {
+    p_request_id: requestId,
+    p_decision: 'rejected',
+    p_comment: trimmed,
+  });
+  if (error) return { ok: false, error: error.message };
+  revalidateRequest(requestId);
+  return { ok: true };
+}
+
 export async function resubmitRequest(requestId: string, comment?: string): Promise<ActionResult> {
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.rpc('resubmit_request', {

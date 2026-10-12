@@ -62,15 +62,23 @@ export type RequestRow = ReturnType<typeof transformRequestRow>;
 
 type Approval = RequestDetailData['approvals'][number];
 
+// Devuelve el comentario de la decisión más reciente para el tipo dado, o null.
+export function findDecisionComment(
+  approvals: Approval[],
+  decision: 'changes_requested' | 'rejected',
+): { comment: string; decidedByName: string } | null {
+  const match = approvals
+    .filter((a) => a.decision === decision && a.comment)
+    .sort((a, b) => b.decided_at.localeCompare(a.decided_at))[0];
+  if (!match?.comment) return null;
+  return { comment: match.comment, decidedByName: match.decided_by_name };
+}
+
 // Devuelve el comentario de la decisión 'changes_requested' más reciente, o null.
 export function findChangesComment(
   approvals: Approval[],
 ): { comment: string; decidedByName: string } | null {
-  const match = approvals
-    .filter((a) => a.decision === 'changes_requested' && a.comment)
-    .sort((a, b) => b.decided_at.localeCompare(a.decided_at))[0];
-  if (!match?.comment) return null;
-  return { comment: match.comment, decidedByName: match.decided_by_name };
+  return findDecisionComment(approvals, 'changes_requested');
 }
 
 /**

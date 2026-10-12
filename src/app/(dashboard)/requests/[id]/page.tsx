@@ -7,7 +7,7 @@ import type { RequestDetailData } from '@/types/request-detail';
 import { RequestInfo } from '@/components/requests/request-info';
 import { RequestWorkflowCard, RequestActivityCard } from '@/components/requests/request-history';
 import { RequestActionsPanel } from '@/components/requests/request-actions-panel';
-import { findChangesComment } from '@/lib/transformers/requests';
+import { findChangesComment, findDecisionComment } from '@/lib/transformers/requests';
 import { RequestCancelMenu } from '@/components/requests/request-cancel-menu';
 
 export default async function RequestDetailPage({
@@ -32,6 +32,7 @@ export default async function RequestDetailPage({
   const detail = data as RequestDetailData;
   const statusStyle = REQUEST_STATUS_STYLES[detail.request.status];
   const changesComment = findChangesComment(detail.approvals);
+  const rejectionComment = findDecisionComment(detail.approvals, 'rejected');
   const submitError = detail.request.status === 'draft' && typeof sp.submit_error === 'string'
     ? sp.submit_error
     : null;
@@ -92,13 +93,14 @@ export default async function RequestDetailPage({
               <p className="m-0 mt-1 text-muted">El borrador quedó guardado. Podés volver a enviarlo desde acá.</p>
             </div>
           )}
-          {(detail.viewer.can_decide || detail.viewer.can_resubmit || detail.viewer.can_submit) && (
+          {(detail.viewer.can_decide || detail.viewer.can_resubmit || detail.viewer.can_submit || !!rejectionComment) && (
             <RequestActionsPanel
               requestId={detail.request.id}
               canDecide={detail.viewer.can_decide}
               canResubmit={detail.viewer.can_resubmit}
               canSubmit={detail.viewer.can_submit}
               changesComment={changesComment}
+              rejectionComment={rejectionComment}
             />
           )}
           <RequestActivityCard detail={detail} />
