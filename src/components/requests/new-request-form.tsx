@@ -9,6 +9,7 @@ import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FileText, ArrowRight, Loader2 } from 'lucide-react';
 import { requestSchema, type RequestFormValues } from '@/lib/validations/request.schema';
+import { validateAttachmentFiles } from '@/lib/validations/attachment-file';
 import { buildRequestFormData } from '@/lib/build-request-form-data';
 import { createRequest, submitRequest } from '@/app/(dashboard)/requests/new/actions';
 import { RequestPreview } from '@/components/requests/request-preview';
@@ -55,6 +56,12 @@ export function NewRequestForm({ requestTypes, costCenters, currencySymbol }: Ne
       }
     }
     if (mode === 'draft' && !(await trigger())) return;
+    const files = (values ?? getValues()).attachments ?? [];
+    const filesValidation = validateAttachmentFiles(files);
+    if (!filesValidation.ok) {
+      setActionError(filesValidation.error);
+      return;
+    }
     setIsLoading(true);
     setActionError('');
     try {

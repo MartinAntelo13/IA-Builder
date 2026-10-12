@@ -3,6 +3,7 @@
 import { redirect } from 'next/navigation';
 import { createSupabaseServerClient, getCurrentProfile } from '@/lib/supabase/server';
 import { ROUTES } from '@/constants';
+import { uploadAttachmentFile } from '@/lib/storage/request-attachments';
 import type { Database } from '@/types/database.types';
 
 type PriorityLevel = Database['public']['Enums']['priority_level'];
@@ -11,12 +12,6 @@ type PriorityLevel = Database['public']['Enums']['priority_level'];
 type RequestInsertPayload = Pick<
   Database['public']['Tables']['requests']['Insert'],
   'request_type_id' | 'title' | 'description' | 'amount' | 'cost_center_id' | 'priority' | 'required_date'
->;
-
-// Only columns permitted by grant insert (...) on public.attachments to authenticated
-type AttachmentInsertPayload = Pick<
-  Database['public']['Tables']['attachments']['Insert'],
-  'request_id' | 'file_name' | 'mime_type' | 'size_bytes' | 'storage_path' | 'checksum'
 >;
 
 export interface RequestActionResult {
@@ -66,36 +61,11 @@ async function insertRequest(
   const files = formData.getAll('attachments') as File[];
   const failedFiles: string[] = [];
 
+  // Reutiliza el helper compartido con addAttachment: sube al bucket + inserta
+  // la fila con el payload tipado + rollback de Storage si falla el insert.
   for (const file of files) {
-    const safeName = file.name.replace(/[^A-Za-z0-9._-]/g, '_');
-    const storagePath = `${profile.organizationId}/${request.id}/${crypto.randomUUID()}-${safeName}`;
-
-    // Usamos el cliente del usuario (no admin): la policy "request attachments: upload"
-    // exige org match + owns_editable_request, condición que cumple un borrador propio.
-    const { error: uploadError } = await supabase.storage
-      .from('request-attachments')
-      .upload(storagePath, file);
-
-    if (uploadError) {
-      failedFiles.push(file.name);
-      continue;
-    }
-
-    // Trigger attachments_before_insert (security definer) populates: organization_id, uploaded_by
-    const attachmentPayload: AttachmentInsertPayload = {
-      request_id: request.id,
-      file_name: file.name,
-      mime_type: file.type,
-      size_bytes: file.size,
-      storage_path: storagePath,
-      checksum: null,
-    };
-    const { error: attError } = await supabase.from('attachments').insert(attachmentPayload);
-    if (attError) {
-      failedFiles.push(file.name);
-      // Borramos el objeto subido para no dejar huérfanos en Storage
-      await supabase.storage.from('request-attachments').remove([storagePath]);
-    }
+    const result = await uploadAttachmentFile(supabase, profile.organizationId, request.id, file);
+    if (!result.ok) failedFiles.push(file.name);
   }
 
   if (failedFiles.length > 0) {

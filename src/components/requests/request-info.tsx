@@ -1,27 +1,12 @@
-import { FileText, MessageSquare, Paperclip, Download } from 'lucide-react';
+import { FileText, MessageSquare } from 'lucide-react';
 import type { RequestDetailData } from '@/types/request-detail';
-import { formatPriority, formatBytes, formatRelativeTime } from '@/lib/format-helpers';
+import { formatPriority, formatRelativeTime } from '@/lib/format-helpers';
 import { RequestCommentForm } from '@/components/requests/request-comment-form';
+import { RequestAttachmentsManager } from '@/components/requests/request-attachments-manager';
 
 interface RequestInfoProps {
   detail: RequestDetailData;
   userInitials: string;
-}
-
-const FILE_BADGE: Record<string, string> = {
-  pdf: 'text-danger bg-danger-bg',
-  img: 'text-success bg-success-bg',
-  xls: 'text-success bg-success-bg',
-  doc: 'text-primary bg-background',
-  file: 'text-muted bg-border',
-};
-
-function getFileBadge(mimeType: string): { cls: string; label: string } {
-  if (mimeType.includes('pdf')) return { cls: 'pdf', label: 'PDF' };
-  if (mimeType.includes('image')) return { cls: 'img', label: 'IMG' };
-  if (mimeType.includes('spreadsheet')) return { cls: 'xls', label: 'XLS' };
-  if (mimeType.includes('word')) return { cls: 'doc', label: 'DOC' };
-  return { cls: 'file', label: 'FILE' };
 }
 
 const CARD = 'bg-white border border-border rounded-lg shadow-sm p-6 max-md:p-4';
@@ -108,40 +93,11 @@ export function RequestInfo({ detail, userInitials }: RequestInfoProps) {
         )}
       </article>
 
-      {detail.attachments.length > 0 && (
-        <article className={CARD}>
-          <div className={CARD_TITLE}>
-            <Paperclip size={16} />
-            <h2 className="m-0 text-foreground text-sm tracking-tight">
-              Archivos adjuntos{' '}
-              <small className="text-muted text-2xs font-medium">({detail.attachments.length})</small>
-            </h2>
-          </div>
-          <div className="grid grid-cols-2 gap-2.5 mt-4 max-md:grid-cols-1">
-            {detail.attachments.map((att) => {
-              const { cls, label } = getFileBadge(att.mime_type);
-              return (
-                <div key={att.id} className="flex items-center gap-2 min-w-0 p-2.5 text-muted bg-surface border border-border rounded-md">
-                  <div className={`w-7 h-8 grid place-items-center rounded text-2xs font-extrabold shrink-0 ${FILE_BADGE[cls]}`}>
-                    {label}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <strong className="block overflow-hidden text-foreground text-2xs font-bold truncate">{att.file_name}</strong>
-                    <small className="block mt-1 text-muted text-2xs">{formatBytes(att.size_bytes)}</small>
-                  </div>
-                  <a
-                    href={`/requests/${detail.request.id}/attachments/${att.id}`}
-                    aria-label={`Descargar ${att.file_name}`}
-                    className="ml-auto text-muted hover:text-primary shrink-0"
-                  >
-                    <Download size={14} />
-                  </a>
-                </div>
-              );
-            })}
-          </div>
-        </article>
-      )}
+      <RequestAttachmentsManager
+        requestId={detail.request.id}
+        attachments={detail.attachments}
+        canEdit={detail.viewer.can_edit}
+      />
 
       <article className={CARD}>
         <div className={CARD_TITLE}>
