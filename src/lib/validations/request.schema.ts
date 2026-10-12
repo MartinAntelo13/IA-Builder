@@ -11,3 +11,8 @@ export const requestSchema = z.object({
 });
 
 export type RequestFormValues = z.infer<typeof requestSchema>;
+
+// Para edición: mismos campos sin attachments. attachments se maneja aparte
+// (FASE B: agregar/quitar desde el detalle, con flujos propios de storage).
+export const editRequestSchema = requestSchema.omit({ attachments: true });
+export type EditRequestFormValues = z.infer<typeof editRequestSchema>;
