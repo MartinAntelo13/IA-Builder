@@ -37,6 +37,9 @@ export default async function RequestDetailPage({
   const submitError = detail.request.status === 'draft' && typeof sp.submit_error === 'string'
     ? sp.submit_error
     : null;
+  // Allowlist estricta: solo el valor exacto 'inbox' activa el flujo "vine de
+  // la bandeja". Cualquier otro valor se ignora.
+  const fromInbox = typeof sp.from === 'string' && sp.from === 'inbox';
   const userInitials = profile.fullName
     .split(' ')
     .map((n) => n[0])
@@ -47,8 +50,11 @@ export default async function RequestDetailPage({
   return (
     <div className="max-w-6xl mx-auto px-10 pt-6 pb-16 max-md:px-4 max-md:pt-5 max-md:pb-12">
       <div className="flex items-center gap-2 mb-5 text-2xs text-muted">
-        <Link href={ROUTES.REQUESTS} className="text-primary font-bold no-underline">
-          Mis solicitudes
+        <Link
+          href={fromInbox ? ROUTES.INBOX : ROUTES.REQUESTS}
+          className="text-primary font-bold no-underline"
+        >
+          {fromInbox ? 'Bandeja de entrada' : 'Mis solicitudes'}
         </Link>
         <span>/</span>
         <strong className="text-muted font-semibold">{detail.request.code}</strong>
@@ -116,6 +122,7 @@ export default async function RequestDetailPage({
               canSubmit={detail.viewer.can_submit}
               changesComment={changesComment}
               rejectionComment={rejectionComment}
+              returnToInbox={fromInbox}
             />
           )}
           <RequestActivityCard detail={detail} />

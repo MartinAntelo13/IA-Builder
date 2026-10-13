@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LayoutDashboard, FileText, Inbox, Workflow, Users, Settings, Plus, ShieldCheck, MoreHorizontal } from 'lucide-react';
 import { NAV_ITEMS, MANAGEMENT_NAV_ITEMS, ROUTES } from '@/constants';
+import { orderRoles } from '@/lib/user/order-roles';
 import type { CurrentProfile } from '@/lib/supabase/server';
 
 interface SidebarProps {
@@ -28,6 +29,15 @@ export function Sidebar({ user, canManageWorkflows = false, canManageTeam = fals
     .join('')
     .toUpperCase()
     .slice(0, 2);
+
+  // Secondary line del footer: jobTitle manda; si no hay, se arma a partir de
+  // los roles ordenados por prioridad fija (sin depender del orden de la DB).
+  const { principal, rest } = orderRoles(user.roles);
+  const rolesLabel = principal
+    ? `${principal.name}${rest.length > 0 ? ` +${rest.length}` : ''}`
+    : null;
+  const secondaryLabel = user.jobTitle || rolesLabel || 'Sin cargo';
+  const rolesTitle = user.roles.map((r) => r.name).join(', ') || undefined;
 
   return (
     <aside
@@ -129,8 +139,8 @@ export function Sidebar({ user, canManageWorkflows = false, canManageTeam = fals
           </div>
           <div className="flex-1 min-w-0 hidden md:block">
             <p className="text-sm font-medium text-gray-900 truncate">{user.fullName}</p>
-            <p className="text-xs text-gray-500 truncate">
-              {user.jobTitle || user.roles[0]?.name || 'Sin cargo'}
+            <p className="text-xs text-gray-500 truncate" title={rolesTitle}>
+              {secondaryLabel}
             </p>
           </div>
           <button className="text-gray-400 hover:text-gray-600 shrink-0">

@@ -25,6 +25,14 @@ export const ROUTES = {
 } as const;
 
 /**
+ * Prioridad fija para elegir el rol "principal" cuando un usuario tiene varios.
+ * Los codes acá listados ganan en el orden declarado; el resto queda después,
+ * manteniendo su orden original (sort estable). Esto evita que el display del
+ * rol dependa del orden en que la base devuelva los registros.
+ */
+export const ROLE_PRIORITY = ['admin', 'approver', 'finance', 'management'] as const;
+
+/**
  * Estilos visuales para cada estado de solicitud.
  * Las claves deben coincidir con el enum `public.request_status`
  * del schema de base de datos.

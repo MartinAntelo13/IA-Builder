@@ -119,3 +119,32 @@ export function formatPriority(priority: string): string {
   };
   return priorityMap[priority] || priority;
 }
+
+// Formatea el "Tiempo medio de respuesta" que viene como fracción de día desde
+// el RPC get_inbox_kpis. Devuelve minutos cuando es < 1 h, horas cuando es < 1
+// día y días en el resto. Promueve el valor cuando el redondeo cruza el umbral
+// (60 min → "1 h", 24 h → "1 día"). Es pura: no depende de Date.now ni de la
+// hora actual, así que no genera hydration mismatch.
+export function formatAvgResponseTime(days: number | null): string {
+  if (days === null) return '—';
+  const safe = Math.max(0, days);
+  const HOUR_IN_DAYS = 1 / 24;
+
+  if (safe < HOUR_IN_DAYS) {
+    const minutes = Math.round(safe * 24 * 60);
+    if (minutes >= 60) return '1 h';
+    return `${minutes} min`;
+  }
+
+  if (safe < 1) {
+    const hoursRounded = Math.round(safe * 24 * 10) / 10;
+    if (hoursRounded >= 24) return '1 día';
+    const label = Number.isInteger(hoursRounded) ? hoursRounded.toFixed(0) : hoursRounded.toFixed(1);
+    return `${label} h`;
+  }
+
+  const daysRounded = Math.round(safe * 10) / 10;
+  if (daysRounded === 1) return '1 día';
+  const label = Number.isInteger(daysRounded) ? daysRounded.toFixed(0) : daysRounded.toFixed(1);
+  return `${label} días`;
+}

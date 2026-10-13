@@ -1,4 +1,5 @@
 import type { InboxKpis } from '@/lib/transformers/inbox';
+import { formatAvgResponseTime } from '@/lib/format-helpers';
 
 interface InboxMetricsCardsProps {
   kpis: InboxKpis;
@@ -21,10 +22,7 @@ function MetricCard({ value, label }: MetricCardProps) {
 export function InboxMetricsCards({ kpis }: InboxMetricsCardsProps) {
   const pending = kpis.pendingCount != null ? String(kpis.pendingCount) : '—';
   const highPriority = kpis.highPriorityCount != null ? String(kpis.highPriorityCount) : '—';
-  const avgDays =
-    kpis.avgResponseDays != null
-      ? `${Number(kpis.avgResponseDays).toFixed(1)} días`
-      : '—';
+  const avgResponse = formatAvgResponseTime(kpis.avgResponseDays);
   const sla =
     kpis.slaCompliancePct != null
       ? `${Math.round(Number(kpis.slaCompliancePct))}%`
@@ -34,7 +32,7 @@ export function InboxMetricsCards({ kpis }: InboxMetricsCardsProps) {
     <div className="grid grid-cols-4 gap-4 max-md:grid-cols-2">
       <MetricCard value={pending} label="Pendientes de revisión" />
       <MetricCard value={highPriority} label="Alta prioridad" />
-      <MetricCard value={avgDays} label="Tiempo medio de respuesta" />
+      <MetricCard value={avgResponse} label="Tiempo medio de respuesta" />
       <MetricCard value={sla} label="Dentro del SLA" />
     </div>
   );

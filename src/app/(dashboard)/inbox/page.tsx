@@ -49,9 +49,9 @@ export default async function InboxPage({ searchParams }: PageProps) {
     }),
   ]);
 
-  if (activeResult.error) throw activeResult.error;
-  if (kpisResult.error) throw kpisResult.error;
-  if (reviewedCountResult.error) throw reviewedCountResult.error;
+  if (activeResult.error) throw new Error(activeResult.error.message);
+  if (kpisResult.error) throw new Error(kpisResult.error.message);
+  if (reviewedCountResult.error) throw new Error(reviewedCountResult.error.message);
 
   const rows = (activeResult.data ?? []).map(transformInboxRow);
   // totalCount viene de count(*) over () por fila. Si la página pedida está fuera
