@@ -49,7 +49,7 @@ export function TeamMetricsCards({ summary }: TeamMetricsCardsProps) {
         icon={<Users size={16} />}
         iconClass="bg-primary/10 text-primary"
         value={String(total_members)}
-        label="Miembros del equipo"
+        label="Miembros habilitados"
         sub={addedSub}
       />
       <MetricCard

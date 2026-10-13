@@ -6,8 +6,10 @@ import { useEffect, useId, useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { ChevronDown } from 'lucide-react';
 import { inviteSchema, type InviteFormValues } from '@/lib/schemas/invite.schema';
 import { inviteMember } from '@/app/(dashboard)/team/invite-actions';
+import { INPUT, SELECT_WITH_CHEVRON } from '@/lib/ui/form-classes';
 import type { RoleCatalog, DepartmentOption, ManagerOption } from '@/lib/transformers/team';
 
 interface InviteMemberDialogProps {
@@ -17,9 +19,12 @@ interface InviteMemberDialogProps {
   managerOptions: ManagerOption[];
 }
 
-const INPUT = 'w-full px-3 py-2 rounded-md border border-border bg-white text-xs text-foreground';
+// Botón "full-width" propio del footer de este diálogo (no se puede reutilizar
+// BTN_PRIMARY/SECONDARY compartidos: son inline-flex, acá queremos w-full).
 const BTN_BASE =
   'w-full flex items-center justify-center gap-2 min-h-10 px-4 rounded-md text-xs font-bold cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed';
+const CHEVRON =
+  'absolute right-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none';
 
 export function InviteMemberDialog({ onClose, roles, departments, managerOptions }: InviteMemberDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -27,6 +32,8 @@ export function InviteMemberDialog({ onClose, roles, departments, managerOptions
   const titleId = useId();
   const [serverError, setServerError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [status, setStatus] = useState<'form' | 'success'>('form');
+  const [sentEmail, setSentEmail] = useState('');
 
   const form = useForm<InviteFormValues>({
     resolver: zodResolver(inviteSchema),
@@ -61,7 +68,8 @@ export function InviteMemberDialog({ onClose, roles, departments, managerOptions
         setServerError(result.error);
         return;
       }
-      onClose();
+      setSentEmail(values.email);
+      setStatus('success');
       router.refresh();
     });
   }
@@ -80,6 +88,16 @@ export function InviteMemberDialog({ onClose, roles, departments, managerOptions
         Enviale un link para que active su cuenta en Flowdesk.
       </p>
 
+      {status === 'success' ? (
+        <>
+          <div role="status" className="mb-4 p-3 bg-success-bg rounded text-2xs text-success leading-relaxed">
+            Invitación enviada a <strong className="font-semibold">{sentEmail}</strong>.
+          </div>
+          <button type="button" onClick={onClose} className={`${BTN_BASE} bg-primary text-primary-foreground`} autoFocus>
+            Cerrar
+          </button>
+        </>
+      ) : (
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
         <div>
           <label htmlFor="inv-email" className="block text-2xs font-semibold text-muted mb-1">Email</label>
@@ -95,14 +113,17 @@ export function InviteMemberDialog({ onClose, roles, departments, managerOptions
 
         <div>
           <label htmlFor="inv-role" className="block text-2xs font-semibold text-muted mb-1">Rol inicial</label>
-          <select
-            id="inv-role"
-            value={roleCode}
-            onChange={(e) => setValue('roleCode', e.target.value, { shouldDirty: true, shouldValidate: true })}
-            className={INPUT}
-          >
-            {roles.map((r) => <option key={r.id} value={r.code}>{r.name}</option>)}
-          </select>
+          <div className="relative">
+            <select
+              id="inv-role"
+              value={roleCode}
+              onChange={(e) => setValue('roleCode', e.target.value, { shouldDirty: true, shouldValidate: true })}
+              className={SELECT_WITH_CHEVRON}
+            >
+              {roles.map((r) => <option key={r.id} value={r.code}>{r.name}</option>)}
+            </select>
+            <ChevronDown size={14} className={CHEVRON} aria-hidden="true" />
+          </div>
           <p className="mt-1 text-2xs text-muted">
             Podés agregarle más roles después desde &quot;Editar miembro&quot;.
           </p>
@@ -117,28 +138,34 @@ export function InviteMemberDialog({ onClose, roles, departments, managerOptions
 
         <div>
           <label htmlFor="inv-dept" className="block text-2xs font-semibold text-muted mb-1">Departamento (opcional)</label>
-          <select
-            id="inv-dept"
-            value={departmentId ?? ''}
-            onChange={(e) => setValue('departmentId', e.target.value || null, { shouldDirty: true })}
-            className={INPUT}
-          >
-            <option value="">Sin departamento</option>
-            {departments.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
-          </select>
+          <div className="relative">
+            <select
+              id="inv-dept"
+              value={departmentId ?? ''}
+              onChange={(e) => setValue('departmentId', e.target.value || null, { shouldDirty: true })}
+              className={SELECT_WITH_CHEVRON}
+            >
+              <option value="">Sin departamento</option>
+              {departments.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
+            </select>
+            <ChevronDown size={14} className={CHEVRON} aria-hidden="true" />
+          </div>
         </div>
 
         <div>
           <label htmlFor="inv-mgr" className="block text-2xs font-semibold text-muted mb-1">Responsable (opcional)</label>
-          <select
-            id="inv-mgr"
-            value={managerId ?? ''}
-            onChange={(e) => setValue('managerId', e.target.value || null, { shouldDirty: true })}
-            className={INPUT}
-          >
-            <option value="">Sin responsable</option>
-            {managerOptions.map((m) => <option key={m.id} value={m.id}>{m.fullName}</option>)}
-          </select>
+          <div className="relative">
+            <select
+              id="inv-mgr"
+              value={managerId ?? ''}
+              onChange={(e) => setValue('managerId', e.target.value || null, { shouldDirty: true })}
+              className={SELECT_WITH_CHEVRON}
+            >
+              <option value="">Sin responsable</option>
+              {managerOptions.map((m) => <option key={m.id} value={m.id}>{m.fullName}</option>)}
+            </select>
+            <ChevronDown size={14} className={CHEVRON} aria-hidden="true" />
+          </div>
         </div>
 
         {serverError && <p role="alert" className="text-2xs text-danger">{serverError}</p>}
@@ -152,6 +179,7 @@ export function InviteMemberDialog({ onClose, roles, departments, managerOptions
           </button>
         </div>
       </form>
+      )}
     </dialog>
   );
 }

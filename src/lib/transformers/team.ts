@@ -74,4 +74,9 @@ export function transformTeamMember(
   };
 }
 
-export type TeamMember = ReturnType<typeof transformTeamMember>;
+export type TeamMember = ReturnType<typeof transformTeamMember> & {
+  // Nombres de los roles del usuario que, si se deshabilita, dejarían al
+  // workflow sin otra persona activa que los cubra. Se calcula en el server
+  // (page.tsx) una vez por carga de /team y se pincha a cada miembro.
+  criticalRoleNames?: string[];
+};

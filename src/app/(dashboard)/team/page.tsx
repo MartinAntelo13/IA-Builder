@@ -7,6 +7,7 @@ import type { Database } from '@/types/database.types';
 import { TeamMetricsCards } from '@/components/team/team-metrics-cards';
 import { TeamList } from '@/components/team/team-list';
 import { InviteMemberButton } from '@/components/team/invite-member-button';
+import { loadCriticalRolesContext } from '@/lib/team/load-critical-roles';
 
 // Fila devuelta por el RPC list_team_members (Regla 7 — tipo generado).
 type TeamMemberRow = Database['public']['Functions']['list_team_members']['Returns'][number];
@@ -42,24 +43,32 @@ export default async function TeamPage({ searchParams }: PageProps) {
   const validRole =
     roleParam && roles.some((r) => r.code === roleParam) ? roleParam : undefined;
 
-  const [summaryResult, membersResult, departmentsResult, managerOptionsResult] =
-    await Promise.all([
-      supabase.rpc('get_team_summary'),
-      supabase.rpc('list_team_members', {
-        p_search: q || undefined,
-        p_role_code: validRole,
-        p_page: page,
-        p_page_size: TEAM_PAGE_SIZE,
-      }),
-      // EXCEPTION (Regla 10): no existe RPC de catálogo de departamentos
-      supabase.from('departments').select('id, name').order('name'),
-      // EXCEPTION (Regla 10): no existe RPC de opciones de responsable
-      supabase
-        .from('profiles')
-        .select('id, full_name')
-        .neq('status', 'disabled')
-        .order('full_name'),
-    ]);
+  const [
+    summaryResult,
+    membersResult,
+    departmentsResult,
+    managerOptionsResult,
+    criticalRolesCtx,
+  ] = await Promise.all([
+    supabase.rpc('get_team_summary'),
+    supabase.rpc('list_team_members', {
+      p_search: q || undefined,
+      p_role_code: validRole,
+      p_page: page,
+      p_page_size: TEAM_PAGE_SIZE,
+    }),
+    // EXCEPTION (Regla 10): no existe RPC de catálogo de departamentos
+    supabase.from('departments').select('id, name').order('name'),
+    // EXCEPTION (Regla 10): no existe RPC de opciones de responsable
+    supabase
+      .from('profiles')
+      .select('id, full_name')
+      .neq('status', 'disabled')
+      .order('full_name'),
+    // Carga y resuelve en una sola llamada los roles críticos (hallazgo D):
+    // qué roles usan workflows activos y qué usuarios activos los cubren.
+    loadCriticalRolesContext(supabase, roles),
+  ]);
 
   if (summaryResult.error) throw new Error(summaryResult.error.message);
   if (membersResult.error) throw new Error(membersResult.error.message);
@@ -90,7 +99,13 @@ export default async function TeamPage({ searchParams }: PageProps) {
   }
 
   const totalCount = rawMembers[0]?.total_count ?? 0;
-  const members = rawMembers.map((m) => transformTeamMember(m, extrasByUserId));
+  const members = rawMembers.map((m) => {
+    const base = transformTeamMember(m, extrasByUserId);
+    return {
+      ...base,
+      criticalRoleNames: criticalRolesCtx.getCriticalRoleNamesFor(base.id, base.status),
+    };
+  });
   const totalPages = Math.max(1, Math.ceil(totalCount / TEAM_PAGE_SIZE));
 
   if (members.length === 0 && page > 1) {
