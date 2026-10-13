@@ -3,6 +3,7 @@ import type { RequestDetailData } from '@/types/request-detail';
 import { formatStepStatus, formatEventType, formatRelativeTime, formatDate } from '@/lib/format-helpers';
 import { ActivityEventList } from '@/components/requests/activity-event-list';
 import type { ActivityItem } from '@/components/requests/activity-event-list';
+import { getEventNote } from '@/lib/activity/event-note';
 
 interface RequestHistoryProps {
   detail: RequestDetailData;
@@ -94,6 +95,7 @@ export function RequestActivityCard({ detail }: RequestHistoryProps) {
     id: event.id,
     title: formatEventType(event.event_type),
     meta: `${event.actor_name} · ${formatRelativeTime(event.created_at)}`,
+    note: getEventNote(event.event_type, event.metadata),
   }));
   return (
     <article className={CARD}>
