@@ -30,7 +30,7 @@ async function insertRequest(
 
   const request_type_id = formData.get('request_type_id') as string;
   const title = formData.get('title') as string;
-  const description = formData.get('description') as string;
+  const description = ((formData.get('description') as string | null) ?? '').trim();
   const cost_center_id = (formData.get('cost_center_id') as string) || null;
   const priority = formData.get('priority') as PriorityLevel;
   const amountRaw = formData.get('amount') as string | null;

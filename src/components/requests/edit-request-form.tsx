@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FileText, Loader2 } from 'lucide-react';
 import { ROUTES } from '@/constants';
@@ -41,9 +41,6 @@ export function EditRequestForm({
   const [isLoading, setIsLoading] = useState(false);
   const [actionError, setActionError] = useState('');
 
-  const initialType = requestTypes.find((t) => t.id === detail.request.request_type_id);
-  const [requiresAmount, setRequiresAmount] = useState(initialType?.requires_amount ?? false);
-
   const form = useForm<RequestFormValues>({
     resolver: zodResolver(requestSchema),
     defaultValues: {
@@ -56,6 +53,12 @@ export function EditRequestForm({
       attachments: [],
     },
   });
+
+  // useWatch sin defaultValue devuelve el objeto de defaultValues en el primer
+  // render, así que requiresAmount arranca ya correcto si el tipo inicial lo requiere.
+  const watchedTypeId = useWatch({ control: form.control, name: 'request_type_id' });
+  const selectedType = requestTypes.find((t) => t.id === watchedTypeId);
+  const requiresAmount = selectedType?.requires_amount ?? false;
 
   const typeFieldLocked = detail.request.status === 'changes_requested';
   const lockedTypeName = typeFieldLocked ? detail.request_type.name : null;
@@ -96,7 +99,6 @@ export function EditRequestForm({
           costCenters={costCenters}
           currencySymbol={currencySymbol}
           requiresAmount={requiresAmount}
-          onRequiresAmountChange={setRequiresAmount}
           typeFieldLocked={typeFieldLocked}
           lockedTypeName={lockedTypeName}
         />

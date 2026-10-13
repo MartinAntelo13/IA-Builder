@@ -126,7 +126,7 @@ export async function updateRequest(
   const payload: UpdatePayload = {
     request_type_id: parsed.data.request_type_id,
     title: parsed.data.title,
-    description: parsed.data.description,
+    description: parsed.data.description?.trim() || null,
     amount: parsed.data.amount ?? null,
     cost_center_id: parsed.data.cost_center_id ?? null,
     priority: parsed.data.priority,

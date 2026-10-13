@@ -36,7 +36,6 @@ export function NewRequestForm({ requestTypes, costCenters, currencySymbol }: Ne
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [actionError, setActionError] = useState('');
-  const [requiresAmount, setRequiresAmount] = useState(false);
 
   const form = useForm<RequestFormValues>({
     resolver: zodResolver(requestSchema),
@@ -46,6 +45,7 @@ export function NewRequestForm({ requestTypes, costCenters, currencySymbol }: Ne
   const watched = useWatch({ control });
   const selectedType = requestTypes.find((t) => t.id === watched.request_type_id);
   const selectedCC = costCenters.find((cc) => cc.id === watched.cost_center_id);
+  const requiresAmount = selectedType?.requires_amount ?? false;
 
   const handleAction = async (mode: 'draft' | 'submit', values?: RequestFormValues) => {
     if (requiresAmount) {
@@ -97,7 +97,6 @@ export function NewRequestForm({ requestTypes, costCenters, currencySymbol }: Ne
             costCenters={costCenters}
             currencySymbol={currencySymbol}
             requiresAmount={requiresAmount}
-            onRequiresAmountChange={setRequiresAmount}
           />
 
           <AttachmentField

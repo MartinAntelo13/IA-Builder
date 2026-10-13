@@ -21,7 +21,6 @@ interface RequestFormFieldsProps {
   costCenters: CostCenter[];
   currencySymbol: string;
   requiresAmount: boolean;
-  onRequiresAmountChange: (requires: boolean) => void;
   // En estado 'changes_requested' el trigger requests_guard_update bloquea el
   // cambio de request_type_id. El select se renderiza sin register, con el valor
   // en defaultValues, para que handleSubmit lo entregue intacto.
@@ -41,7 +40,6 @@ export function RequestFormFields({
   costCenters,
   currencySymbol,
   requiresAmount,
-  onRequiresAmountChange,
   typeFieldLocked = false,
   lockedTypeName = null,
 }: RequestFormFieldsProps) {
@@ -69,7 +67,6 @@ export function RequestFormFields({
             onChange={(e) => {
               typeField.onChange(e);
               const type = requestTypes.find((t) => t.id === e.target.value);
-              onRequiresAmountChange(type?.requires_amount ?? false);
               if (!type?.requires_amount) setValue('amount', null);
             }}
           >
@@ -87,7 +84,7 @@ export function RequestFormFields({
       </div>
 
       <div className="field">
-        <label htmlFor="req-desc">Descripción</label>
+        <label htmlFor="req-desc">Descripción (opcional)</label>
         <textarea id="req-desc" rows={4} {...register('description')} placeholder="Describe el motivo de la solicitud" />
         {errors.description && <span className="field-error">{errors.description.message}</span>}
       </div>
@@ -117,7 +114,7 @@ export function RequestFormFields({
           </div>
         )}
         <div className="field">
-          <label htmlFor="req-cc">Centro de coste</label>
+          <label htmlFor="req-cc">Centro de costo</label>
           <select id="req-cc" {...register('cost_center_id')}>
             <option value="">Seleccioná un centro</option>
             {costCenters.map((cc) => <option key={cc.id} value={cc.id}>{cc.name} · {cc.code}</option>)}
