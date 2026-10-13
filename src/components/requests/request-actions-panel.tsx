@@ -2,7 +2,9 @@
 // Client Component: uses useState for dialog open states and useTransition for server action loading
 
 import { useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { Check, XCircle, RotateCcw, ShieldCheck, Info, ArrowRight } from 'lucide-react';
+import { ROUTES } from '@/constants';
 import { approveRequest, requestChanges, resubmitRequest, submitDraft } from '@/app/(dashboard)/requests/[id]/actions';
 import { RequestActionDialog } from '@/components/requests/request-action-dialog';
 import { RejectRequestButton } from '@/components/requests/reject-request-button';
@@ -15,6 +17,10 @@ interface RequestActionsPanelProps {
   canSubmit?: boolean;
   changesComment?: { comment: string; decidedByName: string } | null;
   rejectionComment?: { comment: string; decidedByName: string } | null;
+  // Si el usuario llegó al detalle desde la bandeja (?from=inbox), tras aprobar
+  // volvemos a /inbox. El destino es SIEMPRE la constante — nunca una URL que
+  // venga del request — para evitar open redirects.
+  returnToInbox?: boolean;
 }
 
 const CARD = 'bg-white border border-border rounded-lg shadow-sm px-6 py-5 max-md:px-4 max-md:py-4';
@@ -24,7 +30,8 @@ const BTN_PRIMARY =
 const BTN_SECONDARY =
   'w-full flex items-center justify-center gap-2 min-h-10 px-4 rounded-md border border-border text-muted text-xs font-bold cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed';
 
-export function RequestActionsPanel({ requestId, canDecide, canResubmit, canSubmit, changesComment, rejectionComment }: RequestActionsPanelProps) {
+export function RequestActionsPanel({ requestId, canDecide, canResubmit, canSubmit, changesComment, rejectionComment, returnToInbox = false }: RequestActionsPanelProps) {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [changesOpen, setChangesOpen] = useState(false);
   const [resubmitOpen, setResubmitOpen] = useState(false);
@@ -36,7 +43,11 @@ export function RequestActionsPanel({ requestId, canDecide, canResubmit, canSubm
     setError(null);
     startTransition(async () => {
       const result = await approveRequest(requestId);
-      if (!result.ok) setError(result.error);
+      if (!result.ok) {
+        setError(result.error);
+        return;
+      }
+      if (returnToInbox) router.push(ROUTES.INBOX);
     });
   }
 

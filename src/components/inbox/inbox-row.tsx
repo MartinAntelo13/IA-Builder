@@ -20,7 +20,7 @@ export function InboxRowItem({ row, tab }: InboxRowProps) {
     tab === 'reviewed'
       ? formatRelativeTime(row.myDecidedAt)
       : formatRelativeTime(row.stepActivatedAt);
-  const detailHref = `${ROUTES.REQUESTS}/${row.requestId}`;
+  const detailHref = `${ROUTES.REQUESTS}/${row.requestId}?from=inbox`;
 
   const badge =
     tab === 'reviewed' && row.myDecision ? (
