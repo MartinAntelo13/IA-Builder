@@ -133,6 +133,7 @@ export function TeamMemberMenu({
           onClose={() => setDialog(null)}
           member={member}
           action="disable"
+          criticalRoleNames={member.criticalRoleNames ?? []}
         />
       )}
       {dialog === 'enable' && (

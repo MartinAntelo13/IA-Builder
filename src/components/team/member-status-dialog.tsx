@@ -11,20 +11,23 @@ interface MemberStatusDialogProps {
   onClose: () => void;
   member: TeamMember;
   action: 'disable' | 'enable';
+  // Roles del miembro que, al deshabilitarlo, dejarían sin cobertura a algún
+  // workflow activo. Vacío/undefined → no se muestra el aviso específico.
+  criticalRoleNames?: string[];
 }
 
 const BTN_BASE =
   'w-full flex items-center justify-center gap-2 min-h-10 px-4 rounded-md text-xs font-bold cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed';
 
+// Cuando hay roles críticos no mostramos la frase genérica ("Si es la única
+// con alguno de sus roles…") porque el aviso específico de abajo ya cubre ese
+// caso con los nombres reales.
+const DISABLE_DESCRIPTION_GENERIC =
+  'Esta persona no podrá iniciar sesión ni usar Flowdesk. Si es la única con alguno de sus roles, las solicitudes que lleguen a ese paso no podrán avanzar.';
+const DISABLE_DESCRIPTION_SHORT =
+  'Esta persona no podrá iniciar sesión ni usar Flowdesk.';
+
 const COPY = {
-  disable: {
-    title: 'Deshabilitar miembro',
-    description:
-      'Esta persona no podrá iniciar sesión ni usar Flowdesk. Si es la única con alguno de sus roles, las solicitudes que lleguen a ese paso no podrán avanzar.',
-    confirm: 'Deshabilitar',
-    pending: 'Deshabilitando…',
-    destructive: true,
-  },
   enable: {
     title: 'Reactivar miembro',
     description: 'Podrá volver a iniciar sesión.',
@@ -32,9 +35,24 @@ const COPY = {
     pending: 'Reactivando…',
     destructive: false,
   },
+  disable: {
+    title: 'Deshabilitar miembro',
+    confirm: 'Deshabilitar',
+    pending: 'Deshabilitando…',
+    destructive: true,
+  },
 } as const;
 
-export function MemberStatusDialog({ onClose, member, action }: MemberStatusDialogProps) {
+function buildCriticalRolesMessage(names: readonly string[]): string {
+  const quoted = names.map((n) => `"${n}"`);
+  const rolesText =
+    quoted.length === 1
+      ? `con el rol ${quoted[0]}`
+      : `con los roles ${quoted.join(', ')}`;
+  return `Es la única persona activa ${rolesText}, que usan workflows: las solicitudes de esos workflows no podrán avanzar hasta asignar otra persona.`;
+}
+
+export function MemberStatusDialog({ onClose, member, action, criticalRoleNames = [] }: MemberStatusDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const router = useRouter();
   const titleId = useId();
@@ -46,8 +64,18 @@ export function MemberStatusDialog({ onClose, member, action }: MemberStatusDial
     dialogRef.current?.showModal();
   }, []);
 
-  const copy = COPY[action];
   const newStatus = action === 'disable' ? 'disabled' : 'active';
+  const hasCriticalRoles = action === 'disable' && criticalRoleNames.length > 0;
+  const title = action === 'disable' ? COPY.disable.title : COPY.enable.title;
+  const confirmLabel = action === 'disable' ? COPY.disable.confirm : COPY.enable.confirm;
+  const pendingLabel = action === 'disable' ? COPY.disable.pending : COPY.enable.pending;
+  const destructive = action === 'disable' ? COPY.disable.destructive : COPY.enable.destructive;
+  const description =
+    action === 'enable'
+      ? COPY.enable.description
+      : hasCriticalRoles
+        ? DISABLE_DESCRIPTION_SHORT
+        : DISABLE_DESCRIPTION_GENERIC;
 
   function onConfirm() {
     setServerError(null);
@@ -70,10 +98,16 @@ export function MemberStatusDialog({ onClose, member, action }: MemberStatusDial
       onClose={onClose}
     >
       <h2 id={titleId} className="m-0 mb-2 text-foreground text-sm font-semibold tracking-tight">
-        {copy.title}
+        {title}
       </h2>
       <p className="m-0 mb-2 text-foreground text-xs font-medium">{member.fullName}</p>
-      <p className="m-0 mb-4 text-muted text-2xs leading-relaxed">{copy.description}</p>
+      <p className="m-0 mb-4 text-muted text-2xs leading-relaxed">{description}</p>
+
+      {hasCriticalRoles && (
+        <div className="mb-4 p-2.5 bg-warning-bg rounded text-2xs text-warning leading-relaxed">
+          {buildCriticalRolesMessage(criticalRoleNames)}
+        </div>
+      )}
 
       {serverError && (
         <div role="alert" className="mb-3 p-2.5 bg-danger-bg rounded text-2xs text-danger">
@@ -83,11 +117,11 @@ export function MemberStatusDialog({ onClose, member, action }: MemberStatusDial
 
       <div className="flex flex-col gap-2">
         <button
-          className={`${BTN_BASE} ${copy.destructive ? 'bg-danger text-white' : 'bg-primary text-primary-foreground'}`}
+          className={`${BTN_BASE} ${destructive ? 'bg-danger text-white' : 'bg-primary text-primary-foreground'}`}
           onClick={onConfirm}
           disabled={isPending}
         >
-          {isPending ? copy.pending : copy.confirm}
+          {isPending ? pendingLabel : confirmLabel}
         </button>
         <button
           className={`${BTN_BASE} border border-border text-muted bg-white`}

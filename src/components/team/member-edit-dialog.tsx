@@ -6,8 +6,10 @@ import { useEffect, useId, useMemo, useRef, useState, useTransition } from 'reac
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { ChevronDown } from 'lucide-react';
 import { memberSchema, type MemberFormValues } from '@/lib/schemas/member.schema';
 import { updateMember } from '@/app/(dashboard)/team/actions';
+import { INPUT, SELECT_WITH_CHEVRON } from '@/lib/ui/form-classes';
 import type { TeamMember, RoleCatalog, DepartmentOption, ManagerOption } from '@/lib/transformers/team';
 
 interface MemberEditDialogProps {
@@ -19,9 +21,11 @@ interface MemberEditDialogProps {
   managerOptions: ManagerOption[];
 }
 
-const INPUT = 'w-full px-3 py-2 rounded-md border border-border bg-white text-xs text-foreground';
+// Botón "full-width" propio del footer (BTN_* compartidos son inline-flex).
 const BTN_BASE =
   'w-full flex items-center justify-center gap-2 min-h-10 px-4 rounded-md text-xs font-bold cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed';
+const CHEVRON =
+  'absolute right-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none';
 
 export function MemberEditDialog({ onClose, member, currentUserId, roles, departments, managerOptions }: MemberEditDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -98,28 +102,34 @@ export function MemberEditDialog({ onClose, member, currentUserId, roles, depart
 
         <div>
           <label htmlFor="mem-dept" className="block text-2xs font-semibold text-muted mb-1">Departamento</label>
-          <select
-            id="mem-dept"
-            value={departmentId ?? ''}
-            onChange={(e) => setValue('departmentId', e.target.value || null, { shouldDirty: true })}
-            className={INPUT}
-          >
-            <option value="">Sin departamento</option>
-            {departments.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
-          </select>
+          <div className="relative">
+            <select
+              id="mem-dept"
+              value={departmentId ?? ''}
+              onChange={(e) => setValue('departmentId', e.target.value || null, { shouldDirty: true })}
+              className={SELECT_WITH_CHEVRON}
+            >
+              <option value="">Sin departamento</option>
+              {departments.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
+            </select>
+            <ChevronDown size={14} className={CHEVRON} aria-hidden="true" />
+          </div>
         </div>
 
         <div>
           <label htmlFor="mem-mgr" className="block text-2xs font-semibold text-muted mb-1">Responsable</label>
-          <select
-            id="mem-mgr"
-            value={managerId ?? ''}
-            onChange={(e) => setValue('managerId', e.target.value || null, { shouldDirty: true })}
-            className={INPUT}
-          >
-            <option value="">Sin responsable</option>
-            {availableManagers.map((m) => <option key={m.id} value={m.id}>{m.fullName}</option>)}
-          </select>
+          <div className="relative">
+            <select
+              id="mem-mgr"
+              value={managerId ?? ''}
+              onChange={(e) => setValue('managerId', e.target.value || null, { shouldDirty: true })}
+              className={SELECT_WITH_CHEVRON}
+            >
+              <option value="">Sin responsable</option>
+              {availableManagers.map((m) => <option key={m.id} value={m.id}>{m.fullName}</option>)}
+            </select>
+            <ChevronDown size={14} className={CHEVRON} aria-hidden="true" />
+          </div>
         </div>
 
         <div>
@@ -146,18 +156,21 @@ export function MemberEditDialog({ onClose, member, currentUserId, roles, depart
 
         <div>
           <label htmlFor="mem-status" className="block text-2xs font-semibold text-muted mb-1">Estado</label>
-          {statusLocked ? (
-            // RHF devuelve undefined para un campo registrado + disabled, lo que
-            // hace fallar la validación de zod. Si está bloqueado renderizamos un
-            // select sin register: el valor queda en el form state vía defaultValues.
-            <select id="mem-status" defaultValue={member.status} disabled className={INPUT}>
-              {statusOptions.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-            </select>
-          ) : (
-            <select id="mem-status" {...register('status')} className={INPUT}>
-              {statusOptions.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-            </select>
-          )}
+          <div className="relative">
+            {statusLocked ? (
+              // RHF devuelve undefined para un campo registrado + disabled, lo que
+              // hace fallar la validación de zod. Si está bloqueado renderizamos un
+              // select sin register: el valor queda en el form state vía defaultValues.
+              <select id="mem-status" defaultValue={member.status} disabled className={SELECT_WITH_CHEVRON}>
+                {statusOptions.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+              </select>
+            ) : (
+              <select id="mem-status" {...register('status')} className={SELECT_WITH_CHEVRON}>
+                {statusOptions.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+              </select>
+            )}
+            <ChevronDown size={14} className={CHEVRON} aria-hidden="true" />
+          </div>
         </div>
 
         {isSelf && (
