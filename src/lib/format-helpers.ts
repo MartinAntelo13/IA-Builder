@@ -108,7 +108,7 @@ export function formatAmountOrFree(
   if (amount !== null && amount > 0 && symbol) {
     return formatCurrency(amount, symbol);
   }
-  return 'Sin coste';
+  return 'Sin costo';
 }
 
 export function formatPriority(priority: string): string {

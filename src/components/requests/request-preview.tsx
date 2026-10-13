@@ -66,7 +66,7 @@ export function RequestPreview({
           </dd>
         </div>
         <div>
-          <dt>Centro de coste</dt>
+          <dt>Centro de costo</dt>
           <dd>{costCenterName ?? '—'}</dd>
         </div>
       </dl>
