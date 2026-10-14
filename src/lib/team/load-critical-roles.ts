@@ -22,7 +22,7 @@ export async function loadCriticalRolesContext(
       .eq('workflows.is_active', true),
     supabase
       .from('user_roles')
-      .select('user_id, role_id, profiles!inner(status)')
+      .select('user_id, role_id, profiles!user_roles_user_id_organization_id_fkey!inner(status)')
       .eq('profiles.status', 'active'),
   ]);
   if (workflowRoleStepsResult.error) throw new Error(workflowRoleStepsResult.error.message);
