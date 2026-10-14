@@ -1282,6 +1282,7 @@ export type Database = {
           sla_compliance_pct: number
         }[]
       }
+      get_invited_member_email: { Args: { p_user_id: string }; Returns: string }
       get_request_detail: { Args: { p_request_id: string }; Returns: Json }
       get_team_summary: {
         Args: never
