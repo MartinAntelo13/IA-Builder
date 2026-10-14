@@ -7,6 +7,7 @@ import { MoreHorizontal } from 'lucide-react';
 import { MemberEditDialog } from '@/components/team/member-edit-dialog';
 import { MemberStatusDialog } from '@/components/team/member-status-dialog';
 import { MemberRevokeDialog } from '@/components/team/member-revoke-dialog';
+import { MemberResendDialog } from '@/components/team/member-resend-dialog';
 import type {
   TeamMember,
   RoleCatalog,
@@ -22,7 +23,7 @@ interface TeamMemberMenuProps {
   managerOptions: ManagerOption[];
 }
 
-type DialogKind = null | 'edit' | 'disable' | 'enable' | 'revoke';
+type DialogKind = null | 'edit' | 'disable' | 'enable' | 'revoke' | 'resend';
 
 export function TeamMemberMenu({
   member,
@@ -60,6 +61,8 @@ export function TeamMemberMenu({
   const selfDisableBlocked = toggleAction === 'disable' && currentUserId === member.id;
   // Revocar solo aplica a invitaciones pendientes y no para uno mismo.
   const canRevokeInvitation = member.status === 'invited' && currentUserId !== member.id;
+  // Reenviar aplica solo a invitaciones pendientes; no tiene sentido reenviarse a uno mismo.
+  const canResendInvitation = member.status === 'invited' && currentUserId !== member.id;
 
   return (
     <div ref={wrapperRef} className="relative shrink-0">
@@ -101,6 +104,18 @@ export function TeamMemberMenu({
               }}
             >
               {toggleLabel}
+            </button>
+          )}
+          {canResendInvitation && (
+            <button
+              type="button"
+              className="w-full px-4 py-2 text-left text-2xs text-foreground hover:bg-surface cursor-pointer"
+              onClick={() => {
+                setMenuOpen(false);
+                setDialog('resend');
+              }}
+            >
+              Reenviar invitación
             </button>
           )}
           {canRevokeInvitation && (
@@ -145,6 +160,12 @@ export function TeamMemberMenu({
       )}
       {dialog === 'revoke' && (
         <MemberRevokeDialog
+          onClose={() => setDialog(null)}
+          member={member}
+        />
+      )}
+      {dialog === 'resend' && (
+        <MemberResendDialog
           onClose={() => setDialog(null)}
           member={member}
         />
