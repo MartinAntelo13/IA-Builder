@@ -41,7 +41,7 @@ export default async function DashboardPage() {
     });
 
   if (requestsError) {
-    console.error('[DashboardPage] Error fetching recent requests:', requestsError);
+    throw new Error(requestsError.message);
   }
 
   return (

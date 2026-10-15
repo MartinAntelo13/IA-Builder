@@ -81,33 +81,7 @@ export function findChangesComment(
   return findDecisionComment(approvals, 'changes_requested');
 }
 
-/**
- * Transforma un array de datos del RPC al formato esperado
- */
+/** Transforma un array de datos del RPC al formato esperado */
 export function transformRequestRows(data: ListRequestsRowSubset[]) {
-  if (!data) {
-    console.warn('[transformRequestRows] Data is null or undefined');
-    return [];
-  }
-  
-  if (!Array.isArray(data)) {
-    console.warn('[transformRequestRows] Data is not an array:', typeof data);
-    return [];
-  }
-  
-  try {
-    const transformed = data.map((row) => {
-      try {
-        return transformRequestRow(row);
-      } catch (error) {
-        console.error('[transformRequestRows] Error transforming individual row:', error, 'Row:', row);
-        return null;
-      }
-    }).filter((row): row is ReturnType<typeof transformRequestRow> => row !== null);
-    
-    return transformed;
-  } catch (error) {
-    console.error('[transformRequestRows] Error transforming rows:', error);
-    return [];
-  }
+  return (data ?? []).map(transformRequestRow);
 }
