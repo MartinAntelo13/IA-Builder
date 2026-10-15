@@ -6,6 +6,7 @@ import { useEffect, useId, useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { setMemberStatus } from '@/app/(dashboard)/team/actions';
 import type { TeamMember } from '@/lib/transformers/team';
+import { CriticalRolesWarning } from '@/components/team/critical-roles-warning';
 
 interface MemberStatusDialogProps {
   onClose: () => void;
@@ -42,15 +43,6 @@ const COPY = {
     destructive: true,
   },
 } as const;
-
-function buildCriticalRolesMessage(names: readonly string[]): string {
-  const quoted = names.map((n) => `"${n}"`);
-  const rolesText =
-    quoted.length === 1
-      ? `con el rol ${quoted[0]}`
-      : `con los roles ${quoted.join(', ')}`;
-  return `Es la única persona activa ${rolesText}, que usan workflows: las solicitudes nuevas de esos workflows no podrán enviarse y las que estén en curso no podrán avanzar hasta asignar otra persona.`;
-}
 
 export function MemberStatusDialog({ onClose, member, action, criticalRoleNames = [] }: MemberStatusDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -96,6 +88,7 @@ export function MemberStatusDialog({ onClose, member, action, criticalRoleNames 
       aria-labelledby={titleId}
       className="m-auto w-11/12 max-w-md rounded-xl border border-border bg-white shadow-xl p-6 backdrop:bg-black/50"
       onClose={onClose}
+      onCancel={(e) => { if (isPending) e.preventDefault(); }}
     >
       <h2 id={titleId} className="m-0 mb-2 text-foreground text-sm font-semibold tracking-tight">
         {title}
@@ -103,11 +96,7 @@ export function MemberStatusDialog({ onClose, member, action, criticalRoleNames 
       <p className="m-0 mb-2 text-foreground text-xs font-medium">{member.fullName}</p>
       <p className="m-0 mb-4 text-muted text-2xs leading-relaxed">{description}</p>
 
-      {hasCriticalRoles && (
-        <div className="mb-4 p-2.5 bg-warning-bg rounded text-2xs text-warning leading-relaxed">
-          {buildCriticalRolesMessage(criticalRoleNames)}
-        </div>
-      )}
+      {hasCriticalRoles && <CriticalRolesWarning names={criticalRoleNames} mode="disable" />}
 
       {serverError && (
         <div role="alert" className="mb-3 p-2.5 bg-danger-bg rounded text-2xs text-danger">

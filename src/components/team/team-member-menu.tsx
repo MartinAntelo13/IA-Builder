@@ -141,6 +141,7 @@ export function TeamMemberMenu({
           roles={roles}
           departments={departments}
           managerOptions={managerOptions}
+          criticalRoleNames={member.criticalRoleNames ?? []}
         />
       )}
       {dialog === 'disable' && (

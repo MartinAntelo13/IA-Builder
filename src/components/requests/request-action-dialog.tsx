@@ -57,6 +57,7 @@ export function RequestActionDialog({
       aria-labelledby={titleId}
       className="m-auto w-11/12 max-w-md rounded-xl border border-border bg-white shadow-xl p-6 backdrop:bg-black/50"
       onClose={() => { onClose(); setText(''); }}
+      onCancel={(e) => { if (isPending) e.preventDefault(); }}
     >
       <h2 id={titleId} className="m-0 mb-2 text-foreground text-sm font-semibold tracking-tight">
         {title}

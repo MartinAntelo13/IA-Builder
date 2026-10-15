@@ -11,6 +11,8 @@ import { memberSchema, type MemberFormValues } from '@/lib/schemas/member.schema
 import { updateMember } from '@/app/(dashboard)/team/actions';
 import { INPUT, SELECT_WITH_CHEVRON } from '@/lib/ui/form-classes';
 import type { TeamMember, RoleCatalog, DepartmentOption, ManagerOption } from '@/lib/transformers/team';
+import { computeEditWarning } from '@/lib/team/critical-roles';
+import { CriticalRolesWarning } from '@/components/team/critical-roles-warning';
 
 interface MemberEditDialogProps {
   onClose: () => void;
@@ -19,6 +21,7 @@ interface MemberEditDialogProps {
   roles: RoleCatalog[];
   departments: DepartmentOption[];
   managerOptions: ManagerOption[];
+  criticalRoleNames?: string[];
 }
 
 // Botón "full-width" propio del footer (BTN_* compartidos son inline-flex).
@@ -27,7 +30,7 @@ const BTN_BASE =
 const CHEVRON =
   'absolute right-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none';
 
-export function MemberEditDialog({ onClose, member, currentUserId, roles, departments, managerOptions }: MemberEditDialogProps) {
+export function MemberEditDialog({ onClose, member, currentUserId, roles, departments, managerOptions, criticalRoleNames = [] }: MemberEditDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const router = useRouter();
   const titleId = useId();
@@ -57,6 +60,7 @@ export function MemberEditDialog({ onClose, member, currentUserId, roles, depart
   const departmentId = watch('departmentId');
   const managerId = watch('managerId');
   const roleCodes = watch('roleCodes');
+  const warning = computeEditWarning(criticalRoleNames, member.status, roles, roleCodes, watch('status'));
 
   const availableManagers = managerOptions.filter((m) => m.id !== member.id);
   const statusOptions = isInvited
@@ -87,6 +91,7 @@ export function MemberEditDialog({ onClose, member, currentUserId, roles, depart
       aria-labelledby={titleId}
       className="m-auto w-11/12 max-w-md rounded-xl border border-border bg-white shadow-xl p-6 backdrop:bg-black/50"
       onClose={onClose}
+      onCancel={(e) => { if (isPending) e.preventDefault(); }}
     >
       <h2 id={titleId} className="m-0 mb-1 text-foreground text-sm font-semibold tracking-tight">
         Editar miembro
@@ -172,7 +177,7 @@ export function MemberEditDialog({ onClose, member, currentUserId, roles, depart
             <ChevronDown size={14} className={CHEVRON} aria-hidden="true" />
           </div>
         </div>
-
+        {warning && <CriticalRolesWarning names={warning.names} mode={warning.mode} />}
         {isSelf && (
           <p className="text-2xs text-muted">
             No podés cambiar tu propio estado ni quitarte el rol de administrador.
