@@ -104,6 +104,7 @@ export default async function TeamPage({ searchParams }: PageProps) {
     return {
       ...base,
       criticalRoleNames: criticalRolesCtx.getCriticalRoleNamesFor(base.id, base.status),
+      extraDisableWarnings: criticalRolesCtx.getExtraDisableWarningsFor(base.id, base.status),
     };
   });
   const totalPages = Math.max(1, Math.ceil(totalCount / TEAM_PAGE_SIZE));
