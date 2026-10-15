@@ -29,9 +29,7 @@ export default async function DashboardPage() {
     .rpc('get_dashboard_kpis')
     .single<Database['public']['Functions']['get_dashboard_kpis']['Returns'][number]>();
 
-  if (kpisError) {
-    console.error('Error fetching dashboard KPIs:', kpisError);
-  }
+  if (kpisError) throw new Error(kpisError.message);
 
   // Obtener solicitudes recientes (scope='visible', page_size=4)
   const { data: requestsData, error: requestsError } = await supabase

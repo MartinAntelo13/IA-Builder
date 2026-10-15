@@ -40,7 +40,10 @@ export async function updateWorkspace(
 
   // 2) Permiso: la Server Action re-chequea org.manage por si la pestaña fue
   //    forzada desde la URL.
-  const permissions = await getUserPermissions();
+  const permissions = await getUserPermissions().catch(() => null);
+  if (!permissions) {
+    return { ok: false, error: 'No se pudieron verificar tus permisos.' };
+  }
   if (!permissions.has(PERMISSIONS.ORG_MANAGE)) {
     return { ok: false, error: 'No tenés permisos para editar la organización.' };
   }
