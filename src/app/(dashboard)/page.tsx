@@ -7,8 +7,8 @@ import { MetricsCards } from "@/components/dashboard/metrics-cards";
 import { RequestsSection } from "@/components/requests/requests-section";
 import { Greeting } from '@/components/dashboard/greeting';
 import { ROUTES } from "@/constants";
-import type { Database } from "@/types/database.types";
 import { transformRequestRows } from "@/lib/transformers/requests";
+import { getDashboardKpis } from "@/lib/dashboard/get-dashboard-kpis";
 
 export const metadata: Metadata = {
   title: "Dashboard - Flowdesk",
@@ -24,10 +24,8 @@ export default async function DashboardPage() {
 
   const supabase = await createSupabaseServerClient();
 
-  // Obtener KPIs del dashboard
-  const { data: kpisData, error: kpisError } = await supabase
-    .rpc('get_dashboard_kpis')
-    .single<Database['public']['Functions']['get_dashboard_kpis']['Returns'][number]>();
+  // Obtener KPIs del dashboard (compartido con el layout vía cache de React).
+  const { data: kpisData, error: kpisError } = await getDashboardKpis();
 
   if (kpisError) throw new Error(kpisError.message);
 
