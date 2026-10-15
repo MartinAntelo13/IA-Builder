@@ -35,7 +35,7 @@ export default async function RequestsPage() {
     });
 
   if (requestsError) {
-    console.error('[RequestsPage] Error fetching user requests:', requestsError);
+    throw new Error(requestsError.message);
   }
 
   return (
