@@ -1,17 +1,21 @@
 'use client';
-// Regla 3: 'use client' — useState para el buscador y el filtro de estado
-// (interactividad en el toolbar, filtrado client-side sobre el set paginado).
+// Regla 3: 'use client' — useState para el buscador y el filtro de estado en
+// variant="dashboard" (filtrado client-side sobre el set paginado del resumen).
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Search, FileText } from 'lucide-react';
 import { REQUEST_STATUS_STYLES, ROUTES } from '@/constants';
 import { formatAmountOrFree, formatRelativeTime } from '@/lib/format-helpers';
 import type { RequestRow } from '@/lib/transformers/requests';
 import { RequestRowItem } from '@/components/requests/request-row';
+import { RequestsSearch } from '@/components/requests/requests-search';
 
 interface RequestsSectionProps {
   requests: RequestRow[];
   variant?: 'dashboard' | 'list';
+  // Valor actual de la búsqueda guiada por URL; sólo aplica a variant="list".
+  q?: string;
 }
 
 const STATUS_TABS = [
@@ -35,22 +39,23 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-export function RequestsSection({ requests, variant = 'list' }: RequestsSectionProps) {
+export function RequestsSection({ requests, variant = 'list', q = '' }: RequestsSectionProps) {
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-
   const isDashboard = variant === 'dashboard';
 
-  const q = searchQuery.toLowerCase();
-  const filtered = requests.filter((r) => {
-    const matchesSearch =
-      !q ||
-      r.title.toLowerCase().includes(q) ||
-      r.code.toLowerCase().includes(q) ||
-      r.requesterName.toLowerCase().includes(q);
-    const matchesStatus = !statusFilter || r.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const rows = isDashboard
+    ? requests.filter((r) => {
+        const query = searchQuery.toLowerCase();
+        const matchesSearch =
+          !query ||
+          r.title.toLowerCase().includes(query) ||
+          r.code.toLowerCase().includes(query) ||
+          r.requesterName.toLowerCase().includes(query);
+        const matchesStatus = !statusFilter || r.status === statusFilter;
+        return matchesSearch && matchesStatus;
+      })
+    : requests;
 
   return (
     <div className="overflow-hidden bg-white border border-border rounded-lg shadow-sm">
@@ -64,16 +69,20 @@ export function RequestsSection({ requests, variant = 'list' }: RequestsSectionP
       </div>
 
       <div className="px-4 pb-3 border-b border-border flex flex-wrap items-center gap-2.5">
-        <div className="flex items-center gap-2 h-8 px-2.5 bg-surface border border-border rounded-md w-full sm:w-56">
-          <Search size={14} className="text-muted shrink-0" />
-          <input
-            type="text"
-            placeholder="Buscar por nombre o ID..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full border-0 outline-none bg-transparent text-2xs text-foreground placeholder:text-muted"
-          />
-        </div>
+        {isDashboard ? (
+          <div className="flex items-center gap-2 h-8 px-2.5 bg-surface border border-border rounded-md w-full sm:w-56">
+            <Search size={14} className="text-muted shrink-0" />
+            <input
+              type="text"
+              placeholder="Buscar por nombre o ID..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full border-0 outline-none bg-transparent text-2xs text-foreground placeholder:text-muted"
+            />
+          </div>
+        ) : (
+          <RequestsSearch q={q} />
+        )}
 
         {isDashboard && (
           <div className="flex flex-wrap gap-1">
@@ -98,9 +107,9 @@ export function RequestsSection({ requests, variant = 'list' }: RequestsSectionP
         )}
       </div>
 
-      {filtered.length > 0 ? (
+      {rows.length > 0 ? (
         <div>
-          {filtered.map((row) => (
+          {rows.map((row) => (
             <RequestRowItem
               key={row.id}
               code={row.code}
@@ -116,7 +125,23 @@ export function RequestsSection({ requests, variant = 'list' }: RequestsSectionP
       ) : (
         <div className="flex flex-col items-center justify-center py-10 px-4 text-center">
           <FileText size={36} className="text-muted mb-3" />
-          <p className="text-xs text-muted">No hay solicitudes que coincidan con los filtros.</p>
+          {!isDashboard && q ? (
+            <>
+              <p className="text-xs text-muted">
+                No se encontraron solicitudes para «{q}».
+              </p>
+              <Link
+                href={ROUTES.REQUESTS}
+                className="mt-3 text-2xs font-medium text-primary hover:underline"
+              >
+                Limpiar búsqueda
+              </Link>
+            </>
+          ) : (
+            <p className="text-xs text-muted">
+              No hay solicitudes que coincidan con los filtros.
+            </p>
+          )}
         </div>
       )}
     </div>
