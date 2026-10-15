@@ -15,6 +15,8 @@ interface MemberStatusDialogProps {
   // Roles del miembro que, al deshabilitarlo, dejarían sin cobertura a algún
   // workflow activo. Vacío/undefined → no se muestra el aviso específico.
   criticalRoleNames?: string[];
+  // Mensajes adicionales al deshabilitar ('user' y 'requester_manager').
+  extraDisableWarnings?: string[];
 }
 
 const BTN_BASE =
@@ -44,7 +46,7 @@ const COPY = {
   },
 } as const;
 
-export function MemberStatusDialog({ onClose, member, action, criticalRoleNames = [] }: MemberStatusDialogProps) {
+export function MemberStatusDialog({ onClose, member, action, criticalRoleNames = [], extraDisableWarnings = [] }: MemberStatusDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const router = useRouter();
   const titleId = useId();
@@ -57,7 +59,8 @@ export function MemberStatusDialog({ onClose, member, action, criticalRoleNames 
   }, []);
 
   const newStatus = action === 'disable' ? 'disabled' : 'active';
-  const hasCriticalRoles = action === 'disable' && criticalRoleNames.length > 0;
+  const hasCriticalRoles =
+    action === 'disable' && (criticalRoleNames.length > 0 || extraDisableWarnings.length > 0);
   const title = action === 'disable' ? COPY.disable.title : COPY.enable.title;
   const confirmLabel = action === 'disable' ? COPY.disable.confirm : COPY.enable.confirm;
   const pendingLabel = action === 'disable' ? COPY.disable.pending : COPY.enable.pending;
@@ -96,7 +99,13 @@ export function MemberStatusDialog({ onClose, member, action, criticalRoleNames 
       <p className="m-0 mb-2 text-foreground text-xs font-medium">{member.fullName}</p>
       <p className="m-0 mb-4 text-muted text-2xs leading-relaxed">{description}</p>
 
-      {hasCriticalRoles && <CriticalRolesWarning names={criticalRoleNames} mode="disable" />}
+      {hasCriticalRoles && (
+        <CriticalRolesWarning
+          names={criticalRoleNames}
+          mode="disable"
+          extraMessages={extraDisableWarnings}
+        />
+      )}
 
       {serverError && (
         <div role="alert" className="mb-3 p-2.5 bg-danger-bg rounded text-2xs text-danger">

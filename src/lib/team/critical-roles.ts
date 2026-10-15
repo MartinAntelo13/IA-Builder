@@ -1,9 +1,14 @@
-import type { CriticalRolesMode } from '@/lib/team/critical-roles-message';
+import {
+  buildAssignedStepsMessage,
+  buildManagerImpactMessage,
+  type CriticalRolesMode,
+  type WorkflowStepRef,
+} from '@/lib/team/critical-roles-message';
 
 type MemberStatus = 'active' | 'invited' | 'disabled';
 type RoleCodeName = { code: string; name: string };
 export type CriticalRolesWarningState =
-  | { names: readonly string[]; mode: CriticalRolesMode }
+  | { names: readonly string[]; mode: CriticalRolesMode; extraMessages?: readonly string[] }
   | null;
 
 // Devuelve los NOMBRES de los roles del usuario que, al deshabilitarlo,
@@ -50,22 +55,41 @@ export function removedCriticalRoleNames(
     .map((r) => r.name);
 }
 
+// Devuelve los mensajes extra ('user' y 'requester_manager') que aplican al
+// deshabilitar al miembro. Vacío si el miembro no está activo o si no se dan las
+// condiciones. Puro: usa los builders de critical-roles-message.
+export function computeExtraDisableWarnings(
+  status: MemberStatus,
+  assignedSteps: readonly WorkflowStepRef[],
+  managerReportsCount: number,
+  managerSteps: readonly WorkflowStepRef[],
+): string[] {
+  if (status !== 'active') return [];
+  const messages: string[] = [];
+  if (assignedSteps.length > 0) messages.push(buildAssignedStepsMessage(assignedSteps));
+  if (managerReportsCount > 0 && managerSteps.length > 0) {
+    messages.push(buildManagerImpactMessage(managerReportsCount, managerSteps));
+  }
+  return messages;
+}
+
 // Para el formulario de edición: decide qué advertencia mostrar (si corresponde).
 // Prioriza 'disable' cuando el miembro activo se está deshabilitando y tiene
-// roles críticos; si no, verifica si se le están quitando roles críticos.
+// roles críticos o mensajes extra; si no, verifica si se le están quitando roles críticos.
 export function computeEditWarning(
   criticalRoleNames: readonly string[],
   memberStatus: MemberStatus,
   roles: readonly RoleCodeName[],
   selectedRoleCodes: readonly string[],
   selectedStatus: MemberStatus,
+  extraDisableWarnings: readonly string[],
 ): CriticalRolesWarningState {
   if (
     selectedStatus === 'disabled' &&
     memberStatus === 'active' &&
-    criticalRoleNames.length > 0
+    (criticalRoleNames.length > 0 || extraDisableWarnings.length > 0)
   ) {
-    return { names: criticalRoleNames, mode: 'disable' };
+    return { names: criticalRoleNames, mode: 'disable', extraMessages: extraDisableWarnings };
   }
   const removed = removedCriticalRoleNames(criticalRoleNames, roles, selectedRoleCodes);
   if (removed.length > 0) return { names: removed, mode: 'removeRole' };

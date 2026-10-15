@@ -79,4 +79,7 @@ export type TeamMember = ReturnType<typeof transformTeamMember> & {
   // workflow sin otra persona activa que los cubra. Se calcula en el server
   // (page.tsx) una vez por carga de /team y se pincha a cada miembro.
   criticalRoleNames?: string[];
+  // Mensajes adicionales que aplican al deshabilitar: aprobador fijo de pasos
+  // ('user') y/o responsable de otros miembros cuando hay pasos 'requester_manager'.
+  extraDisableWarnings?: string[];
 };

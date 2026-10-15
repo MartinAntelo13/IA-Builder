@@ -142,6 +142,7 @@ export function TeamMemberMenu({
           departments={departments}
           managerOptions={managerOptions}
           criticalRoleNames={member.criticalRoleNames ?? []}
+          extraDisableWarnings={member.extraDisableWarnings ?? []}
         />
       )}
       {dialog === 'disable' && (
@@ -150,6 +151,7 @@ export function TeamMemberMenu({
           member={member}
           action="disable"
           criticalRoleNames={member.criticalRoleNames ?? []}
+          extraDisableWarnings={member.extraDisableWarnings ?? []}
         />
       )}
       {dialog === 'enable' && (
