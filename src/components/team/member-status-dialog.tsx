@@ -49,7 +49,7 @@ function buildCriticalRolesMessage(names: readonly string[]): string {
     quoted.length === 1
       ? `con el rol ${quoted[0]}`
       : `con los roles ${quoted.join(', ')}`;
-  return `Es la única persona activa ${rolesText}, que usan workflows: las solicitudes de esos workflows no podrán avanzar hasta asignar otra persona.`;
+  return `Es la única persona activa ${rolesText}, que usan workflows: las solicitudes nuevas de esos workflows no podrán enviarse y las que estén en curso no podrán avanzar hasta asignar otra persona.`;
 }
 
 export function MemberStatusDialog({ onClose, member, action, criticalRoleNames = [] }: MemberStatusDialogProps) {
