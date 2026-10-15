@@ -35,6 +35,7 @@ const ICON_BASE = 'relative z-10 w-6 h-6 grid place-items-center rounded-full sh
 export function RequestWorkflowCard({ detail }: RequestHistoryProps) {
   const approvedCount = detail.steps.filter((s) => s.status === 'approved').length;
   const totalSteps = detail.steps.length;
+  const hasConnectorFromRoot = totalSteps > 0;
   return (
     <article className={CARD}>
       <div className={SIDE_TITLE}>
@@ -44,22 +45,28 @@ export function RequestWorkflowCard({ detail }: RequestHistoryProps) {
         )}
       </div>
       <div className="flex flex-col">
-        <div className="relative flex gap-2.5 min-h-14">
+        <div className={`relative flex gap-2.5 ${hasConnectorFromRoot ? 'min-h-20' : 'min-h-14'}`}>
           <div className={`${ICON_BASE} ${TIMELINE_ICON_STYLES[detail.request.submitted_at ? 'approved' : 'pending']}`}>
             <CheckCircle2 size={16} />
           </div>
           <div className="flex flex-col gap-1 pt-0.5">
-            <strong className="text-foreground text-2xs font-semibold">Solicitud enviada</strong>
+            <strong className="text-foreground text-2xs font-semibold">
+              {detail.request.submitted_at ? 'Solicitud enviada' : 'Solicitud creada'}
+            </strong>
             <span className="text-muted text-2xs">por {detail.requester.full_name}</span>
             <small className="text-muted text-2xs">
-              {detail.request.submitted_at ? formatDate(detail.request.submitted_at) : '(Pendiente de envío)'}
+              {detail.request.submitted_at
+                ? formatDate(detail.request.submitted_at)
+                : detail.request.status === 'cancelled'
+                  ? 'Cancelada antes de enviarse'
+                  : 'Pendiente de envío'}
             </small>
           </div>
-          {detail.steps.length > 0 && <div className="absolute top-6 left-3 w-px h-8 bg-border" />}
+          {hasConnectorFromRoot && <div className="absolute top-6 left-3 w-px h-14 bg-border" />}
         </div>
 
         {detail.steps.map((step, idx) => (
-          <div key={step.id} className="relative flex gap-2.5 min-h-14">
+          <div key={step.id} className={`relative flex gap-2.5 ${idx < totalSteps - 1 ? 'min-h-20' : 'min-h-14'}`}>
             <div className={`${ICON_BASE} ${TIMELINE_ICON_STYLES[step.status] ?? 'text-muted bg-border'}`}>
               {getStepIcon(step.status)}
             </div>
@@ -82,7 +89,7 @@ export function RequestWorkflowCard({ detail }: RequestHistoryProps) {
                     : formatStepStatus(step.status)}
               </small>
             </div>
-            {idx < detail.steps.length - 1 && <div className="absolute top-6 left-3 w-px h-8 bg-border" />}
+            {idx < totalSteps - 1 && <div className="absolute top-6 left-3 w-px h-14 bg-border" />}
           </div>
         ))}
       </div>
@@ -111,14 +118,5 @@ export function RequestActivityCard({ detail }: RequestHistoryProps) {
         </p>
       )}
     </article>
-  );
-}
-
-export function RequestHistory({ detail }: RequestHistoryProps) {
-  return (
-    <>
-      <RequestWorkflowCard detail={detail} />
-      <RequestActivityCard detail={detail} />
-    </>
   );
 }
