@@ -46,7 +46,7 @@ export function ActivityEventList({ items, initialCount = 5 }: ActivityEventList
           type="button"
           aria-expanded={expanded}
           onClick={() => setExpanded((e) => !e)}
-          className="mt-3 text-primary text-2xs font-semibold"
+          className="mt-3 text-primary text-2xs font-semibold cursor-pointer hover:underline focus-visible:underline"
         >
           {expanded ? 'Ver menos' : `Ver todo (${items.length})`}
         </button>

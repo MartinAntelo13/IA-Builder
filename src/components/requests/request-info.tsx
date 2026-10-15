@@ -1,4 +1,4 @@
-import { FileText, MessageSquare } from 'lucide-react';
+import { FileText, MessageSquare, AlignLeft } from 'lucide-react';
 import type { RequestDetailData } from '@/types/request-detail';
 import { formatPriority, formatRelativeTime } from '@/lib/format-helpers';
 import { RequestCommentForm } from '@/components/requests/request-comment-form';
@@ -71,7 +71,7 @@ export function RequestInfo({ detail, userInitials }: RequestInfoProps) {
 
       <article className={CARD}>
         <div className={CARD_TITLE}>
-          <MessageSquare size={16} />
+          <AlignLeft size={16} />
           <h2 className="m-0 text-foreground text-sm tracking-tight">Descripción</h2>
         </div>
         <p className="m-0 mb-1 text-muted text-2xs leading-relaxed whitespace-pre-wrap">
