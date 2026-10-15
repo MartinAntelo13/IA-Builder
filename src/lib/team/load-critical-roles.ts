@@ -7,9 +7,10 @@ type Role = Pick<Database['public']['Tables']['roles']['Row'], 'id' | 'name'>;
 
 // Carga de /team: resuelve las dos consultas que alimentan la advertencia de
 // deshabilitar (D). workflows!inner(is_active)=true limita a steps cuyo workflow
-// está activo; profiles!inner(status)='active' limita a user_roles cuyo profile
-// está activo. Lanza Error con el message original si falla cualquiera (mismo
-// patrón que las demás consultas de /team).
+// está activo; profiles!user_roles_user_id_organization_id_fkey!inner(status)='active'
+// limita a user_roles con profile activo (FK explícita: user_roles tiene dos FK hacia
+// profiles —assigned_by y user_id— y sin nombre el embed es ambiguo en runtime).
+// Lanza Error con el message original si falla cualquiera (mismo patrón que /team).
 export async function loadCriticalRolesContext(
   supabase: SupabaseClient<Database>,
   roles: readonly Role[],
