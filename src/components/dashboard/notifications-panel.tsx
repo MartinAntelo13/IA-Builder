@@ -31,7 +31,7 @@ export function NotificationsPanel({
       id={id}
       role="dialog"
       aria-label="Solicitudes pendientes de revisión"
-      className="absolute right-0 top-full mt-2 w-72 sm:w-80 z-20 bg-white border border-border rounded-lg shadow-md flex flex-col"
+      className="absolute right-0 top-full mt-2 w-72 sm:w-80 z-20 bg-card border border-border rounded-lg shadow-md flex flex-col"
     >
       {header && (
         <div className="px-3 py-2 text-2xs font-semibold text-foreground border-b border-border">

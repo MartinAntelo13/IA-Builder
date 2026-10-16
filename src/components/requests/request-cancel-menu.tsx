@@ -57,7 +57,7 @@ export function RequestCancelMenu({ requestId }: RequestCancelMenuProps) {
       </button>
 
       {menuOpen && (
-        <div className="absolute right-0 top-full mt-1 min-w-40 bg-white border border-border rounded-lg shadow-md z-10 py-1">
+        <div className="absolute right-0 top-full mt-1 min-w-40 bg-card border border-border rounded-lg shadow-md z-10 py-1">
           <button
             className="w-full px-4 py-2 text-left text-2xs text-danger hover:bg-danger-bg cursor-pointer"
             onClick={() => { setMenuOpen(false); setError(null); setDialogOpen(true); }}

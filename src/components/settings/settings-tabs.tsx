@@ -32,7 +32,7 @@ export function SettingsTabs({ active, canManageOrganization }: SettingsTabsProp
   return (
     <nav
       aria-label="Secciones de configuración"
-      className="w-56 shrink-0 bg-white border border-border rounded-lg shadow-sm p-2 flex flex-col gap-1 max-md:w-full max-md:flex-row max-md:overflow-x-auto"
+      className="w-56 shrink-0 bg-card border border-border rounded-lg shadow-sm p-2 flex flex-col gap-1 max-md:w-full max-md:flex-row max-md:overflow-x-auto"
     >
       {items.map((it) => {
         const isActive = active === it.value;

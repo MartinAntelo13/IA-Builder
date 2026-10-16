@@ -17,7 +17,7 @@ export default function RequestsLoading() {
         </div>
       </section>
 
-      <div className="bg-white border border-border rounded-lg shadow-sm animate-pulse">
+      <div className="bg-card border border-border rounded-lg shadow-sm animate-pulse">
         <div className="px-6 py-5 border-b border-border">
           <SkeletonLine w="w-36" h="h-4" />
         </div>

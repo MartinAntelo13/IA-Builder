@@ -38,7 +38,7 @@ function getFileBadge(mimeType: string): { cls: string; label: string } {
   return { cls: 'file', label: 'FILE' };
 }
 
-const CARD = 'bg-white border border-border rounded-lg shadow-sm p-6 max-md:p-4';
+const CARD = 'bg-card border border-border rounded-lg shadow-sm p-6 max-md:p-4';
 const CARD_TITLE = 'flex items-center gap-2 pb-4 mb-4 border-b border-border text-primary';
 
 export function RequestAttachmentsManager({ requestId, attachments, canEdit }: RequestAttachmentsManagerProps) {

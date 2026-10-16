@@ -64,7 +64,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ initialError = '' }) => {
           {errors.email && <span className="field-error">{errors.email.message}</span>}
         </label>
 
-        <label className="password-field">
+        <label>
           <span className="password-label-row">
             <span>Contraseña</span>
             <a href={ROUTES.FORGOT_PASSWORD}>¿La olvidaste?</a>
@@ -81,7 +81,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ initialError = '' }) => {
               type="button"
               onClick={() => setShowPassword((v) => !v)}
               aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 grid place-items-center border-0 bg-transparent text-[#8d96a6]"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 grid place-items-center border-0 bg-transparent text-muted-weak"
             >
               {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
             </button>

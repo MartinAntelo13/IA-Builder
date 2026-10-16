@@ -1,4 +1,4 @@
-const CARD = 'bg-white border border-border rounded-lg shadow-sm p-5 animate-pulse';
+const CARD = 'bg-card border border-border rounded-lg shadow-sm p-5 animate-pulse';
 
 function SkeletonLine({ w = 'w-full', h = 'h-3' }: { w?: string; h?: string }) {
   return <div className={`${w} ${h} rounded bg-border`} />;
@@ -21,7 +21,7 @@ export default function InboxLoading() {
         ))}
       </div>
 
-      <div className="bg-white border border-border rounded-lg shadow-sm animate-pulse">
+      <div className="bg-card border border-border rounded-lg shadow-sm animate-pulse">
         <div className="flex gap-6 px-4 pt-4 pb-0 border-b border-border">
           <div className="h-4 w-24 rounded bg-border mb-3" />
           <div className="h-4 w-24 rounded bg-border mb-3" />

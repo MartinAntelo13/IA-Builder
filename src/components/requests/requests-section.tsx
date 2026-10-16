@@ -59,7 +59,7 @@ export function RequestsSection({ requests, variant = 'list', q = '' }: Requests
     : requests;
 
   return (
-    <div className="overflow-hidden bg-white border border-border rounded-lg shadow-sm">
+    <div className="overflow-hidden bg-card border border-border rounded-lg shadow-sm">
       <div className="px-4 pt-4 pb-3">
         <h2 className="text-sm font-semibold text-foreground">Solicitudes recientes</h2>
         {isDashboard && (

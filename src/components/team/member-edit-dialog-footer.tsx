@@ -17,7 +17,7 @@ export function MemberEditDialogFooter({ isDirty, isPending, onCancel }: MemberE
       <button type="submit" disabled={!isDirty || isPending} className={`${BTN_BASE} bg-primary text-primary-foreground`}>
         {isPending ? 'Guardando…' : 'Guardar cambios'}
       </button>
-      <button type="button" onClick={onCancel} disabled={isPending} className={`${BTN_BASE} border border-border text-muted bg-white`}>
+      <button type="button" onClick={onCancel} disabled={isPending} className={`${BTN_BASE} border border-border text-muted bg-card`}>
         Cancelar
       </button>
     </div>

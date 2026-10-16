@@ -42,7 +42,7 @@ export function Sidebar({ user, canManageWorkflows = false, canManageTeam = fals
 
   return (
     <aside
-      className={`flex flex-col bg-white border-r border-gray-200 h-full overflow-hidden ${className ?? ''}`}
+      className={`flex flex-col bg-card border-r border-gray-200 h-full overflow-hidden ${className ?? ''}`}
     >
       {/* Brand */}
       <div className="flex items-center gap-3 p-4 border-b border-gray-200">

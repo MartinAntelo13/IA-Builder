@@ -86,7 +86,7 @@ export default async function RequestsPage({ searchParams }: PageProps) {
       </section>
 
       {showEmptyNoRequests ? (
-        <div className="overflow-hidden bg-white border border-border rounded-lg shadow-sm">
+        <div className="overflow-hidden bg-card border border-border rounded-lg shadow-sm">
           <div className="flex flex-col items-center justify-center py-12 px-4">
             <FileText className="h-12 w-12 text-muted mb-4" />
             <p className="text-center text-muted">

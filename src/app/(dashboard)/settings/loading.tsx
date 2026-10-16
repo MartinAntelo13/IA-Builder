@@ -16,12 +16,12 @@ export default function SettingsLoading() {
       </div>
 
       <div className="flex gap-5 max-md:flex-col">
-        <aside className="w-56 shrink-0 bg-white border border-border rounded-lg shadow-sm p-3 space-y-2 max-md:w-full">
+        <aside className="w-56 shrink-0 bg-card border border-border rounded-lg shadow-sm p-3 space-y-2 max-md:w-full">
           {[0, 1, 2, 3].map((i) => (
             <div key={i} className="h-9 rounded-md bg-border" />
           ))}
         </aside>
-        <section className="flex-1 min-w-0 bg-white border border-border rounded-lg shadow-sm p-6 space-y-4">
+        <section className="flex-1 min-w-0 bg-card border border-border rounded-lg shadow-sm p-6 space-y-4">
           <Line w="w-48" h="h-5" />
           <Line w="w-72" h="h-3" />
           <div className="h-px bg-border my-4" />

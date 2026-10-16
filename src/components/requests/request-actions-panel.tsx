@@ -23,7 +23,7 @@ interface RequestActionsPanelProps {
   returnToInbox?: boolean;
 }
 
-const CARD = 'bg-white border border-border rounded-lg shadow-sm px-6 py-5 max-md:px-4 max-md:py-4';
+const CARD = 'bg-card border border-border rounded-lg shadow-sm px-6 py-5 max-md:px-4 max-md:py-4';
 const SIDE_TITLE = 'flex items-center justify-between gap-2 pb-4 mb-4 border-b border-border';
 const BTN_PRIMARY =
   'w-full flex items-center justify-center gap-2 min-h-10 px-4 rounded-md bg-primary text-primary-foreground text-xs font-bold cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed';

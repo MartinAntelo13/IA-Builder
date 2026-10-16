@@ -44,7 +44,7 @@ export function SecurityTab({ lastSignInLabel }: SecurityTabProps) {
           <button
             type="button"
             onClick={() => setDialog('password')}
-            className="shrink-0 inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-border text-2xs font-semibold text-foreground bg-white hover:bg-surface cursor-pointer"
+            className="shrink-0 inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-border text-2xs font-semibold text-foreground bg-card hover:bg-surface cursor-pointer"
           >
             Cambiar
           </button>
@@ -63,7 +63,7 @@ export function SecurityTab({ lastSignInLabel }: SecurityTabProps) {
           <button
             type="button"
             onClick={() => setDialog('sign-out-others')}
-            className="shrink-0 inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-border text-2xs font-semibold text-foreground bg-white hover:bg-surface cursor-pointer"
+            className="shrink-0 inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-border text-2xs font-semibold text-foreground bg-card hover:bg-surface cursor-pointer"
           >
             Cerrar en otros
           </button>

@@ -15,7 +15,7 @@ interface WorkflowListProps {
   usedByMap: Record<string, string[]>;
 }
 
-const CARD = 'bg-white border border-border rounded-lg shadow-sm overflow-hidden';
+const CARD = 'bg-card border border-border rounded-lg shadow-sm overflow-hidden';
 const BADGE_ACTIVE = 'inline-flex px-1.5 py-0.5 rounded text-2xs font-medium bg-success-bg text-success';
 const BADGE_INACTIVE = 'inline-flex px-1.5 py-0.5 rounded text-2xs font-medium bg-border text-muted';
 
@@ -138,7 +138,7 @@ export function WorkflowList({ workflows, selectedId, usedByMap }: WorkflowListP
                     <MoreHorizontal size={15} />
                   </button>
                   {isMenuOpen && (
-                    <div className="absolute right-0 top-full mt-1 min-w-36 bg-white border border-border rounded-lg shadow-md z-20 py-1">
+                    <div className="absolute right-0 top-full mt-1 min-w-36 bg-card border border-border rounded-lg shadow-md z-20 py-1">
                       <button
                         className="w-full px-4 py-2 text-left text-2xs text-foreground hover:bg-surface cursor-pointer"
                         onClick={() => handleToggle(wf)}

@@ -88,7 +88,7 @@ export function SettingsShell({
         <div className="flex gap-5 items-start max-md:flex-col">
           <SettingsTabs active={tab} canManageOrganization={canManageOrganization} />
 
-          <section className="flex-1 min-w-0 bg-white border border-border rounded-lg shadow-sm px-6 py-5 max-md:px-4">
+          <section className="flex-1 min-w-0 bg-card border border-border rounded-lg shadow-sm px-6 py-5 max-md:px-4">
             {tab === 'perfil' && <ProfileTab profile={profile} />}
             {tab === 'notificaciones' && <NotificationsTab />}
             {tab === 'workspace' && organization && (

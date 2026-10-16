@@ -56,17 +56,17 @@ export function Topbar({ awaitingMyReview }: TopbarProps) {
   const breadcrumbTitle = getBreadcrumbTitle(pathname);
 
   return (
-    <header className="sticky top-0 z-10 flex h-17 shrink-0 items-center justify-between gap-4 border-b border-[#eceef3] bg-white px-4 md:px-10">
+    <header className="sticky top-0 z-10 flex h-17 shrink-0 items-center justify-between gap-4 border-b border-border bg-card px-4 md:px-10">
       {/* Breadcrumb */}
       <nav
         aria-label="breadcrumb"
-        className="flex min-w-0 items-center gap-2 text-xs text-[#a0a8b8]"
+        className="flex min-w-0 items-center gap-2 text-xs text-muted-weak"
       >
         <Link href="/" className="hidden shrink-0 hover:text-primary sm:inline">
           Workspace
         </Link>
         <ChevronRight className="hidden h-3.5 w-3.5 shrink-0 sm:block" aria-hidden="true" />
-        <strong className="truncate font-semibold text-[#465066]">{breadcrumbTitle}</strong>
+        <strong className="truncate font-semibold text-muted-strong">{breadcrumbTitle}</strong>
       </nav>
 
       {/* Acciones fijas: búsqueda, notificaciones, avatar */}

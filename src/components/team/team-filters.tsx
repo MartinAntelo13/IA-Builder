@@ -38,7 +38,7 @@ export function TeamFilters({ roles, q, role }: TeamFiltersProps) {
           defaultValue={q}
           maxLength={100}
           placeholder="Buscar miembro..."
-          className="w-full h-8 pl-8 pr-3 text-2xs border border-border rounded-md outline-none focus:border-primary bg-white text-foreground placeholder:text-muted"
+          className="w-full h-8 pl-8 pr-3 text-2xs border border-border rounded-md outline-none focus:border-primary bg-card text-foreground placeholder:text-muted"
         />
       </Form>
 
@@ -46,7 +46,7 @@ export function TeamFilters({ roles, q, role }: TeamFiltersProps) {
         value={role}
         onChange={handleRoleChange}
         aria-label="Filtrar por rol"
-        className="h-8 pl-3 pr-7 text-2xs border border-border rounded-md outline-none focus:border-primary bg-white text-foreground appearance-none cursor-pointer shrink-0"
+        className="h-8 pl-3 pr-7 text-2xs border border-border rounded-md outline-none focus:border-primary bg-card text-foreground appearance-none cursor-pointer shrink-0"
       >
         <option value="">Todos los roles</option>
         {roles.map((r) => (

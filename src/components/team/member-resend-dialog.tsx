@@ -49,7 +49,7 @@ export function MemberResendDialog({ onClose, member }: MemberResendDialogProps)
     <dialog
       ref={dialogRef}
       aria-labelledby={titleId}
-      className="m-auto w-11/12 max-w-md rounded-xl border border-border bg-white shadow-xl p-6 backdrop:bg-black/50"
+      className="m-auto w-11/12 max-w-md rounded-xl border border-border bg-card shadow-xl p-6 backdrop:bg-black/50"
       onClose={onClose}
       onCancel={(e) => { if (isPending) e.preventDefault(); }}
     >
@@ -90,7 +90,7 @@ export function MemberResendDialog({ onClose, member }: MemberResendDialogProps)
             </button>
             <button
               type="button"
-              className={`${BTN_BASE} border border-border text-muted bg-white`}
+              className={`${BTN_BASE} border border-border text-muted bg-card`}
               onClick={onClose}
               disabled={isPending}
             >
