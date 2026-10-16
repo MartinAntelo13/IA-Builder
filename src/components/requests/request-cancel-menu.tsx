@@ -1,5 +1,5 @@
+// Regla 3: 'use client' — useState para el menú desplegable y el diálogo, useTransition para la Server Action de cancelación.
 'use client';
-// Client Component: uses useState for dropdown/dialog open states and useTransition for cancel action
 
 import { useEffect, useRef, useState, useTransition } from 'react';
 import { MoreHorizontal } from 'lucide-react';

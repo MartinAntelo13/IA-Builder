@@ -1,5 +1,5 @@
+// Regla 3: 'use client' — useTransition + useRouter para duplicar una solicitud y navegar al resultado.
 'use client';
-// Client Component: necesita useTransition y useRouter para la mutación y la navegación tras duplicar.
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';

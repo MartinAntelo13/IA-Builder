@@ -5,3 +5,7 @@ export function requestDetailHref(id: string, opts?: { from?: string }): string 
   if (opts?.from) return `${base}?from=${encodeURIComponent(opts.from)}`;
   return base;
 }
+
+export function requestAttachmentHref(requestId: string, attachmentId: string): string {
+  return `${ROUTES.REQUESTS}/${requestId}/attachments/${attachmentId}`;
+}

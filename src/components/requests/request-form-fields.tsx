@@ -1,5 +1,5 @@
+// Regla 3: 'use client' — useWatch + setValue para los campos controlados de tipo de solicitud y prioridad.
 'use client';
-// Client Component: shared form fields entre new y edit; usa useWatch del form del padre
 
 import type { UseFormReturn } from 'react-hook-form';
 import { useWatch } from 'react-hook-form';

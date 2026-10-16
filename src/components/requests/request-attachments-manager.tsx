@@ -1,11 +1,12 @@
+// Regla 3: 'use client' — useTransition para subir/quitar adjuntos, useRef para el <input type="file">.
 'use client';
-// Client Component: lista editable de adjuntos; sube/quita uno a la vez con useTransition.
 
 import { useRef, useState, useTransition } from 'react';
 import { Paperclip, Download, Trash2, UploadCloud } from 'lucide-react';
 import { formatBytes } from '@/lib/format-helpers';
 import { validateAttachmentFile } from '@/lib/validations/attachment-file';
 import { addAttachment, removeAttachment } from '@/app/(dashboard)/requests/[id]/attachment-actions';
+import { requestAttachmentHref } from '@/lib/routes';
 
 interface Attachment {
   id: string;
@@ -105,7 +106,7 @@ export function RequestAttachmentsManager({ requestId, attachments, canEdit }: R
                   <small className="block mt-1 text-muted text-2xs">{formatBytes(att.size_bytes)}</small>
                 </div>
                 <a
-                  href={`/requests/${requestId}/attachments/${att.id}`}
+                  href={requestAttachmentHref(requestId, att.id)}
                   aria-label={`Descargar ${att.file_name}`}
                   className="ml-auto text-muted hover:text-primary shrink-0"
                 >
