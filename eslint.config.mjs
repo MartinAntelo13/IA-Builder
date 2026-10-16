@@ -20,6 +20,7 @@ const eslintConfig = defineConfig([
   // Reglas del proyecto (Reglas 2, 8, 9)
   {
     rules: {
+      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
       "@typescript-eslint/no-explicit-any": "error",
       "no-var": "error",
       "prefer-const": "error",

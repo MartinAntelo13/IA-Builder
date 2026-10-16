@@ -5,6 +5,7 @@
 import { useWatch, type UseFormReturn } from 'react-hook-form';
 import { ArrowUp, ArrowDown, Trash2, AlertCircle } from 'lucide-react';
 import type { WorkflowFormValues } from '@/lib/schemas/workflow.schema';
+import { INPUT } from '@/lib/ui/form-classes';
 
 export interface WorkflowStepOption {
   id: string;
@@ -30,8 +31,6 @@ const APPROVER_TYPE_OPTIONS = [
   { value: 'user', label: 'Usuario específico' },
 ] as const;
 
-const INPUT =
-  'w-full px-3 py-2 rounded-md border border-border bg-white text-xs text-foreground';
 const ICON_BTN =
   'grid place-items-center w-7 h-7 rounded-md text-muted hover:bg-border cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed';
 

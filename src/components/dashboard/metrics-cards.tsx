@@ -1,7 +1,6 @@
-'use client';
-
-// Client: la card 'Esperando mi revisión' es clickeable y navega a /inbox, necesita onClick/onKeyDown
+import Link from 'next/link';
 import { TrendingUp, TrendingDown, AlertTriangle, FileCheck2, Send, Clock3, CheckCircle2 } from 'lucide-react';
+import { ROUTES } from '@/constants';
 
 interface MetricsCardsProps {
   activeRequests: number;
@@ -92,12 +91,7 @@ export function MetricsCards({
       </div>
 
       {/* 3. Esperando mi revisión */}
-      <div className="metric-card bg-white border border-gray-200 rounded-lg p-5 shadow-sm cursor-pointer hover:border-primary/50 transition-colors"
-        onClick={() => window.location.href = '/inbox'}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') window.location.href = '/inbox'; }}
-      >
+      <Link href={ROUTES.INBOX} className="metric-card bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:border-primary/50 transition-colors">
         <div className="flex items-center justify-between">
           <span className="text-xs font-medium text-gray-500">Esperando mi revisión</span>
           <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
@@ -115,7 +109,7 @@ export function MetricsCards({
             Requieren atención
           </p>
         )}
-      </div>
+      </Link>
 
       {/* 4. Tiempo promedio de aprobación */}
       <div className="metric-card bg-white border border-gray-200 rounded-lg p-5 shadow-sm">

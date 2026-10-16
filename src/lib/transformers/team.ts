@@ -46,14 +46,12 @@ export function transformTeamMember(
   const extraRoles = Math.max(0, row.role_names.length - 1);
   const statusLabel = STATUS_LABELS[row.status];
 
-  let lastActivityLabel: string;
-  if (row.status === 'invited') {
-    lastActivityLabel = 'Invitación enviada';
-  } else if (row.last_active_at) {
-    lastActivityLabel = formatRelativeTime(row.last_active_at);
-  } else {
-    lastActivityLabel = '—';
-  }
+  const lastActivityLabel =
+    row.status === 'invited'
+      ? 'Invitación enviada'
+      : row.last_active_at
+        ? formatRelativeTime(row.last_active_at)
+        : '—';
 
   const extras = extrasByUserId.get(row.id);
 

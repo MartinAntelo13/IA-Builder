@@ -1,5 +1,6 @@
 import type { InboxRow } from '@/lib/transformers/inbox';
-import { PRIORITY_STYLES, ROUTES } from '@/constants';
+import { PRIORITY_STYLES } from '@/constants';
+import { requestDetailHref } from '@/lib/routes';
 import {
   formatAmountOrFree,
   formatRelativeTime,
@@ -20,7 +21,7 @@ export function InboxRowItem({ row, tab }: InboxRowProps) {
     tab === 'reviewed'
       ? formatRelativeTime(row.myDecidedAt)
       : formatRelativeTime(row.stepActivatedAt);
-  const detailHref = `${ROUTES.REQUESTS}/${row.requestId}?from=inbox`;
+  const detailHref = requestDetailHref(row.requestId, { from: 'inbox' });
 
   const badge =
     tab === 'reviewed' && row.myDecision ? (

@@ -6,6 +6,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Search, FileText } from 'lucide-react';
 import { REQUEST_STATUS_STYLES, ROUTES } from '@/constants';
+import { requestDetailHref } from '@/lib/routes';
 import { formatAmountOrFree, formatRelativeTime } from '@/lib/format-helpers';
 import type { RequestRow } from '@/lib/transformers/requests';
 import { RequestRowItem } from '@/components/requests/request-row';
@@ -114,7 +115,7 @@ export function RequestsSection({ requests, variant = 'list', q = '' }: Requests
               key={row.id}
               code={row.code}
               title={row.title}
-              detailHref={`${ROUTES.REQUESTS}/${row.id}`}
+              detailHref={requestDetailHref(row.id)}
               requesterName={row.requesterName}
               timeStr={formatRelativeTime(row.submittedAt)}
               amountStr={formatAmountOrFree(row.amount, row.currencySymbol)}

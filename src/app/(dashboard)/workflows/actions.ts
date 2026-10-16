@@ -6,10 +6,8 @@ import { ROUTES } from '@/constants';
 import { buildWorkflowSchema, type WorkflowFormValues } from '@/lib/schemas/workflow.schema';
 import { transformWorkflow, type WorkflowItem } from '@/lib/transformers/workflows';
 import type { Database, Json } from '@/types/database.types';
-
-export type ActionResult = { ok: true } | { ok: false; error: string };
-
-const UUID_RE = /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i;
+import type { ActionResult } from '@/types/action-result';
+import { UUID_RE } from '@/lib/validators/uuid';
 
 // EXCEPTION (Regla 10): no existe RPC de activación de workflow.
 // grant update (tabla completa) en workflows; la policy exige workflow.manage.

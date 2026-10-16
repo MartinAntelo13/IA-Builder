@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { createSupabaseServerClient, getCurrentProfile } from '@/lib/supabase/server';
 import { ROUTES } from '@/constants';
+import { requestDetailHref } from '@/lib/routes';
 import type { RequestDetailData } from '@/types/request-detail';
 import { EditRequestForm } from '@/components/requests/edit-request-form';
 
@@ -47,7 +48,7 @@ export default async function EditRequestPage({
       <div className="request-breadcrumb">
         <Link href={ROUTES.REQUESTS}>Mis solicitudes</Link>
         <ChevronRight size={14} />
-        <Link href={`${ROUTES.REQUESTS}/${id}`}>{detail.request.code}</Link>
+        <Link href={requestDetailHref(id)}>{detail.request.code}</Link>
         <ChevronRight size={14} />
         <span>Editar</span>
       </div>

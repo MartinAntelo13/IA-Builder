@@ -14,6 +14,7 @@ import {
 } from '@/lib/schemas/workflow.schema';
 import { WorkflowStepCard, type WorkflowStepOption } from '@/components/workflows/workflow-step-card';
 import type { WorkflowItem, WorkflowStep } from '@/lib/transformers/workflows';
+import { INPUT } from '@/lib/ui/form-classes';
 
 interface WorkflowEditorProps {
   workflow: WorkflowItem;
@@ -22,9 +23,6 @@ interface WorkflowEditorProps {
   userOptions: WorkflowStepOption[];
   roleIdsWithActiveUsers: string[];
 }
-
-const INPUT =
-  'w-full px-3 py-2 rounded-md border border-border bg-white text-xs text-foreground';
 
 export function WorkflowEditor({
   workflow,

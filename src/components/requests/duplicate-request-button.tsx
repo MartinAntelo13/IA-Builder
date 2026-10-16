@@ -4,8 +4,8 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Copy } from 'lucide-react';
-import { ROUTES } from '@/constants';
 import { duplicateRequest } from '@/app/(dashboard)/requests/[id]/duplicate-actions';
+import { requestDetailHref } from '@/lib/routes';
 
 interface DuplicateRequestButtonProps {
   requestId: string;
@@ -24,7 +24,7 @@ export function DuplicateRequestButton({ requestId }: DuplicateRequestButtonProp
         setError(result.error);
         return;
       }
-      router.push(`${ROUTES.REQUESTS}/${result.requestId}`);
+      router.push(requestDetailHref(result.requestId));
     });
   }
 
