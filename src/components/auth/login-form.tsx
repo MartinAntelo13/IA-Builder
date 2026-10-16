@@ -3,6 +3,7 @@
 'use client';
 
 import * as React from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -16,6 +17,7 @@ interface LoginFormProps {
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({ initialError = '' }) => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [authError, setAuthError] = React.useState(initialError);
@@ -38,14 +40,20 @@ export const LoginForm: React.FC<LoginFormProps> = ({ initialError = '' }) => {
 
       const result = await signIn(formData);
 
-      // En éxito, signIn() ejecuta redirect() en el servidor y Next.js
-      // realiza la navegación automáticamente; este código no continúa.
       if (result?.error) {
         setAuthError(result.error);
+        setLoading(false);
+        return;
       }
+
+      // Server Action no llama redirect() → navegamos desde el cliente.
+      // refresh() invalida el Router Cache (Next solo invalida cache del
+      // cliente si la acción llama revalidatePath/Tag, y signIn no lo hace),
+      // para que los Server Components vean las cookies recién puestas.
+      router.replace(ROUTES.HOME);
+      router.refresh();
     } catch {
       setAuthError('Ocurrió un error inesperado. Intentá de nuevo.');
-    } finally {
       setLoading(false);
     }
   };
