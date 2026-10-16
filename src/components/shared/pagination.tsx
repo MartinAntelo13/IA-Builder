@@ -14,7 +14,8 @@ interface PaginationProps {
 function pageHref(basePath: string, params: Record<string, string>, targetPage: number): string {
   const p = new URLSearchParams(params);
   if (targetPage > 1) p.set('page', String(targetPage));
-  return `${basePath}?${p.toString()}`;
+  const qs = p.toString();
+  return qs ? `${basePath}?${qs}` : basePath;
 }
 
 const NAV_BASE =

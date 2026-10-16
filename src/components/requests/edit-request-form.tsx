@@ -1,5 +1,5 @@
+// Regla 3: 'use client' — react-hook-form + useWatch para editar solicitudes, useRouter para navegar al guardar.
 'use client';
-// Client Component: edición de solicitud con react-hook-form + Zod y Server Action
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';

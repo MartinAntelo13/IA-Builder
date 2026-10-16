@@ -1,5 +1,5 @@
+// Regla 3: 'use client' — useState para el texto del comentario y useTransition para el envío con Server Action.
 'use client';
-// Client Component: usa useState para el texto del comentario y useTransition para el envío
 
 import { useState, useTransition } from 'react';
 import { SendHorizonal } from 'lucide-react';

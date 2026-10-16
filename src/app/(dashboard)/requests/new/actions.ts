@@ -22,7 +22,6 @@ export interface RequestActionResult {
 
 async function insertRequest(
   formData: FormData,
-  _status: 'draft' | 'submitted',
 ): Promise<RequestActionResult> {
   const profile = await getCurrentProfile();
   if (!profile?.organization) return { error: 'No autorizado' };
@@ -82,7 +81,7 @@ async function insertRequest(
 export async function createRequest(
   formData: FormData,
 ): Promise<RequestActionResult> {
-  const result = await insertRequest(formData, 'draft');
+  const result = await insertRequest(formData);
   if (result.error) return result;
   redirect(requestDetailHref(result.requestId!));
 }
@@ -90,7 +89,7 @@ export async function createRequest(
 export async function submitRequest(
   formData: FormData,
 ): Promise<RequestActionResult> {
-  const result = await insertRequest(formData, 'draft');
+  const result = await insertRequest(formData);
   if (result.error) return result;
 
   const supabase = await createSupabaseServerClient();

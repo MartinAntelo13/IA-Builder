@@ -1,5 +1,5 @@
+// Regla 3: 'use client' — useState para controlar la expansión in-place de la lista de actividad.
 'use client';
-// Client Component: controla la expansión in-place de la lista de actividad
 
 import { useState } from 'react';
 

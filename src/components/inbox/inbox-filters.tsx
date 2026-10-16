@@ -38,6 +38,7 @@ export function InboxFilters({ tab, sort, q }: InboxFiltersProps) {
           name="q"
           type="search"
           defaultValue={q}
+          maxLength={100}
           placeholder="Buscar por título, solicitante o ID..."
           className="w-full h-8 pl-8 pr-3 text-2xs border border-border rounded-md outline-none focus:border-primary bg-card text-foreground placeholder:text-muted"
         />

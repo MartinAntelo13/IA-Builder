@@ -1,5 +1,5 @@
+// Regla 3: 'use client' — useState para diálogos de acciones, useTransition + useRouter para Server Actions.
 'use client';
-// Client Component: uses useState for dialog open states and useTransition for server action loading
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';

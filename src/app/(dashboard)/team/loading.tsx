@@ -1,8 +1,6 @@
-const CARD = 'bg-card border border-border rounded-lg shadow-sm p-5 animate-pulse';
+import { SkeletonLine } from '@/components/shared/skeleton-line';
 
-function SkeletonLine({ w = 'w-full', h = 'h-3' }: { w?: string; h?: string }) {
-  return <div className={`${w} ${h} rounded bg-border`} />;
-}
+const CARD = 'bg-card border border-border rounded-lg shadow-sm p-5 animate-pulse';
 
 export default function TeamLoading() {
   return (

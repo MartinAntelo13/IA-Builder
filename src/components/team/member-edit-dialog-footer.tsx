@@ -8,16 +8,16 @@ const BTN_BASE =
 interface MemberEditDialogFooterProps {
   isDirty: boolean;
   isPending: boolean;
-  onCancel: () => void;
+  onClose: () => void;
 }
 
-export function MemberEditDialogFooter({ isDirty, isPending, onCancel }: MemberEditDialogFooterProps) {
+export function MemberEditDialogFooter({ isDirty, isPending, onClose }: MemberEditDialogFooterProps) {
   return (
     <div className="flex flex-col gap-2 mt-2">
       <button type="submit" disabled={!isDirty || isPending} className={`${BTN_BASE} bg-primary text-primary-foreground`}>
         {isPending ? 'Guardando…' : 'Guardar cambios'}
       </button>
-      <button type="button" onClick={onCancel} disabled={isPending} className={`${BTN_BASE} border border-border text-muted bg-card`}>
+      <button type="button" onClick={onClose} disabled={isPending} className={`${BTN_BASE} border border-border text-muted bg-card`}>
         Cancelar
       </button>
     </div>

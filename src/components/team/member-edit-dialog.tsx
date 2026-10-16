@@ -186,7 +186,7 @@ export function MemberEditDialog({ onClose, member, currentUserId, roles, depart
 
         {serverError && <p role="alert" className="text-2xs text-danger">{serverError}</p>}
 
-        <MemberEditDialogFooter isDirty={isDirty} isPending={isPending} onCancel={onClose} />
+        <MemberEditDialogFooter isDirty={isDirty} isPending={isPending} onClose={onClose} />
       </form>
     </dialog>
   );

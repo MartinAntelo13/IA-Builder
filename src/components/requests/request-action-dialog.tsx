@@ -1,5 +1,5 @@
+// Regla 3: 'use client' — useRef para showModal() del <dialog> nativo y useState para el texto de la acción.
 'use client';
-// Client Component: uses useRef to call showModal/close on native <dialog>, useState for textarea
 
 import { useEffect, useId, useRef, useState } from 'react';
 

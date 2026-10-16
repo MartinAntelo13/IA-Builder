@@ -1,5 +1,5 @@
+// Regla 3: 'use client' — useState para el diálogo de confirmación y useTransition para la Server Action de rechazo.
 'use client';
-// Client Component: uses useState for dialog open state and useTransition for reject action
 
 import { useState, useTransition } from 'react';
 import { X } from 'lucide-react';
