@@ -2,13 +2,11 @@
 
 import { revalidatePath } from 'next/cache';
 import { createSupabaseServerClient, getCurrentProfile } from '@/lib/supabase/server';
-import { ROUTES } from '@/constants';
 import { uploadAttachmentFile } from '@/lib/storage/request-attachments';
+import { requestDetailHref } from '@/lib/routes';
 import { validateAttachmentFile } from '@/lib/validations/attachment-file';
-
-export type ActionResult = { ok: true } | { ok: false; error: string };
-
-const UUID_RE = /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i;
+import type { ActionResult } from '@/types/action-result';
+import { UUID_RE } from '@/lib/validators/uuid';
 
 export async function addAttachment(
   requestId: string,
@@ -31,7 +29,7 @@ export async function addAttachment(
   const result = await uploadAttachmentFile(supabase, profile.organizationId, requestId, file);
   if (!result.ok) return { ok: false, error: result.error };
 
-  revalidatePath(`${ROUTES.REQUESTS}/${requestId}`);
+  revalidatePath(requestDetailHref(requestId));
   return { ok: true };
 }
 
@@ -69,6 +67,6 @@ export async function removeAttachment(
     console.error(storageError.message);
   }
 
-  revalidatePath(`${ROUTES.REQUESTS}/${requestId}`);
+  revalidatePath(requestDetailHref(requestId));
   return { ok: true };
 }

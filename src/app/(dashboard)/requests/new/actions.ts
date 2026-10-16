@@ -3,6 +3,7 @@
 import { redirect } from 'next/navigation';
 import { createSupabaseServerClient, getCurrentProfile } from '@/lib/supabase/server';
 import { ROUTES } from '@/constants';
+import { requestDetailHref } from '@/lib/routes';
 import { uploadAttachmentFile } from '@/lib/storage/request-attachments';
 import type { Database } from '@/types/database.types';
 
@@ -21,7 +22,7 @@ export interface RequestActionResult {
 
 async function insertRequest(
   formData: FormData,
-  status: 'draft' | 'submitted',
+  _status: 'draft' | 'submitted',
 ): Promise<RequestActionResult> {
   const profile = await getCurrentProfile();
   if (!profile?.organization) return { error: 'No autorizado' };
@@ -83,7 +84,7 @@ export async function createRequest(
 ): Promise<RequestActionResult> {
   const result = await insertRequest(formData, 'draft');
   if (result.error) return result;
-  redirect(`${ROUTES.REQUESTS}/${result.requestId}`);
+  redirect(requestDetailHref(result.requestId!));
 }
 
 export async function submitRequest(

@@ -6,8 +6,7 @@ import { ROUTES } from '@/constants';
 import { memberSchema, type MemberFormValues } from '@/lib/schemas/member.schema';
 import type { Database } from '@/types/database.types';
 import type { ActionResult } from '@/types/action-result';
-
-const UUID_RE = /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i;
+import { UUID_RE } from '@/lib/validators/uuid';
 
 type UpdateMemberArgs = Database['public']['Functions']['update_member']['Args'];
 

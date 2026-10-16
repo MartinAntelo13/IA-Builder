@@ -1,15 +1,15 @@
 import { Workflow } from 'lucide-react';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
-import { transformWorkflow, transformWorkflowStep } from '@/lib/transformers/workflows';
-import type { WorkflowFromQuery, WorkflowStepFromQuery } from '@/lib/transformers/workflows';
+import { transformWorkflow } from '@/lib/transformers/workflows';
+import type { WorkflowFromQuery } from '@/lib/transformers/workflows';
 import { WorkflowList } from '@/components/workflows/workflow-list';
 import { WorkflowDetail } from '@/components/workflows/workflow-detail';
+import { UUID_RE } from '@/lib/validators/uuid';
+import { loadWorkflowDetails } from '@/lib/workflows/load-workflow-details';
 
 interface PageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
-
-const UUID_RE = /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i;
 
 function getString(val: string | string[] | undefined): string {
   return typeof val === 'string' ? val : '';
@@ -83,43 +83,10 @@ export default async function WorkflowsPage({ searchParams }: PageProps) {
 
   const selectedWorkflow = workflows.find((w) => w.id === selectedId) ?? null;
 
-  let steps: ReturnType<typeof transformWorkflowStep>[] = [];
-  let usedByTypes: { id: string; name: string }[] = [];
-
-  if (selectedId && selectedWorkflow) {
-    // EXCEPTION (Regla 10): no existe RPC de lectura de workflows.
-    const stepsResult = await supabase
-      .from('workflow_steps')
-      .select('id, position, label, approver_type, role_id, user_id, sla_hours')
-      .eq('workflow_id', selectedId)
-      .order('position');
-
-    if (stepsResult.error) throw new Error(stepsResult.error.message);
-
-    const rawSteps = (stepsResult.data ?? []) as WorkflowStepFromQuery[];
-    const roleIds = [...new Set(rawSteps.flatMap((s) => (s.role_id ? [s.role_id] : [])))];
-    const userIds = [...new Set(rawSteps.flatMap((s) => (s.user_id ? [s.user_id] : [])))];
-
-    const [rolesResult, usersResult] = await Promise.all([
-      roleIds.length > 0
-        ? supabase.from('roles').select('id, name').in('id', roleIds)
-        : Promise.resolve({ data: [] as { id: string; name: string }[], error: null }),
-      userIds.length > 0
-        ? supabase.from('profiles').select('id, full_name').in('id', userIds)
-        : Promise.resolve({ data: [] as { id: string; full_name: string }[], error: null }),
-    ]);
-
-    if (rolesResult.error) throw new Error(rolesResult.error.message);
-    if (usersResult.error) throw new Error(usersResult.error.message);
-
-    const roleNames = Object.fromEntries((rolesResult.data ?? []).map((r) => [r.id, r.name]));
-    const userNames = Object.fromEntries((usersResult.data ?? []).map((u) => [u.id, u.full_name]));
-
-    steps = rawSteps.map((s) => transformWorkflowStep(s, roleNames, userNames));
-    usedByTypes = requestTypes
-      .filter((rt) => rt.workflow_id === selectedId)
-      .map((rt) => ({ id: rt.id, name: rt.name }));
-  }
+  const { steps, usedByTypes } =
+    selectedId && selectedWorkflow
+      ? await loadWorkflowDetails(supabase, selectedId, requestTypes)
+      : { steps: [], usedByTypes: [] };
 
   return (
     <div className="max-w-6xl mx-auto px-10 pt-6 pb-16 max-md:px-4 max-md:pt-5 max-md:pb-12">

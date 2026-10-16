@@ -3,6 +3,7 @@
 
 import Link from 'next/link';
 import { ROUTES } from '@/constants';
+import { requestDetailHref } from '@/lib/routes';
 import type { InboxRow } from '@/lib/transformers/inbox';
 import { formatRelativeTime } from '@/lib/format-helpers';
 
@@ -94,7 +95,7 @@ interface NotificationsRowProps {
 }
 
 function NotificationsRow({ row, onNavigate }: NotificationsRowProps) {
-  const href = `${ROUTES.REQUESTS}/${row.requestId}?from=inbox`;
+  const href = requestDetailHref(row.requestId, { from: 'inbox' });
   const time = formatRelativeTime(row.stepActivatedAt);
   return (
     <Link

@@ -1,7 +1,4 @@
 // Clases Tailwind compartidas para formularios del dashboard.
-// Centraliza la copia de la constante INPUT que estaba repetida en
-// member-edit-dialog, invite-member-dialog, workflow-editor y workflow-step-card.
-// TODO: migrar esas 4 copias a importar desde acá (fuera de scope de Fase 8).
 export const INPUT =
   'w-full px-3 py-2 rounded-md border border-border bg-white text-xs text-foreground';
 

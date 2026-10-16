@@ -58,7 +58,6 @@ export function NotificationsTab() {
           <li
             key={t.label}
             className="flex items-start justify-between gap-4 py-4"
-            aria-disabled="true"
           >
             <div className="min-w-0">
               <p className="text-xs font-semibold text-foreground">{t.label}</p>

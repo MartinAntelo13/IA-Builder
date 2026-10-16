@@ -5,11 +5,11 @@ import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { ROUTES } from '@/constants';
 import type { Database } from '@/types/database.types';
 import { editRequestSchema } from '@/lib/validations/request.schema';
-
-export type ActionResult = { ok: true } | { ok: false; error: string };
+import type { ActionResult } from '@/types/action-result';
+import { requestDetailHref } from '@/lib/routes';
 
 function revalidateRequest(requestId: string) {
-  revalidatePath(`${ROUTES.REQUESTS}/${requestId}`);
+  revalidatePath(requestDetailHref(requestId));
   revalidatePath(ROUTES.REQUESTS);
   revalidatePath(ROUTES.INBOX);
   revalidatePath('/');

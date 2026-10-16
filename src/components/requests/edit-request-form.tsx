@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FileText, Loader2 } from 'lucide-react';
-import { ROUTES } from '@/constants';
+import { requestDetailHref } from '@/lib/routes';
 import { requestSchema, type RequestFormValues } from '@/lib/validations/request.schema';
 import { buildRequestFormData } from '@/lib/build-request-form-data';
 import { updateRequest } from '@/app/(dashboard)/requests/[id]/actions';
@@ -74,7 +74,7 @@ export function EditRequestForm({
       const fd = buildRequestFormData({ ...values, attachments: [] });
       const result = await updateRequest(detail.request.id, fd);
       if (!result.ok) setActionError(result.error);
-      else router.push(`${ROUTES.REQUESTS}/${detail.request.id}`);
+      else router.push(requestDetailHref(detail.request.id));
     } catch {
       setActionError('Error inesperado al guardar los cambios.');
     } finally {
@@ -106,7 +106,7 @@ export function EditRequestForm({
         {actionError && <p className="field-error">{actionError}</p>}
 
         <div className="form-footer">
-          <Link href={`${ROUTES.REQUESTS}/${detail.request.id}`} className="secondary-button">
+          <Link href={requestDetailHref(detail.request.id)} className="secondary-button">
             Cancelar
           </Link>
           <button type="submit" className="primary-button" disabled={isLoading}>
