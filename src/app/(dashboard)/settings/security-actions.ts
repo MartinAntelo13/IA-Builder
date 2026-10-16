@@ -1,11 +1,14 @@
 'use server';
 
+import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import {
   passwordSchema,
   type PasswordFormValues,
 } from '@/lib/schemas/password.schema';
 import { mapPasswordError } from '@/lib/auth/map-password-error';
+import { ROUTES } from '@/constants';
 import type { ActionResult } from '@/types/action-result';
 
 export async function changePassword(
@@ -30,6 +33,17 @@ export async function changePassword(
   if (error) return { ok: false, error: mapPasswordError(error.message) };
 
   return { ok: true };
+}
+
+// scope: 'local' invalida SOLO esta sesión (no cierra los otros dispositivos del
+// usuario). supabase-js devuelve { error } sin lanzar; si falla igual redirigimos
+// a login — el cliente queda sin acceso. revalidatePath invalida la Router Cache
+// para evitar que el shell del dashboard asome al navegar atrás.
+export async function signOut(): Promise<void> {
+  const supabase = await createSupabaseServerClient();
+  await supabase.auth.signOut({ scope: 'local' });
+  revalidatePath('/', 'layout');
+  redirect(ROUTES.LOGIN);
 }
 
 export async function signOutOtherSessions(): Promise<ActionResult> {

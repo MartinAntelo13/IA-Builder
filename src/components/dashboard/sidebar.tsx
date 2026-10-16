@@ -3,9 +3,10 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, FileText, Inbox, Workflow, Users, Settings, Plus, ShieldCheck, MoreHorizontal } from 'lucide-react';
+import { LayoutDashboard, FileText, Inbox, Workflow, Users, Settings, Plus, ShieldCheck } from 'lucide-react';
 import { NAV_ITEMS, MANAGEMENT_NAV_ITEMS, ROUTES } from '@/constants';
 import { orderRoles } from '@/lib/user/order-roles';
+import { SidebarSignOutButton } from '@/components/dashboard/sidebar-sign-out-button';
 import type { CurrentProfile } from '@/lib/supabase/server';
 
 interface SidebarProps {
@@ -129,6 +130,12 @@ export function Sidebar({ user, canManageWorkflows = false, canManageTeam = fals
             );
           })}
         </ul>
+
+        {/* Cerrar sesión: debajo de "Configuración", visible para TODOS los
+            usuarios (fuera del filtro de permisos de Gestión). */}
+        <div className="mt-2">
+          <SidebarSignOutButton />
+        </div>
       </nav>
 
       {/* User Footer */}
@@ -143,9 +150,6 @@ export function Sidebar({ user, canManageWorkflows = false, canManageTeam = fals
               {secondaryLabel}
             </p>
           </div>
-          <button className="text-gray-400 hover:text-gray-600 shrink-0">
-            <MoreHorizontal className="h-5 w-5" />
-          </button>
         </div>
       </div>
     </aside>
