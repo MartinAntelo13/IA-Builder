@@ -5,7 +5,7 @@
 
 import { useEffect, useMemo, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   profileSchema,
@@ -55,7 +55,7 @@ export function ProfileTab({ profile }: ProfileTabProps) {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     setValue,
     reset,
     formState: { errors, isDirty },
@@ -65,7 +65,7 @@ export function ProfileTab({ profile }: ProfileTabProps) {
     mode: 'onBlur',
   });
 
-  const timezone = watch('timezone') ?? '';
+  const timezone = useWatch({ control, name: 'timezone' }) ?? '';
   const roleLabel = profile.roleNames.join(', ') || '—';
   const avatarInitials = initials(profile.fullName, profile.email);
 
