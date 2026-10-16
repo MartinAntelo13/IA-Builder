@@ -4,7 +4,7 @@
 
 import { useEffect, useMemo, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ShieldCheck } from 'lucide-react';
 import {
@@ -48,7 +48,7 @@ export function WorkspaceTab({ organization }: WorkspaceTabProps) {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     setValue,
     reset,
     formState: { errors, isDirty },
@@ -58,8 +58,8 @@ export function WorkspaceTab({ organization }: WorkspaceTabProps) {
     mode: 'onBlur',
   });
 
-  const timezone = watch('timezone');
-  const currencyCodeValue = watch('currencyCode');
+  const timezone = useWatch({ control, name: 'timezone' });
+  const currencyCodeValue = useWatch({ control, name: 'currencyCode' });
 
   useEffect(() => {
     setFormState({ formId: FORM_ID, isDirty, isPending });

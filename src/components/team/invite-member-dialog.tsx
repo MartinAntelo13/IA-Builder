@@ -4,7 +4,7 @@
 
 import { useEffect, useId, useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronDown } from 'lucide-react';
 import { inviteSchema, type InviteFormValues } from '@/lib/schemas/invite.schema';
@@ -48,7 +48,7 @@ export function InviteMemberDialog({ onClose, roles, departments, managerOptions
     },
     mode: 'onBlur',
   });
-  const { register, handleSubmit, watch, setValue, formState: { errors } } = form;
+  const { register, handleSubmit, control, setValue, formState: { errors } } = form;
 
   // Diálogo montado abierto: showModal() al montar; onClose llamado por Escape,
   // Cancelar o éxito desmonta el componente desde el padre.
@@ -56,9 +56,10 @@ export function InviteMemberDialog({ onClose, roles, departments, managerOptions
     dialogRef.current?.showModal();
   }, []);
 
-  const roleCode = watch('roleCode');
-  const departmentId = watch('departmentId');
-  const managerId = watch('managerId');
+  const [roleCode, departmentId, managerId] = useWatch({
+    control,
+    name: ['roleCode', 'departmentId', 'managerId'],
+  });
 
   function onSubmit(values: InviteFormValues) {
     setServerError(null);

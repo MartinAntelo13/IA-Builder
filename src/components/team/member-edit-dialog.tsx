@@ -4,7 +4,7 @@
 
 import { useEffect, useId, useMemo, useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronDown } from 'lucide-react';
 import { memberSchema, type MemberFormValues } from '@/lib/schemas/member.schema';
@@ -49,17 +49,18 @@ export function MemberEditDialog({ onClose, member, currentUserId, roles, depart
   }), [member]);
 
   const form = useForm<MemberFormValues>({ resolver: zodResolver(memberSchema), defaultValues, mode: 'onBlur' });
-  const { register, handleSubmit, watch, setValue, formState: { errors, isDirty } } = form;
+  const { register, handleSubmit, control, setValue, formState: { errors, isDirty } } = form;
 
   // Dialogo se monta ya abierto: showModal() al montar y nada que hacer al desmontar.
   useEffect(() => {
     dialogRef.current?.showModal();
   }, []);
 
-  const departmentId = watch('departmentId');
-  const managerId = watch('managerId');
-  const roleCodes = watch('roleCodes');
-  const warning = computeEditWarning(criticalRoleNames, member.status, roles, roleCodes, watch('status'), extraDisableWarnings);
+  const [departmentId, managerId, roleCodes, status] = useWatch({
+    control,
+    name: ['departmentId', 'managerId', 'roleCodes', 'status'],
+  });
+  const warning = computeEditWarning(criticalRoleNames, member.status, roles, roleCodes, status, extraDisableWarnings);
 
   const availableManagers = managerOptions.filter((m) => m.id !== member.id);
   const statusOptions = isInvited
