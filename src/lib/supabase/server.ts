@@ -55,7 +55,10 @@ export type CurrentProfile = {
 
 /**
  * Obtiene el perfil del usuario actual junto con su rol y organización.
- * Devuelve null si no hay sesión activa.
+ * Devuelve null si no hay sesión, si no existe el perfil, o si falla alguna
+ * de las consultas necesarias (profiles, user_roles, roles u organizations).
+ * El llamador trata ese null como "sin sesión usable": al usuario le aparece
+ * el formulario de login y la situación se recupera al reintentar.
  *
  * Envuelto en React.cache() para deduplicar llamadas dentro del mismo request
  * del servidor (layout + page llaman a esta función, el cache evita el segundo
@@ -92,9 +95,12 @@ export const getCurrentProfile = cache(async (): Promise<CurrentProfile | null> 
   ]);
 
   const { data: profile, error: profileError } = profileResult;
-  const { data: userRoles } = userRolesResult;
+  const { data: userRoles, error: userRolesError } = userRolesResult;
 
   if (profileError || !profile) {
+    return null;
+  }
+  if (userRolesError) {
     return null;
   }
 
@@ -104,7 +110,7 @@ export const getCurrentProfile = cache(async (): Promise<CurrentProfile | null> 
   // roles depende de user_roles (roleIds ya disponible); entre sí son independientes
   const rolesQuery = roleIds.length > 0
     ? supabase.from('roles').select('code, name').in('id', roleIds)
-    : Promise.resolve({ data: null as Array<{ code: string; name: string }> | null });
+    : Promise.resolve({ data: null, error: null });
 
   const [organizationResult, rolesResult] = await Promise.all([
     supabase
@@ -115,8 +121,17 @@ export const getCurrentProfile = cache(async (): Promise<CurrentProfile | null> 
     rolesQuery,
   ]);
 
-  const { data: organization } = organizationResult;
-  const roles: Array<{ code: string; name: string }> = rolesResult.data ?? [];
+  if (rolesResult.error) {
+    return null;
+  }
+  // PGRST116 = "sin filas" en .single(): organización inexistente — se tolera
+  // como organization: null; cualquier otro error de consulta es fallo real.
+  if (organizationResult.error && organizationResult.error.code !== 'PGRST116') {
+    return null;
+  }
+
+  const organization = organizationResult.data;
+  const roles = rolesResult.data ?? [];
 
   return {
     id: profile.id,

@@ -36,9 +36,12 @@ export async function changePassword(
 }
 
 // scope: 'local' invalida SOLO esta sesión (no cierra los otros dispositivos del
-// usuario). supabase-js devuelve { error } sin lanzar; si falla igual redirigimos
-// a login — el cliente queda sin acceso. revalidatePath invalida la Router Cache
-// para evitar que el shell del dashboard asome al navegar atrás.
+// usuario). Con este scope, si la llamada al servidor falla supabase-js igual
+// elimina la sesión local y las cookies (solo ignora/limpia en 401/403/404) y
+// devuelve { error }; en ese caso el refresh token queda sin revocar en el
+// servidor hasta que venza. Por eso se ignora el error y se redirige a login.
+// revalidatePath invalida la Router Cache para evitar que el shell del dashboard
+// asome al navegar atrás.
 export async function signOut(): Promise<void> {
   const supabase = await createSupabaseServerClient();
   await supabase.auth.signOut({ scope: 'local' });
