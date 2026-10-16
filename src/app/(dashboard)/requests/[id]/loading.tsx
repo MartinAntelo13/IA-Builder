@@ -21,7 +21,7 @@ export default function RequestDetailLoading() {
 
       <section className="flex flex-col lg:flex-row gap-5 items-start w-full">
         <div className="w-full lg:flex-1 lg:min-w-0 flex flex-col gap-4">
-          <div className="bg-white border border-border rounded-lg shadow-sm px-6 py-5 animate-pulse">
+          <div className="bg-card border border-border rounded-lg shadow-sm px-6 py-5 animate-pulse">
             <div className="pb-4 mb-4 border-b border-border">
               <SkeletonLine w="w-44" h="h-4" />
             </div>
@@ -35,7 +35,7 @@ export default function RequestDetailLoading() {
               ))}
             </div>
           </div>
-          <div className="bg-white border border-border rounded-lg shadow-sm px-6 py-5 animate-pulse">
+          <div className="bg-card border border-border rounded-lg shadow-sm px-6 py-5 animate-pulse">
             <div className="pb-4 mb-4 border-b border-border">
               <SkeletonLine w="w-24" h="h-4" />
             </div>
@@ -48,7 +48,7 @@ export default function RequestDetailLoading() {
         </div>
 
         <aside className="w-full lg:w-72 flex flex-col gap-4 shrink-0">
-          <div className="bg-white border border-border rounded-lg shadow-sm px-6 py-5 animate-pulse">
+          <div className="bg-card border border-border rounded-lg shadow-sm px-6 py-5 animate-pulse">
             <div className="pb-4 mb-4 border-b border-border">
               <SkeletonLine w="w-40" h="h-4" />
             </div>
@@ -64,7 +64,7 @@ export default function RequestDetailLoading() {
               ))}
             </div>
           </div>
-          <div className="bg-white border border-border rounded-lg shadow-sm px-6 py-5 animate-pulse">
+          <div className="bg-card border border-border rounded-lg shadow-sm px-6 py-5 animate-pulse">
             <div className="pb-4 mb-4 border-b border-border">
               <SkeletonLine w="w-32" h="h-4" />
             </div>

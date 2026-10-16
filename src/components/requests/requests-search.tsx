@@ -22,7 +22,7 @@ export function RequestsSearch({ q }: RequestsSearchProps) {
         type="search"
         defaultValue={q}
         placeholder="Buscar por título, solicitante o ID..."
-        className="w-full h-8 pl-8 pr-3 text-2xs border border-border rounded-md outline-none focus:border-primary bg-white text-foreground placeholder:text-muted"
+        className="w-full h-8 pl-8 pr-3 text-2xs border border-border rounded-md outline-none focus:border-primary bg-card text-foreground placeholder:text-muted"
       />
     </Form>
   );

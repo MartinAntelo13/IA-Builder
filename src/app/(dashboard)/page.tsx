@@ -82,7 +82,7 @@ export default async function DashboardPage() {
           />
         ) : (
           <div className="col-span-full text-center py-12">
-            <p className="text-muted-foreground">Cargando métricas...</p>
+            <p className="text-muted">Cargando métricas...</p>
           </div>
         )}
       </section>
@@ -101,7 +101,7 @@ export default async function DashboardPage() {
             </div>
           </>
         ) : (
-          <div className="overflow-hidden bg-white border border-border rounded-lg shadow-sm">
+          <div className="overflow-hidden bg-card border border-border rounded-lg shadow-sm">
             <div className="flex flex-col items-center justify-center py-12 px-4">
               <FileText className="h-12 w-12 text-muted mb-4" />
               <p className="text-center text-muted">

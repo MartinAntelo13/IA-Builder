@@ -57,7 +57,7 @@ export function RequestCommentForm({ requestId, userInitials }: RequestCommentFo
           maxLength={5000}
           placeholder="Escribe un comentario..."
           disabled={isPending}
-          className="flex-1 min-w-0 h-8 px-3 text-2xs border border-border rounded-md outline-none focus:border-primary disabled:opacity-60 bg-white text-foreground placeholder:text-muted"
+          className="flex-1 min-w-0 h-8 px-3 text-2xs border border-border rounded-md outline-none focus:border-primary disabled:opacity-60 bg-card text-foreground placeholder:text-muted"
         />
         <button
           onClick={handleSubmit}

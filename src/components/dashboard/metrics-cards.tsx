@@ -46,7 +46,7 @@ export function MetricsCards({
       <p className="mt-2 text-xs">
         <span
           className={`font-medium flex items-center gap-1 ${
-            isPositive ? 'text-emerald-600' : isNegative ? 'text-rose-600' : 'text-muted-foreground'
+            isPositive ? 'text-emerald-600' : isNegative ? 'text-rose-600' : 'text-muted'
           }`}
         >
           {isPositive ? (
@@ -56,7 +56,7 @@ export function MetricsCards({
           ) : null}
           {absValue}{label}
         </span>
-        <span className="text-muted-foreground ml-1">vs. 30 días anteriores</span>
+        <span className="text-muted ml-1">vs. 30 días anteriores</span>
       </p>
     );
   };
@@ -64,7 +64,7 @@ export function MetricsCards({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
       {/* 1. Solicitudes activas */}
-      <div className="metric-card bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+      <div className="bg-card border border-gray-200 rounded-lg p-5 shadow-sm">
         <div className="flex items-center justify-between">
           <span className="text-xs font-medium text-gray-500">Solicitudes activas</span>
           <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
@@ -77,7 +77,7 @@ export function MetricsCards({
       </div>
 
       {/* 2. Enviadas (30 días) */}
-      <div className="metric-card bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+      <div className="bg-card border border-gray-200 rounded-lg p-5 shadow-sm">
         <div className="flex items-center justify-between">
           <span className="text-xs font-medium text-gray-500">Enviadas (30 días)</span>
           <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
@@ -91,7 +91,7 @@ export function MetricsCards({
       </div>
 
       {/* 3. Esperando mi revisión */}
-      <Link href={ROUTES.INBOX} className="metric-card bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:border-primary/50 transition-colors">
+      <Link href={ROUTES.INBOX} className="bg-card border border-gray-200 rounded-lg p-5 shadow-sm hover:border-primary/50 transition-colors">
         <div className="flex items-center justify-between">
           <span className="text-xs font-medium text-gray-500">Esperando mi revisión</span>
           <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
@@ -112,7 +112,7 @@ export function MetricsCards({
       </Link>
 
       {/* 4. Tiempo promedio de aprobación */}
-      <div className="metric-card bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+      <div className="bg-card border border-gray-200 rounded-lg p-5 shadow-sm">
         <div className="flex items-center justify-between">
           <span className="text-xs font-medium text-gray-500">Tiempo promedio de aprobación</span>
           <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
@@ -127,7 +127,7 @@ export function MetricsCards({
       </div>
 
       {/* 5. Tasa de aprobación */}
-      <div className="metric-card bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+      <div className="bg-card border border-gray-200 rounded-lg p-5 shadow-sm">
         <div className="flex items-center justify-between">
           <span className="text-xs font-medium text-gray-500">Tasa de aprobación</span>
           <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">

@@ -11,7 +11,7 @@ export default function NewRequestLoading() {
         <div className="h-3 w-28 rounded bg-border" />
       </div>
 
-      <div className="bg-white border border-border rounded-lg shadow-sm p-6 animate-pulse">
+      <div className="bg-card border border-border rounded-lg shadow-sm p-6 animate-pulse">
         <div className="pb-4 mb-6 border-b border-border">
           <SkeletonLine w="w-40" h="h-5" />
         </div>

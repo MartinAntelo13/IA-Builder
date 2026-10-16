@@ -18,6 +18,9 @@
   --accent: #e5a43b;
   --surface: #fbfbfd;
   --primary-muted: #8d87db;
+  --muted-weak: #a0a8b8;
+  --muted-strong: #465066;
+  --card: #ffffff;
 }
 
 @theme inline {
@@ -36,6 +39,9 @@
   --color-accent: var(--accent);
   --color-surface: var(--surface);
   --color-primary-muted: var(--primary-muted);
+  --color-muted-weak: var(--muted-weak);
+  --color-muted-strong: var(--muted-strong);
+  --color-card: var(--card);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --text-2xs: 0.625rem;

@@ -36,11 +36,11 @@ export default async function DashboardLayout({
         user={profile}
         canManageWorkflows={canManageWorkflows}
         canManageTeam={canManageTeam}
-        className="w-[68px] md:w-64 shrink-0 border-r transition-all"
+        className="w-17 md:w-64 shrink-0 border-r transition-all"
       />
       <div className="flex flex-1 flex-col overflow-hidden">
         <Topbar awaitingMyReview={awaitingMyReview} />
-        <main className="flex-1 overflow-y-auto bg-[#f8f9fd]">{children}</main>
+        <main className="flex-1 overflow-y-auto bg-surface">{children}</main>
       </div>
     </div>
   );

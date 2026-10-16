@@ -78,7 +78,7 @@ export function InviteMemberDialog({ onClose, roles, departments, managerOptions
     <dialog
       ref={dialogRef}
       aria-labelledby={titleId}
-      className="m-auto w-11/12 max-w-md rounded-xl border border-border bg-white shadow-xl p-6 backdrop:bg-black/50"
+      className="m-auto w-11/12 max-w-md rounded-xl border border-border bg-card shadow-xl p-6 backdrop:bg-black/50"
       onClose={onClose}
       onCancel={(e) => { if (isPending) e.preventDefault(); }}
     >
@@ -175,7 +175,7 @@ export function InviteMemberDialog({ onClose, roles, departments, managerOptions
           <button type="submit" disabled={isPending} className={`${BTN_BASE} bg-primary text-primary-foreground`}>
             {isPending ? 'Enviando…' : 'Enviar invitación'}
           </button>
-          <button type="button" onClick={onClose} disabled={isPending} className={`${BTN_BASE} border border-border text-muted bg-white`}>
+          <button type="button" onClick={onClose} disabled={isPending} className={`${BTN_BASE} border border-border text-muted bg-card`}>
             Cancelar
           </button>
         </div>

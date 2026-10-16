@@ -20,8 +20,8 @@ function pageHref(basePath: string, params: Record<string, string>, targetPage: 
 const NAV_BASE =
   'inline-flex items-center justify-center h-7 px-2.5 rounded border text-2xs font-medium transition-colors';
 const NAV_ACTIVE = `${NAV_BASE} bg-primary text-primary-foreground border-primary`;
-const NAV_IDLE = `${NAV_BASE} bg-white text-foreground border-border hover:bg-background`;
-const NAV_DISABLED = `${NAV_BASE} bg-white text-muted border-border opacity-40 pointer-events-none`;
+const NAV_IDLE = `${NAV_BASE} bg-card text-foreground border-border hover:bg-background`;
+const NAV_DISABLED = `${NAV_BASE} bg-card text-muted border-border opacity-40 pointer-events-none`;
 
 export function Pagination({
   basePath,

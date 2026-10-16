@@ -12,7 +12,7 @@ interface MetricCardProps {
 
 function MetricCard({ value, label }: MetricCardProps) {
   return (
-    <div className="bg-white border border-border rounded-lg shadow-sm p-5">
+    <div className="bg-card border border-border rounded-lg shadow-sm p-5">
       <p className="text-xl font-bold text-foreground">{value}</p>
       <p className="mt-1 text-2xs text-muted">{label}</p>
     </div>

@@ -90,7 +90,7 @@ export default async function InboxPage({ searchParams }: PageProps) {
 
       {kpis && <InboxMetricsCards kpis={kpis} />}
 
-      <div className="bg-white border border-border rounded-lg shadow-sm mt-6">
+      <div className="bg-card border border-border rounded-lg shadow-sm mt-6">
         <InboxTabs
           tab={tab}
           sort={sort}

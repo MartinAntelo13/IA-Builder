@@ -1,4 +1,4 @@
-const CARD = 'bg-white border border-border rounded-lg shadow-sm p-5 animate-pulse';
+const CARD = 'bg-card border border-border rounded-lg shadow-sm p-5 animate-pulse';
 
 function SkeletonLine({ w = 'w-full', h = 'h-3' }: { w?: string; h?: string }) {
   return <div className={`${w} ${h} rounded bg-border`} />;
@@ -13,7 +13,7 @@ export default function WorkflowsLoading() {
       </div>
 
       <div className="flex flex-col lg:flex-row gap-5 items-start w-full">
-        <div className="w-full lg:w-72 shrink-0 bg-white border border-border rounded-lg shadow-sm animate-pulse">
+        <div className="w-full lg:w-72 shrink-0 bg-card border border-border rounded-lg shadow-sm animate-pulse">
           <div className="px-4 py-4 border-b border-border flex items-center justify-between">
             <SkeletonLine w="w-36" h="h-4" />
             <div className="w-5 h-5 rounded-full bg-border" />

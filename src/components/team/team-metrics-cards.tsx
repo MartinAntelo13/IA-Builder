@@ -15,7 +15,7 @@ interface MetricCardProps {
 
 function MetricCard({ icon, iconClass, value, label, sub }: MetricCardProps) {
   return (
-    <div className="bg-white border border-border rounded-lg shadow-sm p-5">
+    <div className="bg-card border border-border rounded-lg shadow-sm p-5">
       <div className="flex items-start justify-between gap-2">
         <p className="text-xl font-bold text-foreground">{value}</p>
         <div className={`w-8 h-8 rounded-lg grid place-items-center shrink-0 ${iconClass}`}>

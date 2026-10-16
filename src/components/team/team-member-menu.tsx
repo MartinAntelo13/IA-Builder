@@ -78,7 +78,7 @@ export function TeamMemberMenu({
       </button>
 
       {menuOpen && (
-        <div className="absolute right-0 top-full mt-1 min-w-40 bg-white border border-border rounded-lg shadow-md z-10 py-1">
+        <div className="absolute right-0 top-full mt-1 min-w-40 bg-card border border-border rounded-lg shadow-md z-10 py-1">
           <button
             type="button"
             className="w-full px-4 py-2 text-left text-2xs text-foreground hover:bg-surface cursor-pointer"

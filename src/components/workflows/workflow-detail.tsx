@@ -18,7 +18,7 @@ interface WorkflowDetailProps {
   roleIdsWithActiveUsers: string[];
 }
 
-const CARD = 'bg-white border border-border rounded-lg shadow-sm px-6 py-5 max-md:px-4';
+const CARD = 'bg-card border border-border rounded-lg shadow-sm px-6 py-5 max-md:px-4';
 
 export function WorkflowDetail({
   workflow,

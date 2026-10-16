@@ -39,7 +39,7 @@ export function TeamList({
   if (role) paginationParams.role = role;
 
   return (
-    <article className="bg-white border border-border rounded-lg shadow-sm mt-6">
+    <article className="bg-card border border-border rounded-lg shadow-sm mt-6">
       {/* Encabezado del card */}
       <div className="px-6 pt-5 pb-4 flex items-start justify-between gap-4 flex-wrap">
         <div>

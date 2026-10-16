@@ -19,7 +19,7 @@ export default function DashboardLoading() {
 
       <section className="metric-grid">
         {[0, 1, 2, 3].map((i) => (
-          <div key={i} className="bg-white border border-border rounded-lg shadow-sm p-5 animate-pulse space-y-2">
+          <div key={i} className="bg-card border border-border rounded-lg shadow-sm p-5 animate-pulse space-y-2">
             <SkeletonLine w="w-12" h="h-7" />
             <SkeletonLine w="w-28" />
             <SkeletonLine w="w-20" />
@@ -28,7 +28,7 @@ export default function DashboardLoading() {
       </section>
 
       <section>
-        <div className="bg-white border border-border rounded-lg shadow-sm animate-pulse">
+        <div className="bg-card border border-border rounded-lg shadow-sm animate-pulse">
           <div className="px-6 py-5 border-b border-border">
             <SkeletonLine w="w-36" h="h-4" />
           </div>

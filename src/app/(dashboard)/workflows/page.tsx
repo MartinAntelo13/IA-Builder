@@ -101,7 +101,7 @@ export default async function WorkflowsPage({ searchParams }: PageProps) {
       </header>
 
       {workflows.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 gap-3 bg-white border border-border rounded-lg shadow-sm">
+        <div className="flex flex-col items-center justify-center py-16 gap-3 bg-card border border-border rounded-lg shadow-sm">
           <div className="w-10 h-10 rounded-lg bg-primary/10 grid place-items-center">
             <Workflow size={20} className="text-primary" />
           </div>
