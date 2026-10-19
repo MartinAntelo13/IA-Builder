@@ -99,7 +99,7 @@ export function RequestWorkflowCard({ detail }: RequestHistoryProps) {
 
 export function RequestActivityCard({ detail }: RequestHistoryProps) {
   const items: ActivityItem[] = detail.events.map((event) => ({
-    id: event.id,
+    id: String(event.id),
     title: formatEventType(event.event_type),
     meta: `${event.actor_name} · ${formatRelativeTime(event.created_at)}`,
     note: getEventNote(event.event_type, event.metadata),

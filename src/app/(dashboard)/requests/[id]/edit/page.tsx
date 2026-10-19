@@ -5,7 +5,7 @@ import { ChevronRight } from 'lucide-react';
 import { createSupabaseServerClient, getCurrentProfile } from '@/lib/supabase/server';
 import { ROUTES } from '@/constants';
 import { requestDetailHref } from '@/lib/routes';
-import type { RequestDetailData } from '@/types/request-detail';
+import { getRequestDetail } from '@/lib/requests/get-request-detail';
 import { EditRequestForm } from '@/components/requests/edit-request-form';
 
 export const metadata: Metadata = { title: 'Editar solicitud - Flowdesk' };
@@ -21,9 +21,8 @@ export default async function EditRequestPage({
   if (!profile?.organization) return notFound();
 
   const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.rpc('get_request_detail', { p_request_id: id });
-  if (error || !data) return notFound();
-  const detail = data as RequestDetailData;
+  const detail = await getRequestDetail(supabase, id);
+  if (!detail) return notFound();
   if (!detail.viewer.can_edit) return notFound();
 
   const [{ data: requestTypes }, { data: costCenters }] = await Promise.all([
