@@ -1,9 +1,8 @@
 'use server';
 
-import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 import { createSupabaseServerClient, getCurrentProfile } from '@/lib/supabase/server';
 import { ROUTES } from '@/constants';
-import { requestDetailHref } from '@/lib/routes';
 import { uploadAttachmentFile } from '@/lib/storage/request-attachments';
 import type { Database } from '@/types/database.types';
 
@@ -15,16 +14,15 @@ type RequestInsertPayload = Pick<
   'request_type_id' | 'title' | 'description' | 'amount' | 'cost_center_id' | 'priority' | 'required_date'
 >;
 
-export interface RequestActionResult {
-  error?: string;
-  requestId?: string;
-}
+export type RequestActionResult =
+  | { ok: true; requestId: string }
+  | { ok: false; error: string; requestId?: string };
 
 async function insertRequest(
   formData: FormData,
 ): Promise<RequestActionResult> {
   const profile = await getCurrentProfile();
-  if (!profile?.organization) return { error: 'No autorizado' };
+  if (!profile?.organization) return { ok: false, error: 'No autorizado' };
 
   const supabase = await createSupabaseServerClient();
 
@@ -55,8 +53,11 @@ async function insertRequest(
     .single();
 
   if (insertError || !request) {
-    return { error: insertError?.message ?? 'Error al crear la solicitud' };
+    return { ok: false, error: insertError?.message ?? 'Error al crear la solicitud' };
   }
+
+  revalidatePath(ROUTES.REQUESTS);
+  revalidatePath(ROUTES.HOME);
 
   const files = formData.getAll('attachments') as File[];
   const failedFiles: string[] = [];
@@ -70,39 +71,42 @@ async function insertRequest(
 
   if (failedFiles.length > 0) {
     return {
+      ok: false,
       requestId: request.id,
       error: `La solicitud se guardó como borrador, pero no se pudieron adjuntar los siguientes archivos: ${failedFiles.join(', ')}. Podés reintentar la carga desde el detalle de la solicitud.`,
     };
   }
 
-  return { requestId: request.id };
+  return { ok: true, requestId: request.id };
 }
 
+// No se llama a redirect() para no romper el try/catch del cliente:
+// Next.js rechaza la promesa con NEXT_REDIRECT y el catch lo muestra como error.
+// La navegación la realiza new-request-form con router.push.
 export async function createRequest(
   formData: FormData,
 ): Promise<RequestActionResult> {
-  const result = await insertRequest(formData);
-  if (result.error) return result;
-  redirect(requestDetailHref(result.requestId!));
+  return insertRequest(formData);
 }
 
 export async function submitRequest(
   formData: FormData,
 ): Promise<RequestActionResult> {
   const result = await insertRequest(formData);
-  if (result.error) return result;
+  if (!result.ok) return result;
 
   const supabase = await createSupabaseServerClient();
   const { error: submitError } = await supabase.rpc('submit_request', {
-    p_request_id: result.requestId!,
+    p_request_id: result.requestId,
   });
 
   if (submitError) {
     return {
+      ok: false,
       error: `La solicitud quedó guardada como borrador, pero el envío falló: ${submitError.message}`,
       requestId: result.requestId,
     };
   }
 
-  redirect(ROUTES.REQUESTS);
+  return result;
 }
