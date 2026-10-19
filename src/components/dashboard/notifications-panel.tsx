@@ -1,6 +1,7 @@
 // Regla 3: 'use client' — se monta dentro del dropdown y recibe onNavigate (callback).
 'use client';
 
+import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { ROUTES } from '@/constants';
 import { requestDetailHref } from '@/lib/routes';
@@ -25,13 +26,22 @@ export function NotificationsPanel({
   onNavigate,
 }: NotificationsPanelProps) {
   const header = buildHeader(awaitingMyReview);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  // El panel solo monta cuando el dropdown está abierto: enfocar el wrapper al
+  // montar lleva el foco al diálogo (sin trap: Tab natural recorre los links).
+  useEffect(() => {
+    panelRef.current?.focus();
+  }, []);
 
   return (
     <div
+      ref={panelRef}
       id={id}
       role="dialog"
       aria-label="Solicitudes pendientes de revisión"
-      className="absolute right-0 top-full mt-2 w-72 sm:w-80 z-20 bg-card border border-border rounded-lg shadow-md flex flex-col"
+      tabIndex={-1}
+      className="absolute right-0 top-full mt-2 w-72 sm:w-80 z-20 bg-card border border-border rounded-lg shadow-md flex flex-col outline-none"
     >
       {header && (
         <div className="px-3 py-2 text-2xs font-semibold text-foreground border-b border-border">
