@@ -4,8 +4,8 @@ import { revalidatePath } from 'next/cache';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { ROUTES } from '@/constants';
 import type { Database } from '@/types/database.types';
-import { editRequestSchema } from '@/lib/validations/request.schema';
 import type { ActionResult } from '@/types/action-result';
+import { parseRequestFormData } from '@/lib/requests/parse-request-form';
 import { requestDetailHref } from '@/lib/routes';
 
 function revalidateRequest(requestId: string) {
@@ -89,31 +89,8 @@ export async function updateRequest(
   if (!/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i.test(requestId))
     return { ok: false, error: 'ID de solicitud inválido' };
 
-  // Parse amount con rechazo explícito de NaN antes de pasar al schema (z.number()
-  // acepta NaN porque typeof NaN === 'number').
-  const amountRaw = formData.get('amount');
-  let amount: number | null = null;
-  if (typeof amountRaw === 'string' && amountRaw.length > 0) {
-    const n = Number(amountRaw);
-    if (!Number.isFinite(n)) return { ok: false, error: 'El importe no es un número válido' };
-    amount = n;
-  }
-
-  // Trim antes del safeParse para que .min(1) rechace valores solo-espacios.
-  const input = {
-    request_type_id: ((formData.get('request_type_id') as string) ?? '').trim(),
-    title: ((formData.get('title') as string) ?? '').trim(),
-    description: ((formData.get('description') as string) ?? '').trim(),
-    amount,
-    cost_center_id: ((formData.get('cost_center_id') as string) ?? '').trim() || null,
-    priority: (formData.get('priority') as string) ?? '',
-  };
-
-  // La action nunca confía en el cliente: valida de nuevo con el mismo schema.
-  const parsed = editRequestSchema.safeParse(input);
-  if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Datos inválidos' };
-  }
+  const parsed = parseRequestFormData(formData);
+  if (!parsed.ok) return { ok: false, error: parsed.error };
 
   const supabase = await createSupabaseServerClient();
 
