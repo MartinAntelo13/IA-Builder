@@ -11,6 +11,7 @@ import { FileText, ArrowRight, Loader2 } from 'lucide-react';
 import { requestSchema, type RequestFormValues } from '@/lib/validations/request.schema';
 import { validateAttachmentFiles } from '@/lib/validations/attachment-file';
 import { buildRequestFormData } from '@/lib/build-request-form-data';
+import { requestDetailHref } from '@/lib/routes';
 import { createRequest, submitRequest } from '@/app/(dashboard)/requests/new/actions';
 import { RequestPreview } from '@/components/requests/request-preview';
 import { AttachmentField } from '@/components/requests/attachment-field';
@@ -67,12 +68,18 @@ export function NewRequestForm({ requestTypes, costCenters, currencySymbol }: Ne
     try {
       const fd = buildRequestFormData(values ?? getValues());
       const result = mode === 'draft' ? await createRequest(fd) : await submitRequest(fd);
-      if (result?.error && result.requestId)
-        router.push(`${ROUTES.REQUESTS}/${result.requestId}?submit_error=${encodeURIComponent(result.error.slice(0, 200))}`);
-      else if (result?.error) setActionError(result.error);
+      if (!result.ok && result.requestId) {
+        router.push(`${requestDetailHref(result.requestId)}?submit_error=${encodeURIComponent(result.error.slice(0, 200))}`);
+      } else if (!result.ok) {
+        setActionError(result.error);
+        setIsLoading(false);
+      } else {
+        // No se llama setIsLoading(false): el botón permanece en estado de carga
+        // hasta que la navegación completa y el componente se desmonta.
+        router.push(mode === 'draft' ? requestDetailHref(result.requestId) : ROUTES.REQUESTS);
+      }
     } catch {
       setActionError(`Error inesperado al ${mode === 'draft' ? 'guardar el borrador' : 'enviar la solicitud'}.`);
-    } finally {
       setIsLoading(false);
     }
   };
