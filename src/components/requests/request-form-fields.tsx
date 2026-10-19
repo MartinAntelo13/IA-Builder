@@ -65,7 +65,7 @@ export function RequestFormFields({
             id="req-type"
             {...typeField}
             onChange={(e) => {
-              typeField.onChange(e);
+              void typeField.onChange(e); // onChange de RHF devuelve Promise<void> que no hace falta esperar
               const type = requestTypes.find((t) => t.id === e.target.value);
               if (!type?.requires_amount) setValue('amount', null);
             }}
