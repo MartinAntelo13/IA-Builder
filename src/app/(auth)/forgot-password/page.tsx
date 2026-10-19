@@ -10,8 +10,6 @@ import { ROUTES } from '@/constants';
 import { getCurrentProfile } from '@/lib/supabase/server';
 import { ForgotPasswordForm } from '@/components/auth/forgot-password-form';
 
-export const dynamic = 'force-dynamic';
-
 interface ForgotPasswordPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }

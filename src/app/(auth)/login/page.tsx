@@ -10,8 +10,6 @@ import { ROUTES } from '@/constants';
 import { getCurrentProfile } from '@/lib/supabase/server';
 import { LoginForm } from '@/components/auth/login-form';
 
-export const dynamic = 'force-dynamic';
-
 interface LoginPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
