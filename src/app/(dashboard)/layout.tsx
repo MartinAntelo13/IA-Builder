@@ -39,7 +39,10 @@ export default async function DashboardLayout({
         className="w-17 md:w-64 shrink-0 border-r transition-all"
       />
       <div className="flex flex-1 flex-col overflow-hidden">
-        <Topbar awaitingMyReview={awaitingMyReview} />
+        <Topbar
+          awaitingMyReview={awaitingMyReview}
+          user={{ fullName: profile.fullName, email: profile.email }}
+        />
         <main className="flex-1 overflow-y-auto bg-surface">{children}</main>
       </div>
     </div>

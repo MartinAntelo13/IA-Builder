@@ -19,7 +19,9 @@ export function NotificationsDropdown({ awaitingMyReview }: NotificationsDropdow
   const buttonRef = useRef<HTMLButtonElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Cierre con Escape (foco al botón) y click fuera.
+  // Cierre con Escape (foco al botón), click fuera y foco fuera.
+  // No se usa onBlur del contenedor: en Safari el click en el botón no lo enfoca
+  // y el panel se reabriría solo.
   useEffect(() => {
     if (!open) return;
     function onKeyDown(e: KeyboardEvent) {
@@ -33,11 +35,18 @@ export function NotificationsDropdown({ awaitingMyReview }: NotificationsDropdow
         setOpen(false);
       }
     }
+    function onFocusIn(e: FocusEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
     document.addEventListener('keydown', onKeyDown);
     document.addEventListener('mousedown', onMouseDown);
+    document.addEventListener('focusin', onFocusIn);
     return () => {
       document.removeEventListener('keydown', onKeyDown);
       document.removeEventListener('mousedown', onMouseDown);
+      document.removeEventListener('focusin', onFocusIn);
     };
   }, [open]);
 
@@ -52,7 +61,7 @@ export function NotificationsDropdown({ awaitingMyReview }: NotificationsDropdow
         ref={buttonRef}
         type="button"
         aria-label={bellLabel}
-        aria-haspopup="true"
+        aria-haspopup="dialog"
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => setOpen((v) => !v)}
