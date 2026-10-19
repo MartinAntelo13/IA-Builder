@@ -33,11 +33,6 @@ export default async function SettingsPage({ searchParams }: PageProps) {
   const permissions = await getUserPermissions();
   const canManageOrganization = permissions.has(PERMISSIONS.ORG_MANAGE);
 
-  // Sesión actual: necesitamos last_sign_in_at para la pestaña Seguridad.
-  const supabase = await createSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  const lastSignInAt = user?.last_sign_in_at ?? null;
-
   // Pestaña activa: default perfil; workspace sin permiso cae en perfil.
   const rawTab = getString((await searchParams).tab);
   const requested = (VALID_TABS as readonly string[]).includes(rawTab)
@@ -66,7 +61,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
       }}
       orgTimezone={profile.organization?.timezone ?? null}
       organization={organization}
-      lastSignInAt={lastSignInAt}
+      lastSignInAt={profile.lastSignInAt}
     />
   );
 }

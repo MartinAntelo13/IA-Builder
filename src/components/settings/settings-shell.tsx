@@ -35,7 +35,7 @@ function formatLastSignIn(iso: string | null, tz: string | null): string {
   if (Number.isNaN(date.getTime())) return '—';
   const timeZone = tz ?? 'UTC';
   try {
-    return new Intl.DateTimeFormat('es-ES', {
+    return new Intl.DateTimeFormat('es', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -44,7 +44,7 @@ function formatLastSignIn(iso: string | null, tz: string | null): string {
       timeZone,
     }).format(date);
   } catch {
-    return new Intl.DateTimeFormat('es-ES', {
+    return new Intl.DateTimeFormat('es', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',

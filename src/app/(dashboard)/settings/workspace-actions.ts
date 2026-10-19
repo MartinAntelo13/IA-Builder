@@ -79,7 +79,10 @@ export async function updateWorkspace(
     .eq('id', profile.organizationId)
     .select('id')
     .maybeSingle();
-  if (error) return { ok: false, error: error.message };
+  if (error) {
+    console.error('updateWorkspace: error al guardar', { code: error.code, message: error.message });
+    return { ok: false, error: 'No se pudo guardar los cambios.' };
+  }
   if (!data) {
     return { ok: false, error: 'No se pudo guardar los cambios.' };
   }

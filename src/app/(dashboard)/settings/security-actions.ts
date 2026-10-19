@@ -59,7 +59,8 @@ export async function signOutOtherSessions(): Promise<ActionResult> {
   // scope: 'others' invalida todas las sesiones del usuario SALVO la actual.
   const { error } = await supabase.auth.signOut({ scope: 'others' });
   if (error) {
-    return { ok: false, error: error.message || 'No se pudo cerrar las otras sesiones.' };
+    console.error('signOutOtherSessions: error', { code: error.code, message: error.message });
+    return { ok: false, error: 'No se pudo cerrar las otras sesiones.' };
   }
 
   return { ok: true };
