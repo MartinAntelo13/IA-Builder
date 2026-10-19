@@ -1,9 +1,15 @@
+// Proxy: se ejecuta en cada request antes de renderizar.
+// Refresca la sesión de Supabase (getUser + cookies getAll/setAll) para que
+// los Server Components siempre lean cookies actualizadas.
+// Exige sesión activa en /set-password y /reset-password; cualquier otra
+// protección de rutas del dashboard se resuelve en
+// src/app/(dashboard)/layout.tsx vía getCurrentProfile.
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
-import { env } from './lib/env';
-import { ROUTES } from './constants';
+import { env } from '@/lib/env';
+import { ROUTES } from '@/constants';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   });
@@ -36,15 +42,6 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Protected routes: (dashboard) group
-  const isDashboardRoute = request.nextUrl.pathname.startsWith('/dashboard');
-
-  if (isDashboardRoute && !user) {
-    const url = request.nextUrl.clone();
-    url.pathname = ROUTES.LOGIN;
-    return NextResponse.redirect(url);
-  }
-
   // /set-password y /reset-password requieren sesión: el usuario la obtiene
   // vía verifyOtp en /auth/confirm (type=invite o type=recovery). Sin sesión
   // → al login. /auth/confirm sigue público (no está en ninguna condición).
@@ -56,20 +53,6 @@ export async function middleware(request: NextRequest) {
     url.pathname = ROUTES.LOGIN;
     return NextResponse.redirect(url);
   }
-
-  // TODO: migrar middleware → proxy del nuevo API de Next.js (deuda).
-
-  // If user is logged in and tries to access auth pages, redirect to home
-  // TEMPORARILY COMMENTED OUT to allow login page to handle authenticated users
-  // const isAuthRoute =
-  //   request.nextUrl.pathname === ROUTES.LOGIN ||
-  //   request.nextUrl.pathname === ROUTES.FORGOT_PASSWORD;
-  //
-  // if (isAuthRoute && user) {
-  //   const url = request.nextUrl.clone();
-  //   url.pathname = ROUTES.HOME;
-  //   return NextResponse.redirect(url);
-  // }
 
   return supabaseResponse;
 }
