@@ -13,7 +13,7 @@ const CARD = 'bg-card border border-border rounded-lg shadow-sm p-6 max-md:p-4';
 const CARD_TITLE = 'flex items-center gap-2 pb-4 mb-4 border-b border-border text-primary';
 
 export function RequestInfo({ detail, userInitials }: RequestInfoProps) {
-  const hasAmount = detail.request.amount && parseFloat(detail.request.amount) > 0;
+  const hasAmount = detail.request.amount != null && detail.request.amount > 0;
 
   return (
     <>
@@ -82,7 +82,7 @@ export function RequestInfo({ detail, userInitials }: RequestInfoProps) {
             <span className="text-muted text-2xs">Monto estimado</span>
             <strong className="text-primary text-base">
               {detail.currency.symbol}
-              {parseFloat(detail.request.amount!).toLocaleString('es-ES', {
+              {detail.request.amount!.toLocaleString('es-ES', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
                 useGrouping: 'always',

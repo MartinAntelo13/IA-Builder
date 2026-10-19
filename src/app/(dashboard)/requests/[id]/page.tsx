@@ -3,7 +3,7 @@ import { ArrowLeft, Pencil } from 'lucide-react';
 import Link from 'next/link';
 import { createSupabaseServerClient, getCurrentProfile } from '@/lib/supabase/server';
 import { ROUTES, REQUEST_STATUS_STYLES } from '@/constants';
-import type { RequestDetailData } from '@/types/request-detail';
+import { getRequestDetail } from '@/lib/requests/get-request-detail';
 import { RequestInfo } from '@/components/requests/request-info';
 import { RequestWorkflowCard, RequestActivityCard } from '@/components/requests/request-history';
 import { RequestActionsPanel } from '@/components/requests/request-actions-panel';
@@ -24,13 +24,8 @@ export default async function RequestDetailPage({
   if (!profile?.organization) return notFound();
 
   const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.rpc('get_request_detail', {
-    p_request_id: id,
-  });
-
-  if (error || !data) return notFound();
-
-  const detail = data as RequestDetailData;
+  const detail = await getRequestDetail(supabase, id);
+  if (!detail) return notFound();
   const statusStyle = REQUEST_STATUS_STYLES[detail.request.status];
   const changesComment = findChangesComment(detail.approvals);
   const rejectionComment = findDecisionComment(detail.approvals, 'rejected');

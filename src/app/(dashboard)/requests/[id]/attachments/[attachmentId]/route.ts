@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
-import type { RequestDetailData } from '@/types/request-detail';
+import { getRequestDetail } from '@/lib/requests/get-request-detail';
 import { UUID_RE } from '@/lib/validators/uuid';
 
 export async function GET(
@@ -18,10 +18,8 @@ export async function GET(
   if (!user) return new Response('Unauthorized', { status: 401 });
 
   // Regla 10: obtener adjunto vía RPC (RLS verifica acceso del usuario a la solicitud)
-  const { data, error } = await supabase.rpc('get_request_detail', { p_request_id: id });
-  if (error || !data) return new Response('Not Found', { status: 404 });
-
-  const detail = data as RequestDetailData;
+  const detail = await getRequestDetail(supabase, id);
+  if (!detail) return new Response('Not Found', { status: 404 });
   const attachment = detail.attachments.find((a) => a.id === attachmentId);
   if (!attachment) return new Response('Not Found', { status: 404 });
 

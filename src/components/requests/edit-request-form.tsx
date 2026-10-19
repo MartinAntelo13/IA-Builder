@@ -47,7 +47,7 @@ export function EditRequestForm({
       request_type_id: detail.request.request_type_id,
       title: detail.request.title,
       description: detail.request.description ?? '',
-      amount: detail.request.amount != null ? parseFloat(detail.request.amount) : null,
+      amount: detail.request.amount,
       cost_center_id: detail.request.cost_center_id ?? '',
       priority: detail.request.priority,
       attachments: [],
