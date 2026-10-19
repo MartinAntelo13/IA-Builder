@@ -74,7 +74,11 @@ export function useCurrentUser() {
       setLoading(false);
     };
 
-    fetchUser();
+    // fetchUser no tiene try/catch; el catch registra el error y evita que loading quede en true para siempre.
+    fetchUser().catch((error: unknown) => {
+      console.error('useCurrentUser: error al cargar el usuario', error);
+      setLoading(false);
+    });
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
