@@ -1,9 +1,9 @@
 import type { Database } from '@/types/database.types';
+import type { RequestEventType } from '@/types';
 
 type RequestStatus = Database['public']['Enums']['request_status'];
 type StepStatus = Database['public']['Enums']['step_status'];
 type DecisionType = Database['public']['Enums']['decision_type'];
-type RequestEventType = Database['public']['Enums']['event_type'];
 
 export function formatRequestStatus(status: RequestStatus): {
   label: string;

@@ -1,9 +1,6 @@
-interface DecisionCommentProps {
-  comment: string;
-  decidedByName: string;
-}
+import type { DecisionCommentData } from '@/lib/transformers/requests';
 
-export function DecisionComment({ comment, decidedByName }: DecisionCommentProps) {
+export function DecisionComment({ comment, decidedByName }: DecisionCommentData) {
   return (
     <div className="p-3 bg-danger-bg rounded-md">
       <p className="m-0 text-2xs font-medium text-danger">{decidedByName}</p>

@@ -4,6 +4,7 @@
 import { useRef, useState, useTransition } from 'react';
 import { Paperclip, Download, Trash2, UploadCloud } from 'lucide-react';
 import { formatBytes } from '@/lib/format-helpers';
+import { ATTACHMENT_ACCEPT } from '@/constants';
 import { validateAttachmentFile } from '@/lib/validations/attachment-file';
 import { addAttachment, removeAttachment } from '@/app/(dashboard)/requests/[id]/attachment-actions';
 import { requestAttachmentHref } from '@/lib/routes';
@@ -141,7 +142,7 @@ export function RequestAttachmentsManager({ requestId, attachments, canEdit }: R
             id="add-attachment"
             type="file"
             multiple
-            accept=".pdf,.xlsx,image/*"
+            accept={ATTACHMENT_ACCEPT}
             disabled={isPending}
             onChange={(e) => handleAdd(Array.from(e.target.files ?? []))}
           />
