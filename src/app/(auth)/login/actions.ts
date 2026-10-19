@@ -1,6 +1,7 @@
 'use server';
 
 import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { signinSchema } from '@/lib/schemas/signin.schema';
 
 export interface SignInResult {
   error?: string;
@@ -8,14 +9,19 @@ export interface SignInResult {
 }
 
 export async function signIn(formData: FormData): Promise<SignInResult> {
+  const parsed = signinSchema.safeParse({
+    email: formData.get('email'),
+    password: formData.get('password'),
+  });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? 'Datos inválidos' };
+  }
+
   const supabase = await createSupabaseServerClient();
 
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
-
   const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
+    email: parsed.data.email,
+    password: parsed.data.password,
   });
 
   if (error) {

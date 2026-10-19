@@ -5,8 +5,7 @@ import { createSupabaseServerClient, getCurrentProfile } from '@/lib/supabase/se
 import { ROUTES } from '@/constants';
 import { uploadAttachmentFile } from '@/lib/storage/request-attachments';
 import type { Database } from '@/types/database.types';
-
-type PriorityLevel = Database['public']['Enums']['priority_level'];
+import { parseRequestFormData } from '@/lib/requests/parse-request-form';
 
 // Only columns permitted by grant insert (...) on public.requests to authenticated
 type RequestInsertPayload = Pick<
@@ -24,25 +23,20 @@ async function insertRequest(
   const profile = await getCurrentProfile();
   if (!profile?.organization) return { ok: false, error: 'No autorizado' };
 
-  const supabase = await createSupabaseServerClient();
+  const parsed = parseRequestFormData(formData);
+  if (!parsed.ok) return { ok: false, error: parsed.error };
 
-  const request_type_id = formData.get('request_type_id') as string;
-  const title = formData.get('title') as string;
-  const description = ((formData.get('description') as string | null) ?? '').trim();
-  const cost_center_id = (formData.get('cost_center_id') as string) || null;
-  const priority = formData.get('priority') as PriorityLevel;
-  const amountRaw = formData.get('amount') as string | null;
-  const amount = amountRaw ? parseFloat(amountRaw) : null;
+  const supabase = await createSupabaseServerClient();
 
   // Trigger requests_before_insert (security definer) populates: organization_id, requester_id,
   // status, request_seq, currency_code, submitted_at — pass only permitted columns to client
   const insertPayload: RequestInsertPayload = {
-    request_type_id,
-    title,
-    description: description || null,
-    amount: amount ?? null,
-    cost_center_id,
-    priority,
+    request_type_id: parsed.data.request_type_id,
+    title: parsed.data.title,
+    description: parsed.data.description || null,
+    amount: parsed.data.amount ?? null,
+    cost_center_id: parsed.data.cost_center_id ?? null,
+    priority: parsed.data.priority,
     required_date: null,
   };
 
@@ -59,7 +53,7 @@ async function insertRequest(
   revalidatePath(ROUTES.REQUESTS);
   revalidatePath(ROUTES.HOME);
 
-  const files = formData.getAll('attachments') as File[];
+  const files = formData.getAll('attachments').filter((v): v is File => v instanceof File);
   const failedFiles: string[] = [];
 
   // Reutiliza el helper compartido con addAttachment: sube al bucket + inserta

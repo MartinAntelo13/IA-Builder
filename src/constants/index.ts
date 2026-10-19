@@ -92,6 +92,9 @@ export const INBOX_PAGE_SIZE = 10;
 export const TEAM_PAGE_SIZE = 10;
 export const REQUESTS_PAGE_SIZE = 20;
 
+// Coincide con mime_type check en public.attachments y el bucket request-attachments.
+export const ATTACHMENT_ACCEPT = '.pdf,.xlsx,.xls,image/png,image/jpeg,image/webp';
+
 export const PERMISSIONS = {
   WORKFLOW_MANAGE: 'workflow.manage',
   TEAM_MANAGE: 'team.manage',

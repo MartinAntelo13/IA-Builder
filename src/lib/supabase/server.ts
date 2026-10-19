@@ -51,6 +51,7 @@ export type CurrentProfile = {
     Database['public']['Tables']['organizations']['Row'],
     'id' | 'name' | 'currency_code' | 'currency_symbol' | 'timezone'
   > | null;
+  lastSignInAt: string | null;
 };
 
 /**
@@ -143,5 +144,6 @@ export const getCurrentProfile = cache(async (): Promise<CurrentProfile | null> 
     status: profile.status,
     roles,
     organization: organization ?? null,
+    lastSignInAt: user.last_sign_in_at ?? null,
   };
 });

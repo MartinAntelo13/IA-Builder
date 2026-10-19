@@ -2,6 +2,7 @@
 'use client';
 
 import { UploadCloud } from 'lucide-react';
+import { ATTACHMENT_ACCEPT } from '@/constants';
 
 interface AttachmentFieldProps {
   files: File[];
@@ -25,7 +26,7 @@ export function AttachmentField({ files, error, onChange }: AttachmentFieldProps
           id="req-files"
           type="file"
           multiple
-          accept=".pdf,.xlsx,image/*"
+          accept={ATTACHMENT_ACCEPT}
           onChange={(e) => onChange(Array.from(e.target.files ?? []))}
         />
       </label>

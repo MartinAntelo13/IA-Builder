@@ -49,7 +49,10 @@ export async function updateProfile(input: ProfileFormValues): Promise<ActionRes
     .eq('id', user.id)
     .select('id')
     .maybeSingle();
-  if (error) return { ok: false, error: error.message };
+  if (error) {
+    console.error('updateProfile: error al guardar', { code: error.code, message: error.message });
+    return { ok: false, error: 'No se pudo guardar los cambios.' };
+  }
   if (!data) {
     // RLS filtró la fila (0 filas afectadas sin error): mensaje genérico.
     return { ok: false, error: 'No se pudo guardar los cambios.' };

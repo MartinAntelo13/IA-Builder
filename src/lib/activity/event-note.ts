@@ -1,6 +1,4 @@
-import type { Database } from '@/types/database.types';
-
-type RequestEventType = Database['public']['Enums']['event_type'];
+import type { RequestEventType } from '@/types';
 
 // Extrae la nota libre que corresponde a un evento del historial:
 //   - 'resubmitted': metadata.comment (la nota que escribió el solicitante al reenviar)

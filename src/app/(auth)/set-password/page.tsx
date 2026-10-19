@@ -6,7 +6,6 @@ import { SetPasswordForm } from '@/components/auth/set-password-form';
 
 // La página sin sesión no debería llegar acá (el proxy redirige), pero
 // se chequea de nuevo acá para que el renderizado sea seguro.
-export const dynamic = 'force-dynamic';
 
 export default async function SetPasswordPage() {
   const supabase = await createSupabaseServerClient();

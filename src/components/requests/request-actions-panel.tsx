@@ -9,14 +9,15 @@ import { approveRequest, requestChanges, resubmitRequest, submitDraft } from '@/
 import { RequestActionDialog } from '@/components/requests/request-action-dialog';
 import { RejectRequestButton } from '@/components/requests/reject-request-button';
 import { DecisionComment } from '@/components/requests/decision-comment';
+import type { DecisionCommentData } from '@/lib/transformers/requests';
 
 interface RequestActionsPanelProps {
   requestId: string;
   canDecide: boolean;
   canResubmit: boolean;
   canSubmit?: boolean;
-  changesComment?: { comment: string; decidedByName: string } | null;
-  rejectionComment?: { comment: string; decidedByName: string } | null;
+  changesComment?: DecisionCommentData | null;
+  rejectionComment?: DecisionCommentData | null;
   // Si el usuario llegó al detalle desde la bandeja (?from=inbox), tras aprobar
   // volvemos a /inbox. El destino es SIEMPRE la constante — nunca una URL que
   // venga del request — para evitar open redirects.
