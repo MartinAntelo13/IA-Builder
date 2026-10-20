@@ -10,7 +10,7 @@ export function mapPasswordError(message: string): string {
   if (m.includes('same') || m.includes('previous') || m.includes('different')) {
     return 'La nueva contraseña no puede ser igual a la anterior.';
   }
-  return message || 'No se pudo guardar la contraseña.';
+  return 'No se pudo guardar la contraseña.';
 }
 
 // Mapeo específico del diálogo "Cambiar contraseña" en Settings: usa el `code`
