@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { createSupabaseServerClient, getCurrentProfile } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { FileText, Plus, SlidersHorizontal } from "lucide-react";
+import { FileText, Plus } from "lucide-react";
 import { MetricsCards } from "@/components/dashboard/metrics-cards";
 import { RequestsSection } from "@/components/requests/requests-section";
 import { Greeting } from '@/components/dashboard/greeting';
@@ -61,10 +61,6 @@ export default async function DashboardPage() {
             <Plus className="h-4 w-4" />
             Nueva solicitud
           </Link>
-          <button type="button" className="hero-button" aria-label="Personalizar vista">
-            <SlidersHorizontal className="h-4 w-4" />
-            Personalizar vista
-          </button>
         </div>
       </section>
 
@@ -94,7 +90,7 @@ export default async function DashboardPage() {
             <div className="mt-3 text-right">
               <Link
                 href={ROUTES.REQUESTS}
-                className="text-sm font-medium text-primary hover:underline"
+                className="hero-button focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 Ver todas
               </Link>
