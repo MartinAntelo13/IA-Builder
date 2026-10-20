@@ -9,17 +9,9 @@ import { inviteSchema, type InviteFormValues } from '@/lib/schemas/invite.schema
 import { UUID_RE } from '@/lib/validators/uuid';
 import type { Database } from '@/types/database.types';
 import type { ActionResult } from '@/types/action-result';
+import { toUserError } from '@/lib/errors/to-user-error';
 
 type InviteMemberArgs = Database['public']['Functions']['invite_member']['Args'];
-
-// Mapeo de errores del RPC invite_member.
-//   42501: permisos insuficientes
-//   P0001: validación de negocio con mensaje en español (mostrable tal cual)
-function mapInviteRpcError(code: string | undefined, message: string): string {
-  if (code === '42501') return 'No tenés permisos para invitar miembros.';
-  if (code === 'P0001') return message;
-  return 'No se pudo crear la invitación.';
-}
 
 // Mapeo de errores de admin.auth.admin.inviteUserByEmail (string message).
 function mapInviteEmailError(message: string): string {
@@ -58,7 +50,7 @@ export async function inviteMember(input: InviteFormValues): Promise<ActionResul
   const args = buildInviteArgs(parsed.data);
   const { data: invitation, error: rpcError } = await supabase.rpc('invite_member', args);
   if (rpcError) {
-    return { ok: false, error: mapInviteRpcError(rpcError.code, rpcError.message) };
+    return { ok: false, error: toUserError(rpcError, { label: 'inviteMember', fallback: 'No se pudo crear la invitación.', forbidden: 'No tenés permisos para invitar miembros.' }) };
   }
   if (!invitation) {
     return { ok: false, error: 'No se pudo crear la invitación.' };
@@ -123,6 +115,7 @@ export async function inviteMember(input: InviteFormValues): Promise<ActionResul
     } catch (e) {
       console.error('[inviteMember] excepción inesperada durante la compensación', e);
     }
+    console.error('inviteMember.email: error', { code: (inviteError as { code?: string }).code, message: inviteError.message });
     return { ok: false, error: mapInviteEmailError(inviteError.message) };
   }
 
@@ -136,12 +129,7 @@ export async function revokeInvitedMember(userId: string): Promise<ActionResult>
   const supabase = await createSupabaseServerClient();
   const { error: rpcError } = await supabase.rpc('revoke_invited_member', { p_user_id: userId });
   if (rpcError) {
-    if (rpcError.code === '42501') {
-      return { ok: false, error: 'No tenés permisos para revocar invitaciones.' };
-    }
-    if (rpcError.code === 'P0002') return { ok: false, error: 'El miembro no existe.' };
-    if (rpcError.code === 'P0001') return { ok: false, error: rpcError.message };
-    return { ok: false, error: 'No se pudo revocar la invitación.' };
+    return { ok: false, error: toUserError(rpcError, { label: 'revokeInvitedMember', fallback: 'No se pudo revocar la invitación.', forbidden: 'No tenés permisos para revocar invitaciones.', notFound: 'El miembro no existe.' }) };
   }
 
   const admin = createSupabaseAdminClient();

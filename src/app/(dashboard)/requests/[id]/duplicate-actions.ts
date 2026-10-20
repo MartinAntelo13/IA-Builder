@@ -5,16 +5,7 @@ import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { ROUTES } from '@/constants';
 import type { ActionResult } from '@/types/action-result';
 import { UUID_RE } from '@/lib/validators/uuid';
-
-// La RPC duplicate_request valida permiso request.create, ownership
-// (requester_id = auth.uid()) y que el tipo esté activo. Devuelve estos
-// códigos de error en español:
-//   42501 — permisos insuficientes o no sos el solicitante
-//   P0002 — solicitud no encontrada
-//   P0001 — tipo de solicitud inactivo
-// Para cualquier otro código devolvemos un mensaje genérico sin filtrar el
-// texto crudo de Postgres.
-const PASS_THROUGH_CODES = new Set(['42501', 'P0002', 'P0001']);
+import { toUserError } from '@/lib/errors/to-user-error';
 
 export async function duplicateRequest(
   requestId: string,
@@ -29,10 +20,7 @@ export async function duplicateRequest(
   });
 
   if (error) {
-    const message = PASS_THROUGH_CODES.has(error.code ?? '')
-      ? error.message
-      : 'No se pudo duplicar la solicitud';
-    return { ok: false, error: message };
+    return { ok: false, error: toUserError(error, { label: 'duplicateRequest', fallback: 'No se pudo duplicar la solicitud.', forbidden: 'No tenés permisos para duplicar esta solicitud.', notFound: 'La solicitud no existe.' }) };
   }
   if (!data?.id) {
     return { ok: false, error: 'No se pudo duplicar la solicitud' };

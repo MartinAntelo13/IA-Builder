@@ -69,8 +69,11 @@ export async function setMemberStatus(
     supabase.from('user_roles').select('role_id').eq('user_id', userId),
   ]);
 
-  if (profileResult.error || !profileResult.data) {
-    return { ok: false, error: toUserError(profileResult.error ?? { message: 'Miembro no encontrado' }, { label: 'toggleMemberStatus.read', fallback: 'No se pudo cargar el miembro.', notFound: 'El miembro no existe.' }) };
+  if (profileResult.error) {
+    return { ok: false, error: toUserError(profileResult.error, { label: 'toggleMemberStatus.read', fallback: 'No se pudo cargar el miembro.', notFound: 'El miembro no existe.' }) };
+  }
+  if (!profileResult.data) {
+    return { ok: false, error: 'El miembro no existe.' };
   }
   if (userRolesResult.error) {
     return { ok: false, error: toUserError(userRolesResult.error, { label: 'toggleMemberStatus.read', fallback: 'No se pudo cargar el miembro.' }) };

@@ -9,6 +9,11 @@ import { parseRequestFormData } from '@/lib/requests/parse-request-form';
 import { requestDetailHref } from '@/lib/routes';
 import { toUserError } from '@/lib/errors/to-user-error';
 
+const DECISION_ERRORS = {
+  forbidden: 'No tenés permisos para decidir esta solicitud.',
+  notFound: 'La solicitud no existe.',
+} as const;
+
 function revalidateRequest(requestId: string) {
   revalidatePath(requestDetailHref(requestId));
   revalidatePath(ROUTES.REQUESTS);
@@ -22,7 +27,7 @@ export async function approveRequest(requestId: string): Promise<ActionResult> {
     p_request_id: requestId,
     p_decision: 'approved',
   });
-  if (error) return { ok: false, error: toUserError(error, { label: 'approveRequest', fallback: 'No se pudo aprobar la solicitud.', forbidden: 'No tenés permisos para decidir esta solicitud.', notFound: 'La solicitud no existe.' }) };
+  if (error) return { ok: false, error: toUserError(error, { label: 'approveRequest', fallback: 'No se pudo aprobar la solicitud.', ...DECISION_ERRORS }) };
   revalidateRequest(requestId);
   return { ok: true };
 }
@@ -36,7 +41,7 @@ export async function requestChanges(requestId: string, comment: string): Promis
     p_decision: 'changes_requested',
     p_comment: trimmed,
   });
-  if (error) return { ok: false, error: toUserError(error, { label: 'requestChanges', fallback: 'No se pudo solicitar los cambios.', forbidden: 'No tenés permisos para decidir esta solicitud.', notFound: 'La solicitud no existe.' }) };
+  if (error) return { ok: false, error: toUserError(error, { label: 'requestChanges', fallback: 'No se pudo solicitar los cambios.', ...DECISION_ERRORS }) };
   revalidateRequest(requestId);
   return { ok: true };
 }
@@ -50,7 +55,7 @@ export async function rejectRequest(requestId: string, comment: string): Promise
     p_decision: 'rejected',
     p_comment: trimmed,
   });
-  if (error) return { ok: false, error: toUserError(error, { label: 'rejectRequest', fallback: 'No se pudo rechazar la solicitud.', forbidden: 'No tenés permisos para decidir esta solicitud.', notFound: 'La solicitud no existe.' }) };
+  if (error) return { ok: false, error: toUserError(error, { label: 'rejectRequest', fallback: 'No se pudo rechazar la solicitud.', ...DECISION_ERRORS }) };
   revalidateRequest(requestId);
   return { ok: true };
 }

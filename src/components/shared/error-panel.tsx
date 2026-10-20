@@ -1,5 +1,5 @@
-'use client';
 // Regla 3: 'use client' — los error boundaries de Next.js deben ser Client Components.
+'use client';
 
 import { AlertCircle } from 'lucide-react';
 
@@ -18,7 +18,8 @@ export function ErrorPanel({ title, error, reset, wrapperClassName }: ErrorPanel
       </div>
       <div>
         <p className="text-sm font-medium text-foreground">{title}</p>
-        <p className="mt-1 text-2xs text-muted">{error.message}</p>
+        <p className="mt-1 text-2xs text-muted">Ocurrió un error inesperado. Probá de nuevo y, si persiste, contactá a un administrador.</p>
+        {error.digest && <p className="mt-1 text-2xs text-muted">Código: {error.digest}</p>}
       </div>
       <button
         onClick={reset}

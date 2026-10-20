@@ -3,6 +3,8 @@
 // cuando no se indica errcode en PL/pgSQL), por lo que solo ese código pasa el
 // mensaje de la excepción — todos los mensajes P0001 están escritos en español
 // por convención del proyecto.
+// P0001, P0002 y PGRST116 no se loguean: son resultados esperados del negocio,
+// no errores internos.
 
 export interface UserErrorSource {
   code?: string | undefined;
@@ -19,10 +21,10 @@ export interface UserErrorOptions {
 export function toUserError(error: UserErrorSource, options: UserErrorOptions): string {
   const { code, message } = error;
 
-  // P0001 y P0002 son mensajes de negocio escritos por el proyecto: no se loguean
-  // (no contienen datos de usuario) y sus mensajes son mostrables.
   if (code === 'P0001') return message || options.fallback;
   if (code === 'P0002') return options.notFound ?? 'No se encontró el elemento solicitado.';
+  // PGRST116 = fila no encontrada en .single(); mismo tratamiento que P0002.
+  if (code === 'PGRST116') return options.notFound ?? 'No se encontró el elemento solicitado.';
 
   // Para cualquier otro código: registrar para diagnóstico, nunca exponer el mensaje.
   console.error(options.label, { code, message });

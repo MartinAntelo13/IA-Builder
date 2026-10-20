@@ -98,7 +98,7 @@ export async function submitRequest(
   if (submitError) {
     return {
       ok: false,
-      error: `La solicitud quedó guardada como borrador, pero el envío falló: ${toUserError(submitError, { label: 'insertRequest.submit', fallback: 'ocurrió un error inesperado.' })}`,
+      error: `La solicitud quedó guardada como borrador, pero el envío falló. ${toUserError(submitError, { label: 'insertRequest.submit', fallback: 'Ocurrió un error inesperado.' })}`,
       requestId: result.requestId,
     };
   }

@@ -28,6 +28,7 @@ export async function forgotPassword(input: ForgotPasswordInput): Promise<Action
   const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, { redirectTo });
 
   if (error) {
+    console.error('forgotPassword: error', { code: error.code, message: error.message });
     return { ok: false, error: mapResetEmailError(error.code, error.status) };
   }
 

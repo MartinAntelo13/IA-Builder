@@ -8,6 +8,7 @@ import { resolveOrigin } from '@/lib/auth/resolve-origin';
 import { UUID_RE } from '@/lib/validators/uuid';
 import { mapResendEmailError } from '@/lib/team/map-resend-error';
 import type { ActionResult } from '@/types/action-result';
+import { toUserError } from '@/lib/errors/to-user-error';
 
 // Reenvía la invitación a un perfil en status 'invited'. El RPC
 // get_invited_member_email autoriza (team.manage + misma org + status) y
@@ -22,12 +23,7 @@ export async function resendInvitation(userId: string): Promise<ActionResult> {
     p_user_id: userId,
   });
   if (rpcError) {
-    if (rpcError.code === '42501') {
-      return { ok: false, error: 'No tenés permisos para reenviar invitaciones.' };
-    }
-    if (rpcError.code === 'P0002') return { ok: false, error: 'El miembro no existe.' };
-    if (rpcError.code === 'P0001') return { ok: false, error: rpcError.message };
-    return { ok: false, error: 'No se pudo reenviar la invitación.' };
+    return { ok: false, error: toUserError(rpcError, { label: 'resendInvitation', fallback: 'No se pudo reenviar la invitación.', forbidden: 'No tenés permisos para reenviar invitaciones.', notFound: 'El miembro no existe.' }) };
   }
   if (!email) return { ok: false, error: 'No se pudo reenviar la invitación.' };
 
@@ -37,6 +33,7 @@ export async function resendInvitation(userId: string): Promise<ActionResult> {
     redirectTo: `${origin}${ROUTES.AUTH_CONFIRM}`,
   });
   if (inviteError) {
+    console.error('resendInvitation.email: error', { code: (inviteError as { code?: string }).code, message: inviteError.message });
     return { ok: false, error: mapResendEmailError(inviteError) };
   }
 
