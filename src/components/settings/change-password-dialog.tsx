@@ -6,8 +6,8 @@ import { useEffect, useId, useRef, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  passwordSchema,
-  type PasswordFormValues,
+  changePasswordSchema,
+  type ChangePasswordFormValues,
 } from '@/lib/schemas/password.schema';
 import { changePassword } from '@/app/(dashboard)/settings/security-actions';
 import { INPUT, BTN_PRIMARY, BTN_SECONDARY } from '@/lib/ui/form-classes';
@@ -27,14 +27,14 @@ export function ChangePasswordDialog({ onClose }: ChangePasswordDialogProps) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<PasswordFormValues>({ resolver: zodResolver(passwordSchema) });
+  } = useForm<ChangePasswordFormValues>({ resolver: zodResolver(changePasswordSchema) });
 
   // Diálogo montado abierto: showModal() al montar; onClose desmonta.
   useEffect(() => {
     dialogRef.current?.showModal();
   }, []);
 
-  function onSubmit(values: PasswordFormValues) {
+  function onSubmit(values: ChangePasswordFormValues) {
     setServerError(null);
     setSuccess(false);
     startTransition(async () => {
@@ -53,15 +53,33 @@ export function ChangePasswordDialog({ onClose }: ChangePasswordDialogProps) {
       aria-labelledby={titleId}
       className="m-auto w-11/12 max-w-md rounded-xl border border-border bg-card shadow-xl p-6 backdrop:bg-black/50"
       onClose={onClose}
+      onCancel={(e) => {
+        if (isPending) e.preventDefault();
+      }}
     >
       <h2 id={titleId} className="m-0 mb-1 text-foreground text-sm font-semibold tracking-tight">
         Cambiar contraseña
       </h2>
       <p className="m-0 mb-4 text-muted text-2xs">
-        Elegí una nueva contraseña para tu cuenta.
+        Ingresá tu contraseña actual y elegí una nueva.
       </p>
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
+        <div>
+          <label htmlFor="pw-current" className="block text-2xs font-semibold text-muted mb-1">
+            Contraseña actual
+          </label>
+          <input
+            id="pw-current"
+            type="password"
+            autoComplete="current-password"
+            {...register('currentPassword')}
+            className={INPUT}
+          />
+          {errors.currentPassword && (
+            <p role="alert" className="mt-1 text-2xs text-danger">{errors.currentPassword.message}</p>
+          )}
+        </div>
         <div>
           <label htmlFor="pw-new" className="block text-2xs font-semibold text-muted mb-1">
             Nueva contraseña
