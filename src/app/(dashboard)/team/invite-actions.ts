@@ -115,7 +115,7 @@ export async function inviteMember(input: InviteFormValues): Promise<ActionResul
     } catch (e) {
       console.error('[inviteMember] excepción inesperada durante la compensación', e);
     }
-    console.error('inviteMember.email: error', { code: (inviteError as { code?: string }).code, message: inviteError.message });
+    console.error('inviteMember.email: error', { code: inviteError.code, message: inviteError.message });
     return { ok: false, error: mapInviteEmailError(inviteError.message) };
   }
 
@@ -124,7 +124,7 @@ export async function inviteMember(input: InviteFormValues): Promise<ActionResul
 }
 
 export async function revokeInvitedMember(userId: string): Promise<ActionResult> {
-  if (!UUID_RE.test(userId)) return { ok: false, error: 'ID de miembro inválido' };
+  if (!UUID_RE.test(userId)) return { ok: false, error: 'ID de miembro inválido.' };
 
   const supabase = await createSupabaseServerClient();
   const { error: rpcError } = await supabase.rpc('revoke_invited_member', { p_user_id: userId });

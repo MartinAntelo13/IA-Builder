@@ -22,7 +22,7 @@ async function insertRequest(
   formData: FormData,
 ): Promise<RequestActionResult> {
   const profile = await getCurrentProfile();
-  if (!profile?.organization) return { ok: false, error: 'No autorizado' };
+  if (!profile?.organization) return { ok: false, error: 'No autorizado.' };
 
   const parsed = parseRequestFormData(formData);
   if (!parsed.ok) return { ok: false, error: parsed.error };

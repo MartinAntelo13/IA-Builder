@@ -32,7 +32,7 @@ export async function updateMember(
   userId: string,
   input: MemberFormValues,
 ): Promise<ActionResult> {
-  if (!UUID_RE.test(userId)) return { ok: false, error: 'ID de miembro inválido' };
+  if (!UUID_RE.test(userId)) return { ok: false, error: 'ID de miembro inválido.' };
 
   const parsed = memberSchema.safeParse(input);
   if (!parsed.success) {
@@ -52,7 +52,7 @@ export async function setMemberStatus(
   userId: string,
   status: 'active' | 'disabled',
 ): Promise<ActionResult> {
-  if (!UUID_RE.test(userId)) return { ok: false, error: 'ID de miembro inválido' };
+  if (!UUID_RE.test(userId)) return { ok: false, error: 'ID de miembro inválido.' };
 
   const supabase = await createSupabaseServerClient();
 

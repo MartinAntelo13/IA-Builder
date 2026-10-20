@@ -13,10 +13,10 @@ export async function addAttachment(
   requestId: string,
   formData: FormData,
 ): Promise<ActionResult> {
-  if (!UUID_RE.test(requestId)) return { ok: false, error: 'ID de solicitud inválido' };
+  if (!UUID_RE.test(requestId)) return { ok: false, error: 'ID de solicitud inválido.' };
 
   const file = formData.get('file');
-  if (!(file instanceof File)) return { ok: false, error: 'Archivo inválido' };
+  if (!(file instanceof File)) return { ok: false, error: 'Archivo inválido.' };
 
   // La action nunca confía en el cliente: revalida tamaño y MIME con la misma
   // función que usa el formulario (coincide con el bucket).
@@ -24,7 +24,7 @@ export async function addAttachment(
   if (!validation.ok) return { ok: false, error: validation.error };
 
   const profile = await getCurrentProfile();
-  if (!profile?.organization) return { ok: false, error: 'No autorizado' };
+  if (!profile?.organization) return { ok: false, error: 'No autorizado.' };
 
   const supabase = await createSupabaseServerClient();
   const result = await uploadAttachmentFile(supabase, profile.organizationId, requestId, file);
@@ -38,8 +38,8 @@ export async function removeAttachment(
   requestId: string,
   attachmentId: string,
 ): Promise<ActionResult> {
-  if (!UUID_RE.test(requestId)) return { ok: false, error: 'ID de solicitud inválido' };
-  if (!UUID_RE.test(attachmentId)) return { ok: false, error: 'ID de adjunto inválido' };
+  if (!UUID_RE.test(requestId)) return { ok: false, error: 'ID de solicitud inválido.' };
+  if (!UUID_RE.test(attachmentId)) return { ok: false, error: 'ID de adjunto inválido.' };
 
   const supabase = await createSupabaseServerClient();
 
@@ -54,7 +54,7 @@ export async function removeAttachment(
 
   if (error) return { ok: false, error: toUserError(error, { label: 'removeAttachment', fallback: 'No se pudo quitar el adjunto.' }) };
   if (!data || data.length === 0) {
-    return { ok: false, error: 'No se puede quitar este adjunto' };
+    return { ok: false, error: 'No se puede quitar este adjunto.' };
   }
 
   // 2) Remover el objeto de Storage de forma tolerante: la fila ya no existe

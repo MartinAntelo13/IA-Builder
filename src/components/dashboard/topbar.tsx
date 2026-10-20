@@ -40,7 +40,7 @@ function getBreadcrumbTitle(pathname: string): string {
 /**
  * Topbar compartido del dashboard (Client Component: usa usePathname).
  * Contiene SOLO: breadcrumb, búsqueda, notificaciones y avatar con iniciales.
- * El saludo y "Personalizar vista" viven en el encabezado de app/(dashboard)/page.tsx.
+ * El saludo y las acciones del encabezado viven en cada página (app/(dashboard)/page.tsx y requests/page.tsx).
  * El perfil (fullName, email) y el contador de notificaciones viajan como props
  * desde el layout (ver (dashboard)/layout.tsx): el servidor los precarga vía
  * getCurrentProfile y get_dashboard_kpis, y se refrescan con cada revalidatePath.
@@ -55,7 +55,7 @@ export function Topbar({ awaitingMyReview, user }: TopbarProps) {
 
   const initials = getInitials(user.fullName, user.email);
   const breadcrumbTitle = getBreadcrumbTitle(pathname);
-  const accountName = user.fullName ?? user.email;
+  const accountName = user.fullName || user.email;
   const avatarLabel = accountName
     ? `Configuración de la cuenta de ${accountName}`
     : 'Configuración de la cuenta';

@@ -1,7 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database.types';
-import { requestDetailSchema } from '@/lib/schemas/request-detail.schema';
-import type { RequestDetailData } from '@/lib/schemas/request-detail.schema';
+import { requestDetailSchema, type RequestDetailData } from '@/lib/schemas/request-detail.schema';
 
 export async function getRequestDetail(
   supabase: SupabaseClient<Database>,

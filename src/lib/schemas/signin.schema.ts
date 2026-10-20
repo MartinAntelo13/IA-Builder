@@ -5,4 +5,3 @@ export const signinSchema = z.object({
   password: z.string().min(1, 'La contraseña es requerida'),
 });
 
-export type SigninValues = z.infer<typeof signinSchema>;

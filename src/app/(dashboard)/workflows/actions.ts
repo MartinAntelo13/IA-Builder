@@ -17,7 +17,7 @@ export async function setWorkflowActive(
   workflowId: string,
   isActive: boolean,
 ): Promise<ActionResult> {
-  if (!UUID_RE.test(workflowId)) return { ok: false, error: 'ID de workflow inválido' };
+  if (!UUID_RE.test(workflowId)) return { ok: false, error: 'ID de workflow inválido.' };
   const supabase = await createSupabaseServerClient();
   const payload: Pick<Database['public']['Tables']['workflows']['Update'], 'is_active'> = {
     is_active: isActive,
@@ -31,7 +31,7 @@ export async function setWorkflowActive(
 export async function duplicateWorkflow(
   workflowId: string,
 ): Promise<{ ok: true; workflowId: string } | { ok: false; error: string }> {
-  if (!UUID_RE.test(workflowId)) return { ok: false, error: 'ID de workflow inválido' };
+  if (!UUID_RE.test(workflowId)) return { ok: false, error: 'ID de workflow inválido.' };
   const supabase = await createSupabaseServerClient();
 
   // EXCEPTION (Regla 10): no existe RPC de lectura de workflows.
@@ -48,7 +48,7 @@ export async function duplicateWorkflow(
     p_name: `${src.name} (copia)`,
   });
   if (error) return { ok: false, error: toUserError(error, { label: 'duplicateWorkflow', fallback: 'No se pudo duplicar el workflow.', notFound: 'El workflow no existe o fue eliminado.', forbidden: 'No tenés permisos para editar workflows.' }) };
-  if (!data) return { ok: false, error: 'No se recibió respuesta del servidor' };
+  if (!data) return { ok: false, error: 'No se recibió respuesta del servidor.' };
   revalidatePath(ROUTES.WORKFLOWS);
   return { ok: true, workflowId: data.id };
 }
@@ -61,7 +61,7 @@ export async function saveWorkflow(
   workflowId: string,
   input: WorkflowFormValues,
 ): Promise<SaveWorkflowResult> {
-  if (!UUID_RE.test(workflowId)) return { ok: false, error: 'ID de workflow inválido' };
+  if (!UUID_RE.test(workflowId)) return { ok: false, error: 'ID de workflow inválido.' };
 
   const supabase = await createSupabaseServerClient();
 
@@ -72,7 +72,7 @@ export async function saveWorkflow(
     .select('is_active')
     .eq('id', workflowId)
     .single();
-  if (wfError || !wfRow) return { ok: false, error: 'Workflow no encontrado' };
+  if (wfError || !wfRow) return { ok: false, error: 'Workflow no encontrado.' };
 
   const parsed = buildWorkflowSchema(wfRow.is_active).safeParse(input);
   if (!parsed.success) {
@@ -99,7 +99,7 @@ export async function saveWorkflow(
 
   const { data, error } = await supabase.rpc('save_workflow', args);
   if (error) return { ok: false, error: toUserError(error, { label: 'saveWorkflow', fallback: 'No se pudo guardar el workflow.', forbidden: 'No tenés permisos para editar workflows.', notFound: 'El workflow no existe o fue eliminado.' }) };
-  if (!data) return { ok: false, error: 'No se recibió respuesta del servidor' };
+  if (!data) return { ok: false, error: 'No se recibió respuesta del servidor.' };
 
   revalidatePath(ROUTES.WORKFLOWS);
 
