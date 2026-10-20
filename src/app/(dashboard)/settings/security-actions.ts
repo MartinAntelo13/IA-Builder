@@ -4,18 +4,18 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import {
-  passwordSchema,
-  type PasswordFormValues,
+  changePasswordSchema,
+  type ChangePasswordFormValues,
 } from '@/lib/schemas/password.schema';
-import { mapPasswordError } from '@/lib/auth/map-password-error';
+import { mapChangePasswordError } from '@/lib/auth/map-password-error';
 import { ROUTES } from '@/constants';
 import type { ActionResult } from '@/types/action-result';
 
 export async function changePassword(
-  input: PasswordFormValues,
+  input: ChangePasswordFormValues,
 ): Promise<ActionResult> {
   // Re-validación en el servidor (nunca confiar en el cliente).
-  const parsed = passwordSchema.safeParse(input);
+  const parsed = changePasswordSchema.safeParse(input);
   if (!parsed.success) {
     return { ok: false, error: parsed.error.issues[0]?.message ?? 'Datos inválidos' };
   }
@@ -26,11 +26,22 @@ export async function changePassword(
     return { ok: false, error: 'Tu sesión expiró. Volvé a iniciar sesión.' };
   }
 
-  // supabase-js devuelve { error } (no lanza).
+  // supabase-js devuelve { error } (no lanza). current_password lo exige Supabase
+  // cuando la opción "Require current password when updating" está activa en el
+  // dashboard. NO VERIFICADO: qué hace Supabase con este campo cuando la opción
+  // está apagada (puede ignorarlo o validarlo); se comprueba en el QA.
   const { error } = await supabase.auth.updateUser({
     password: parsed.data.password,
+    current_password: parsed.data.currentPassword,
   });
-  if (error) return { ok: false, error: mapPasswordError(error.message) };
+  if (error) {
+    // No se registra el input (contiene contraseñas): solo code + message.
+    console.error('changePassword: error', { code: error.code, message: error.message });
+    return {
+      ok: false,
+      error: mapChangePasswordError({ code: error.code, message: error.message }),
+    };
+  }
 
   return { ok: true };
 }
