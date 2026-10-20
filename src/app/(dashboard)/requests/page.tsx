@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient, getCurrentProfile } from "@/lib/supabase/server";
-import { FileText, Plus, SlidersHorizontal } from "lucide-react";
+import { FileText, Plus } from "lucide-react";
 import { RequestsSection } from "@/components/requests/requests-section";
 import { Greeting } from "@/components/dashboard/greeting";
 import { Pagination } from "@/components/shared/pagination";
@@ -78,10 +78,6 @@ export default async function RequestsPage({ searchParams }: PageProps) {
             <Plus className="h-4 w-4" />
             Nueva solicitud
           </Link>
-          <button type="button" className="hero-button" aria-label="Personalizar vista">
-            <SlidersHorizontal className="h-4 w-4" />
-            Personalizar vista
-          </button>
         </div>
       </section>
 
