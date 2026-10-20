@@ -92,7 +92,7 @@ export default async function DashboardPage() {
                 href={ROUTES.REQUESTS}
                 className="hero-button focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
-                Ver todas
+                Ver mis solicitudes
               </Link>
             </div>
           </>

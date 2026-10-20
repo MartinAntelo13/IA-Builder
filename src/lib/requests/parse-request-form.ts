@@ -23,7 +23,7 @@ function parseAmount(raw: FormDataEntryValue | null): { ok: true; value: number 
 
 export function parseRequestFormData(formData: FormData): ParseOk | ParseFail {
   const amountResult = parseAmount(formData.get('amount'));
-  if (!amountResult.ok) return { ok: false, error: 'El importe no es un número válido' };
+  if (!amountResult.ok) return { ok: false, error: 'El importe no es un número válido.' };
 
   // readText ya hace trim: así .min(1) del schema rechaza valores de solo espacios.
   const input = {

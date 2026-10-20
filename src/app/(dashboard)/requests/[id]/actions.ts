@@ -34,7 +34,7 @@ export async function approveRequest(requestId: string): Promise<ActionResult> {
 
 export async function requestChanges(requestId: string, comment: string): Promise<ActionResult> {
   const trimmed = comment.trim();
-  if (!trimmed) return { ok: false, error: 'Se requiere un comentario para esta decisión' };
+  if (!trimmed) return { ok: false, error: 'Se requiere un comentario para esta decisión.' };
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.rpc('decide_request', {
     p_request_id: requestId,
@@ -48,7 +48,7 @@ export async function requestChanges(requestId: string, comment: string): Promis
 
 export async function rejectRequest(requestId: string, comment: string): Promise<ActionResult> {
   const trimmed = comment.trim();
-  if (!trimmed) return { ok: false, error: 'Se requiere un comentario para esta decisión' };
+  if (!trimmed) return { ok: false, error: 'Se requiere un comentario para esta decisión.' };
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.rpc('decide_request', {
     p_request_id: requestId,
@@ -93,7 +93,7 @@ export async function updateRequest(
   formData: FormData,
 ): Promise<ActionResult> {
   if (!/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i.test(requestId))
-    return { ok: false, error: 'ID de solicitud inválido' };
+    return { ok: false, error: 'ID de solicitud inválido.' };
 
   const parsed = parseRequestFormData(formData);
   if (!parsed.ok) return { ok: false, error: parsed.error };
@@ -123,7 +123,7 @@ export async function updateRequest(
 
   if (error) return { ok: false, error: toUserError(error, { label: 'updateRequest', fallback: 'No se pudo guardar los cambios.', forbidden: 'No tenés permisos para editar esta solicitud.' }) };
   if (!data || data.length === 0) {
-    return { ok: false, error: 'La solicitud ya no se puede editar' };
+    return { ok: false, error: 'La solicitud ya no se puede editar.' };
   }
 
   revalidateRequest(requestId);
@@ -132,7 +132,7 @@ export async function updateRequest(
 
 export async function submitDraft(requestId: string): Promise<ActionResult> {
   if (!/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i.test(requestId))
-    return { ok: false, error: 'ID de solicitud inválido' };
+    return { ok: false, error: 'ID de solicitud inválido.' };
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.rpc('submit_request', { p_request_id: requestId });
   if (error) return { ok: false, error: toUserError(error, { label: 'submitDraft', fallback: 'No se pudo enviar la solicitud.', forbidden: 'No tenés permisos para enviar esta solicitud.' }) };
@@ -145,8 +145,8 @@ export async function submitDraft(requestId: string): Promise<ActionResult> {
 // los completa el trigger comments_before_insert. Igual que el borrador en Fase 3.
 export async function addComment(requestId: string, body: string): Promise<ActionResult> {
   const trimmed = body.trim();
-  if (!trimmed) return { ok: false, error: 'El comentario no puede estar vacío' };
-  if (trimmed.length > 5000) return { ok: false, error: 'El comentario no puede superar los 5000 caracteres' };
+  if (!trimmed) return { ok: false, error: 'El comentario no puede estar vacío.' };
+  if (trimmed.length > 5000) return { ok: false, error: 'El comentario no puede superar los 5000 caracteres.' };
   const supabase = await createSupabaseServerClient();
   const payload: Pick<Database['public']['Tables']['comments']['Insert'], 'request_id' | 'body'> = {
     request_id: requestId,

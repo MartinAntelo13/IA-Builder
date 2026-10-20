@@ -16,7 +16,7 @@ import { toUserError } from '@/lib/errors/to-user-error';
 // usando el MISMO redirectTo que inviteMember. Sin compensación: no se crea
 // nada nuevo en Auth ni en profiles, no hay estado a medias que revertir.
 export async function resendInvitation(userId: string): Promise<ActionResult> {
-  if (!UUID_RE.test(userId)) return { ok: false, error: 'ID de miembro inválido' };
+  if (!UUID_RE.test(userId)) return { ok: false, error: 'ID de miembro inválido.' };
 
   const supabase = await createSupabaseServerClient();
   const { data: email, error: rpcError } = await supabase.rpc('get_invited_member_email', {
@@ -33,7 +33,7 @@ export async function resendInvitation(userId: string): Promise<ActionResult> {
     redirectTo: `${origin}${ROUTES.AUTH_CONFIRM}`,
   });
   if (inviteError) {
-    console.error('resendInvitation.email: error', { code: (inviteError as { code?: string }).code, message: inviteError.message });
+    console.error('resendInvitation.email: error', { code: inviteError.code, message: inviteError.message });
     return { ok: false, error: mapResendEmailError(inviteError) };
   }
 
