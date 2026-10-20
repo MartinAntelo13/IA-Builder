@@ -7,18 +7,9 @@ import { memberSchema, type MemberFormValues } from '@/lib/schemas/member.schema
 import type { Database } from '@/types/database.types';
 import type { ActionResult } from '@/types/action-result';
 import { UUID_RE } from '@/lib/validators/uuid';
+import { toUserError } from '@/lib/errors/to-user-error';
 
 type UpdateMemberArgs = Database['public']['Functions']['update_member']['Args'];
-
-// Mapeo de errores del RPC update_member:
-//   42501: permisos insuficientes
-//   P0002: miembro no encontrado
-//   P0001: validación de negocio (mensaje en español, mostrable tal cual)
-function mapUpdateMemberError(code: string | undefined, message: string): string {
-  if (code === '42501') return 'No tenés permisos para editar miembros.';
-  if (code === 'P0002') return 'El miembro no existe.';
-  return message || 'Error al actualizar el miembro.';
-}
 
 // Los tipos generados exigen OMITIR las claves opcionales en lugar de pasar
 // undefined/null, porque Args define `string | undefined` (no null). Cuando se
@@ -51,7 +42,7 @@ export async function updateMember(
   const supabase = await createSupabaseServerClient();
   const args = buildUpdateArgs(userId, parsed.data);
   const { error } = await supabase.rpc('update_member', args);
-  if (error) return { ok: false, error: mapUpdateMemberError(error.code, error.message) };
+  if (error) return { ok: false, error: toUserError(error, { label: 'updateMember', fallback: 'No se pudo actualizar el miembro.', forbidden: 'No tenés permisos para editar miembros.', notFound: 'El miembro no existe.' }) };
 
   revalidatePath(ROUTES.TEAM);
   return { ok: true };
@@ -78,11 +69,14 @@ export async function setMemberStatus(
     supabase.from('user_roles').select('role_id').eq('user_id', userId),
   ]);
 
-  if (profileResult.error || !profileResult.data) {
-    return { ok: false, error: profileResult.error?.message ?? 'Miembro no encontrado' };
+  if (profileResult.error) {
+    return { ok: false, error: toUserError(profileResult.error, { label: 'toggleMemberStatus.read', fallback: 'No se pudo cargar el miembro.', notFound: 'El miembro no existe.' }) };
+  }
+  if (!profileResult.data) {
+    return { ok: false, error: 'El miembro no existe.' };
   }
   if (userRolesResult.error) {
-    return { ok: false, error: userRolesResult.error.message };
+    return { ok: false, error: toUserError(userRolesResult.error, { label: 'toggleMemberStatus.read', fallback: 'No se pudo cargar el miembro.' }) };
   }
 
   if (profileResult.data.status === 'invited') {
@@ -97,7 +91,7 @@ export async function setMemberStatus(
     roleIds.length > 0
       ? await supabase.from('roles').select('code').in('id', roleIds)
       : { data: [] as { code: string }[], error: null };
-  if (rolesResult.error) return { ok: false, error: rolesResult.error.message };
+  if (rolesResult.error) return { ok: false, error: toUserError(rolesResult.error, { label: 'toggleMemberStatus.read', fallback: 'No se pudo cargar el miembro.' }) };
 
   const roleCodes = (rolesResult.data ?? []).map((r) => r.code);
 
@@ -116,7 +110,7 @@ export async function setMemberStatus(
 
   const args = buildUpdateArgs(userId, parsed.data);
   const { error } = await supabase.rpc('update_member', args);
-  if (error) return { ok: false, error: mapUpdateMemberError(error.code, error.message) };
+  if (error) return { ok: false, error: toUserError(error, { label: 'updateMember', fallback: 'No se pudo actualizar el miembro.', forbidden: 'No tenés permisos para editar miembros.', notFound: 'El miembro no existe.' }) };
 
   revalidatePath(ROUTES.TEAM);
   return { ok: true };

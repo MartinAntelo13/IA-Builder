@@ -1,5 +1,6 @@
 import type { createSupabaseServerClient } from '@/lib/supabase/server';
 import type { Database } from '@/types/database.types';
+import { toUserError } from '@/lib/errors/to-user-error';
 
 // Mismo tipo inferido que el resto del proyecto: createServerClient sin generic
 // devuelve un cliente con tipado laxo que permite Pick<..., ...> en los inserts.
@@ -31,7 +32,7 @@ export async function uploadAttachmentFile(
   const { error: uploadError } = await supabase.storage
     .from('request-attachments')
     .upload(storagePath, file);
-  if (uploadError) return { ok: false, error: uploadError.message };
+  if (uploadError) return { ok: false, error: toUserError({ message: uploadError.message }, { label: 'uploadAttachment.storage', fallback: 'No se pudo subir el archivo.' }) };
 
   // Trigger attachments_before_insert (security definer) completa organization_id
   // y uploaded_by — pasamos solo las columnas permitidas por el grant insert.
@@ -46,7 +47,7 @@ export async function uploadAttachmentFile(
   const { error: insertError } = await supabase.from('attachments').insert(payload);
   if (insertError) {
     await supabase.storage.from('request-attachments').remove([storagePath]);
-    return { ok: false, error: insertError.message };
+    return { ok: false, error: toUserError(insertError, { label: 'uploadAttachment.insert', fallback: 'No se pudo registrar el adjunto.' }) };
   }
 
   return { ok: true };

@@ -26,6 +26,7 @@ export async function setInitialPassword(
 
   const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
   if (error) {
+    console.error('setInitialPassword: error', { code: error.code, message: error.message });
     return { ok: false, error: mapPasswordError(error.message) };
   }
 

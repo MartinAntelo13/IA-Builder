@@ -6,6 +6,7 @@ import { ROUTES } from '@/constants';
 import { uploadAttachmentFile } from '@/lib/storage/request-attachments';
 import type { Database } from '@/types/database.types';
 import { parseRequestFormData } from '@/lib/requests/parse-request-form';
+import { toUserError } from '@/lib/errors/to-user-error';
 
 // Only columns permitted by grant insert (...) on public.requests to authenticated
 type RequestInsertPayload = Pick<
@@ -47,7 +48,7 @@ async function insertRequest(
     .single();
 
   if (insertError || !request) {
-    return { ok: false, error: insertError?.message ?? 'Error al crear la solicitud' };
+    return { ok: false, error: insertError ? toUserError(insertError, { label: 'insertRequest', fallback: 'No se pudo crear la solicitud.', forbidden: 'No tenés permisos para crear solicitudes.' }) : 'No se pudo crear la solicitud.' };
   }
 
   revalidatePath(ROUTES.REQUESTS);
@@ -97,7 +98,7 @@ export async function submitRequest(
   if (submitError) {
     return {
       ok: false,
-      error: `La solicitud quedó guardada como borrador, pero el envío falló: ${submitError.message}`,
+      error: `La solicitud quedó guardada como borrador, pero el envío falló. ${toUserError(submitError, { label: 'insertRequest.submit', fallback: 'Ocurrió un error inesperado.' })}`,
       requestId: result.requestId,
     };
   }

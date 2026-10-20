@@ -8,6 +8,7 @@ import { transformWorkflow, type WorkflowItem } from '@/lib/transformers/workflo
 import type { Database, Json } from '@/types/database.types';
 import type { ActionResult } from '@/types/action-result';
 import { UUID_RE } from '@/lib/validators/uuid';
+import { toUserError } from '@/lib/errors/to-user-error';
 
 // EXCEPTION (Regla 10): no existe RPC de activación de workflow.
 // grant update (tabla completa) en workflows; la policy exige workflow.manage.
@@ -22,7 +23,7 @@ export async function setWorkflowActive(
     is_active: isActive,
   };
   const { error } = await supabase.from('workflows').update(payload).eq('id', workflowId);
-  if (error) return { ok: false, error: error.message };
+  if (error) return { ok: false, error: toUserError(error, { label: 'toggleWorkflow', fallback: 'No se pudo actualizar el workflow.', forbidden: 'No tenés permisos para editar workflows.' }) };
   revalidatePath(ROUTES.WORKFLOWS);
   return { ok: true };
 }
@@ -40,13 +41,13 @@ export async function duplicateWorkflow(
     .select('name')
     .eq('id', workflowId)
     .single();
-  if (srcError || !src) return { ok: false, error: srcError?.message ?? 'Workflow no encontrado' };
+  if (srcError || !src) return { ok: false, error: srcError ? toUserError(srcError, { label: 'duplicateWorkflow.read', fallback: 'No se pudo cargar el workflow.', notFound: 'El workflow no existe o fue eliminado.' }) : 'El workflow no existe o fue eliminado.' };
 
   const { data, error } = await supabase.rpc('duplicate_workflow', {
     p_workflow_id: workflowId,
     p_name: `${src.name} (copia)`,
   });
-  if (error) return { ok: false, error: error.message };
+  if (error) return { ok: false, error: toUserError(error, { label: 'duplicateWorkflow', fallback: 'No se pudo duplicar el workflow.', notFound: 'El workflow no existe o fue eliminado.', forbidden: 'No tenés permisos para editar workflows.' }) };
   if (!data) return { ok: false, error: 'No se recibió respuesta del servidor' };
   revalidatePath(ROUTES.WORKFLOWS);
   return { ok: true, workflowId: data.id };
@@ -55,16 +56,6 @@ export async function duplicateWorkflow(
 export type SaveWorkflowResult =
   | { ok: true; workflow: WorkflowItem }
   | { ok: false; error: string };
-
-// Mapeo de errores del RPC save_workflow:
-//   42501 → permisos insuficientes
-//   P0002 → workflow no encontrado
-//   P0001 → validaciones de negocio (mensaje en español, mostrable tal cual)
-function mapSaveWorkflowError(code: string | undefined, message: string): string {
-  if (code === '42501') return 'No tenés permisos para editar workflows.';
-  if (code === 'P0002') return 'El workflow no existe o fue eliminado.';
-  return message || 'Error al guardar el workflow.';
-}
 
 export async function saveWorkflow(
   workflowId: string,
@@ -107,7 +98,7 @@ export async function saveWorkflow(
   };
 
   const { data, error } = await supabase.rpc('save_workflow', args);
-  if (error) return { ok: false, error: mapSaveWorkflowError(error.code, error.message) };
+  if (error) return { ok: false, error: toUserError(error, { label: 'saveWorkflow', fallback: 'No se pudo guardar el workflow.', forbidden: 'No tenés permisos para editar workflows.', notFound: 'El workflow no existe o fue eliminado.' }) };
   if (!data) return { ok: false, error: 'No se recibió respuesta del servidor' };
 
   revalidatePath(ROUTES.WORKFLOWS);

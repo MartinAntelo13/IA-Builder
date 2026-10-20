@@ -7,6 +7,12 @@ import type { Database } from '@/types/database.types';
 import type { ActionResult } from '@/types/action-result';
 import { parseRequestFormData } from '@/lib/requests/parse-request-form';
 import { requestDetailHref } from '@/lib/routes';
+import { toUserError } from '@/lib/errors/to-user-error';
+
+const DECISION_ERRORS = {
+  forbidden: 'No tenés permisos para decidir esta solicitud.',
+  notFound: 'La solicitud no existe.',
+} as const;
 
 function revalidateRequest(requestId: string) {
   revalidatePath(requestDetailHref(requestId));
@@ -21,7 +27,7 @@ export async function approveRequest(requestId: string): Promise<ActionResult> {
     p_request_id: requestId,
     p_decision: 'approved',
   });
-  if (error) return { ok: false, error: error.message };
+  if (error) return { ok: false, error: toUserError(error, { label: 'approveRequest', fallback: 'No se pudo aprobar la solicitud.', ...DECISION_ERRORS }) };
   revalidateRequest(requestId);
   return { ok: true };
 }
@@ -35,7 +41,7 @@ export async function requestChanges(requestId: string, comment: string): Promis
     p_decision: 'changes_requested',
     p_comment: trimmed,
   });
-  if (error) return { ok: false, error: error.message };
+  if (error) return { ok: false, error: toUserError(error, { label: 'requestChanges', fallback: 'No se pudo solicitar los cambios.', ...DECISION_ERRORS }) };
   revalidateRequest(requestId);
   return { ok: true };
 }
@@ -49,7 +55,7 @@ export async function rejectRequest(requestId: string, comment: string): Promise
     p_decision: 'rejected',
     p_comment: trimmed,
   });
-  if (error) return { ok: false, error: error.message };
+  if (error) return { ok: false, error: toUserError(error, { label: 'rejectRequest', fallback: 'No se pudo rechazar la solicitud.', ...DECISION_ERRORS }) };
   revalidateRequest(requestId);
   return { ok: true };
 }
@@ -60,7 +66,7 @@ export async function resubmitRequest(requestId: string, comment?: string): Prom
     p_request_id: requestId,
     ...(comment?.trim() ? { p_comment: comment.trim() } : {}),
   });
-  if (error) return { ok: false, error: error.message };
+  if (error) return { ok: false, error: toUserError(error, { label: 'resubmitRequest', fallback: 'No se pudo reenviar la solicitud.', forbidden: 'No tenés permisos para reenviar esta solicitud.' }) };
   revalidateRequest(requestId);
   return { ok: true };
 }
@@ -71,7 +77,7 @@ export async function cancelRequest(requestId: string, reason?: string): Promise
     p_request_id: requestId,
     ...(reason?.trim() ? { p_reason: reason.trim() } : {}),
   });
-  if (error) return { ok: false, error: error.message };
+  if (error) return { ok: false, error: toUserError(error, { label: 'cancelRequest', fallback: 'No se pudo cancelar la solicitud.', forbidden: 'No tenés permisos para cancelar esta solicitud.' }) };
   revalidateRequest(requestId);
   return { ok: true };
 }
@@ -115,7 +121,7 @@ export async function updateRequest(
     .eq('id', requestId)
     .select('id');
 
-  if (error) return { ok: false, error: error.message };
+  if (error) return { ok: false, error: toUserError(error, { label: 'updateRequest', fallback: 'No se pudo guardar los cambios.', forbidden: 'No tenés permisos para editar esta solicitud.' }) };
   if (!data || data.length === 0) {
     return { ok: false, error: 'La solicitud ya no se puede editar' };
   }
@@ -129,7 +135,7 @@ export async function submitDraft(requestId: string): Promise<ActionResult> {
     return { ok: false, error: 'ID de solicitud inválido' };
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.rpc('submit_request', { p_request_id: requestId });
-  if (error) return { ok: false, error: error.message };
+  if (error) return { ok: false, error: toUserError(error, { label: 'submitDraft', fallback: 'No se pudo enviar la solicitud.', forbidden: 'No tenés permisos para enviar esta solicitud.' }) };
   revalidateRequest(requestId);
   return { ok: true };
 }
@@ -147,7 +153,7 @@ export async function addComment(requestId: string, body: string): Promise<Actio
     body: trimmed,
   };
   const { error } = await supabase.from('comments').insert(payload);
-  if (error) return { ok: false, error: error.message };
+  if (error) return { ok: false, error: toUserError(error, { label: 'addComment', fallback: 'No se pudo agregar el comentario.', forbidden: 'No tenés permisos para comentar en esta solicitud.' }) };
   revalidateRequest(requestId);
   return { ok: true };
 }

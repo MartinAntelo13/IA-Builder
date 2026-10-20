@@ -7,6 +7,7 @@ import { requestDetailHref } from '@/lib/routes';
 import { validateAttachmentFile } from '@/lib/validations/attachment-file';
 import type { ActionResult } from '@/types/action-result';
 import { UUID_RE } from '@/lib/validators/uuid';
+import { toUserError } from '@/lib/errors/to-user-error';
 
 export async function addAttachment(
   requestId: string,
@@ -51,7 +52,7 @@ export async function removeAttachment(
     .eq('id', attachmentId)
     .select('storage_path');
 
-  if (error) return { ok: false, error: error.message };
+  if (error) return { ok: false, error: toUserError(error, { label: 'removeAttachment', fallback: 'No se pudo quitar el adjunto.' }) };
   if (!data || data.length === 0) {
     return { ok: false, error: 'No se puede quitar este adjunto' };
   }

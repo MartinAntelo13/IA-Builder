@@ -2,6 +2,7 @@
 
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { signinSchema } from '@/lib/schemas/signin.schema';
+import { mapSignInError } from '@/lib/auth/map-sign-in-error';
 
 export interface SignInResult {
   error?: string;
@@ -25,7 +26,7 @@ export async function signIn(formData: FormData): Promise<SignInResult> {
   });
 
   if (error) {
-    return { error: error.message };
+    return { error: mapSignInError(error) };
   }
 
   // En éxito no llamamos a redirect() desde el servidor: el cliente navega con
