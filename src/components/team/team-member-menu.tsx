@@ -1,8 +1,9 @@
 'use client';
 // Regla 3: 'use client' — maneja estado del menú (useState) y click-outside
-// (useEffect + useRef). Los diálogos hijos invocan Server Actions.
+// (useRef + useDismissable). Los diálogos hijos invocan Server Actions.
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import { useDismissable } from '@/hooks/use-dismissable';
 import { MoreHorizontal } from 'lucide-react';
 import { MemberEditDialog } from '@/components/team/member-edit-dialog';
 import { MemberStatusDialog } from '@/components/team/member-status-dialog';
@@ -36,23 +37,7 @@ export function TeamMemberMenu({
   const [dialog, setDialog] = useState<DialogKind>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!menuOpen) return;
-    function onClickOutside(e: MouseEvent) {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
-        setMenuOpen(false);
-      }
-    }
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') setMenuOpen(false);
-    }
-    document.addEventListener('mousedown', onClickOutside);
-    document.addEventListener('keydown', onKeyDown);
-    return () => {
-      document.removeEventListener('mousedown', onClickOutside);
-      document.removeEventListener('keydown', onKeyDown);
-    };
-  }, [menuOpen]);
+  useDismissable({ open: menuOpen, onDismiss: () => setMenuOpen(false), containerRef: wrapperRef });
 
   const canToggleStatus = member.status !== 'invited';
   const toggleAction: 'disable' | 'enable' = member.status === 'disabled' ? 'enable' : 'disable';

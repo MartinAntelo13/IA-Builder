@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect, useId, useRef, useState } from 'react';
+import { useDismissable } from '@/hooks/use-dismissable';
 import { Bell } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { transformInboxRow, type InboxRow } from '@/lib/transformers/inbox';
@@ -19,36 +20,8 @@ export function NotificationsDropdown({ awaitingMyReview }: NotificationsDropdow
   const buttonRef = useRef<HTMLButtonElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Cierre con Escape (foco al botón), click fuera y foco fuera.
-  // No se usa onBlur del contenedor: en Safari el click en el botón no lo enfoca
-  // y el panel se reabriría solo.
-  useEffect(() => {
-    if (!open) return;
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') {
-        setOpen(false);
-        buttonRef.current?.focus();
-      }
-    }
-    function onMouseDown(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    function onFocusIn(e: FocusEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener('keydown', onKeyDown);
-    document.addEventListener('mousedown', onMouseDown);
-    document.addEventListener('focusin', onFocusIn);
-    return () => {
-      document.removeEventListener('keydown', onKeyDown);
-      document.removeEventListener('mousedown', onMouseDown);
-      document.removeEventListener('focusin', onFocusIn);
-    };
-  }, [open]);
+  // onBlur no sirve en Safari (el click en el botón no lo enfoca y el panel se reabriría).
+  useDismissable({ open, onDismiss: () => setOpen(false), containerRef, closeOnFocusOutside: true, restoreFocusRef: buttonRef });
 
   const bellLabel =
     awaitingMyReview > 0

@@ -1,7 +1,8 @@
 // Regla 3: 'use client' — useState para el menú desplegable y el diálogo, useTransition para la Server Action de cancelación.
 'use client';
 
-import { useEffect, useRef, useState, useTransition } from 'react';
+import { useRef, useState, useTransition } from 'react';
+import { useDismissable } from '@/hooks/use-dismissable';
 import { MoreHorizontal } from 'lucide-react';
 import { cancelRequest } from '@/app/(dashboard)/requests/[id]/actions';
 import { RequestActionDialog } from '@/components/requests/request-action-dialog';
@@ -17,23 +18,7 @@ export function RequestCancelMenu({ requestId }: RequestCancelMenuProps) {
   const [isPending, startTransition] = useTransition();
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!menuOpen) return;
-    function onClickOutside(e: MouseEvent) {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
-        setMenuOpen(false);
-      }
-    }
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') setMenuOpen(false);
-    }
-    document.addEventListener('mousedown', onClickOutside);
-    document.addEventListener('keydown', onKeyDown);
-    return () => {
-      document.removeEventListener('mousedown', onClickOutside);
-      document.removeEventListener('keydown', onKeyDown);
-    };
-  }, [menuOpen]);
+  useDismissable({ open: menuOpen, onDismiss: () => setMenuOpen(false), containerRef: wrapperRef });
 
   function handleCancel(reason: string) {
     setError(null);
