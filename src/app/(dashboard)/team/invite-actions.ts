@@ -10,6 +10,7 @@ import { UUID_RE } from '@/lib/validators/uuid';
 import type { Database } from '@/types/database.types';
 import type { ActionResult } from '@/types/action-result';
 import { toUserError } from '@/lib/errors/to-user-error';
+import { firstIssueMessage } from '@/lib/errors/first-issue-message';
 
 type InviteMemberArgs = Database['public']['Functions']['invite_member']['Args'];
 
@@ -43,7 +44,7 @@ function buildInviteArgs(input: InviteFormValues): InviteMemberArgs {
 export async function inviteMember(input: InviteFormValues): Promise<ActionResult> {
   const parsed = inviteSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Datos inválidos' };
+    return { ok: false, error: firstIssueMessage(parsed.error) };
   }
 
   const supabase = await createSupabaseServerClient();

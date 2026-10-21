@@ -8,6 +8,7 @@ import type { Database } from '@/types/database.types';
 import type { ActionResult } from '@/types/action-result';
 import { UUID_RE } from '@/lib/validators/uuid';
 import { toUserError } from '@/lib/errors/to-user-error';
+import { firstIssueMessage } from '@/lib/errors/first-issue-message';
 
 type UpdateMemberArgs = Database['public']['Functions']['update_member']['Args'];
 
@@ -36,7 +37,7 @@ export async function updateMember(
 
   const parsed = memberSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Datos inválidos' };
+    return { ok: false, error: firstIssueMessage(parsed.error) };
   }
 
   const supabase = await createSupabaseServerClient();
@@ -105,7 +106,7 @@ export async function setMemberStatus(
 
   const parsed = memberSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Datos inválidos' };
+    return { ok: false, error: firstIssueMessage(parsed.error) };
   }
 
   const args = buildUpdateArgs(userId, parsed.data);

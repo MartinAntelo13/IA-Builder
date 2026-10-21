@@ -3,6 +3,7 @@
 // con editRequestSchema (los mismos campos que el formulario, sin attachments).
 import { editRequestSchema } from '@/lib/validations/request.schema';
 import type { EditRequestFormValues } from '@/lib/validations/request.schema';
+import { firstIssueMessage } from '@/lib/errors/first-issue-message';
 
 type ParseOk = { ok: true; data: EditRequestFormValues };
 type ParseFail = { ok: false; error: string };
@@ -37,7 +38,7 @@ export function parseRequestFormData(formData: FormData): ParseOk | ParseFail {
 
   const parsed = editRequestSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Datos inválidos' };
+    return { ok: false, error: firstIssueMessage(parsed.error) };
   }
   return { ok: true, data: parsed.data };
 }

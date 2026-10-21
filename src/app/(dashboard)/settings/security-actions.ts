@@ -10,6 +10,7 @@ import {
 import { mapChangePasswordError } from '@/lib/auth/map-password-error';
 import { ROUTES } from '@/constants';
 import type { ActionResult } from '@/types/action-result';
+import { firstIssueMessage } from '@/lib/errors/first-issue-message';
 
 export async function changePassword(
   input: ChangePasswordFormValues,
@@ -17,7 +18,7 @@ export async function changePassword(
   // Re-validación en el servidor (nunca confiar en el cliente).
   const parsed = changePasswordSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Datos inválidos' };
+    return { ok: false, error: firstIssueMessage(parsed.error) };
   }
 
   const supabase = await createSupabaseServerClient();

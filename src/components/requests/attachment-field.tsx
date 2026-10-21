@@ -2,7 +2,7 @@
 'use client';
 
 import { UploadCloud } from 'lucide-react';
-import { ATTACHMENT_ACCEPT } from '@/constants';
+import { ATTACHMENT_ACCEPT, ATTACHMENT_HINT } from '@/constants';
 
 interface AttachmentFieldProps {
   files: File[];
@@ -21,7 +21,7 @@ export function AttachmentField({ files, error, onChange }: AttachmentFieldProps
             ? `${files.length} archivo(s) seleccionado(s)`
             : 'Arrastra archivos aquí o haz clic para seleccionar'}
         </strong>
-        <small>PDF, XLSX o imágenes, máx. 10MB</small>
+        <small>{ATTACHMENT_HINT}</small>
         <input
           id="req-files"
           type="file"

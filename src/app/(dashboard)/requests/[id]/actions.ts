@@ -8,6 +8,7 @@ import type { ActionResult } from '@/types/action-result';
 import { parseRequestFormData } from '@/lib/requests/parse-request-form';
 import { requestDetailHref } from '@/lib/routes';
 import { toUserError } from '@/lib/errors/to-user-error';
+import { UUID_RE } from '@/lib/validators/uuid';
 
 const DECISION_ERRORS = {
   forbidden: 'No tenés permisos para decidir esta solicitud.',
@@ -92,7 +93,7 @@ export async function updateRequest(
   requestId: string,
   formData: FormData,
 ): Promise<ActionResult> {
-  if (!/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i.test(requestId))
+  if (!UUID_RE.test(requestId))
     return { ok: false, error: 'ID de solicitud inválido.' };
 
   const parsed = parseRequestFormData(formData);
@@ -131,7 +132,7 @@ export async function updateRequest(
 }
 
 export async function submitDraft(requestId: string): Promise<ActionResult> {
-  if (!/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i.test(requestId))
+  if (!UUID_RE.test(requestId))
     return { ok: false, error: 'ID de solicitud inválido.' };
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.rpc('submit_request', { p_request_id: requestId });

@@ -4,7 +4,7 @@
 import { useRef, useState, useTransition } from 'react';
 import { Paperclip, Download, Trash2, UploadCloud } from 'lucide-react';
 import { formatBytes } from '@/lib/format-helpers';
-import { ATTACHMENT_ACCEPT } from '@/constants';
+import { ATTACHMENT_ACCEPT, ATTACHMENT_HINT } from '@/constants';
 import { validateAttachmentFile } from '@/lib/validations/attachment-file';
 import { addAttachment, removeAttachment } from '@/app/(dashboard)/requests/[id]/attachment-actions';
 import { requestAttachmentHref } from '@/lib/routes';
@@ -136,7 +136,7 @@ export function RequestAttachmentsManager({ requestId, attachments, canEdit }: R
         <label className="dropzone mt-4" htmlFor="add-attachment">
           <UploadCloud size={20} />
           <strong>{isPending ? 'Subiendo…' : 'Agregar archivos'}</strong>
-          <small>PDF, XLSX o imágenes, máx. 10 MB</small>
+          <small>{ATTACHMENT_HINT}</small>
           <input
             ref={inputRef}
             id="add-attachment"

@@ -39,9 +39,9 @@ const eslintConfig = defineConfig([
       "max-lines": ["warn", { max: 200 }],
     },
   },
-  // Única regla con información de tipos: requiere projectService: true y agrega ~13 s al lint.
-  // no-misused-promises quedó afuera: su patrón habitual (handleSubmit de react-hook-form en
-  // onSubmit) requeriría wrappers en todos los formularios del proyecto.
+  // Reglas con información de tipos: requieren projectService: true y agregan ~13 s al lint.
+  // no-misused-promises con { checksVoidReturn: { attributes: false } } suprime el patrón
+  // onSubmit={handleSubmit(...)} de react-hook-form sin necesidad de wrappers.
   {
     files: ["src/**/*.{ts,tsx}"],
     languageOptions: {
@@ -51,6 +51,7 @@ const eslintConfig = defineConfig([
     },
     rules: {
       "@typescript-eslint/no-floating-promises": "error",
+      "@typescript-eslint/no-misused-promises": ["error", { checksVoidReturn: { attributes: false } }],
     },
   },
   // Override: desactivar max-lines para el archivo generado por Supabase

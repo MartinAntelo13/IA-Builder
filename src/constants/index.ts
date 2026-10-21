@@ -94,6 +94,7 @@ export const REQUESTS_PAGE_SIZE = 20;
 
 // Coincide con mime_type check en public.attachments y el bucket request-attachments.
 export const ATTACHMENT_ACCEPT = '.pdf,.xlsx,.xls,image/png,image/jpeg,image/webp';
+export const ATTACHMENT_HINT = 'PDF, Excel (XLS o XLSX) o imágenes (PNG, JPG o WEBP), máx. 10 MB por archivo';
 
 export const PERMISSIONS = {
   WORKFLOW_MANAGE: 'workflow.manage',

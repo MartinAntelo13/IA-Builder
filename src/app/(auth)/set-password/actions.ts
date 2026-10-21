@@ -6,6 +6,7 @@ import { ROUTES } from '@/constants';
 import { passwordSchema, type PasswordFormValues } from '@/lib/schemas/password.schema';
 import { mapPasswordError } from '@/lib/auth/map-password-error';
 import type { ActionResult } from '@/types/action-result';
+import { firstIssueMessage } from '@/lib/errors/first-issue-message';
 
 export async function setInitialPassword(
   input: PasswordFormValues,
@@ -13,7 +14,7 @@ export async function setInitialPassword(
   // La action nunca confía en el cliente: valida de nuevo con el mismo schema.
   const parsed = passwordSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Datos inválidos' };
+    return { ok: false, error: firstIssueMessage(parsed.error) };
   }
 
   const supabase = await createSupabaseServerClient();
