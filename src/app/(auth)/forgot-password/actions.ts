@@ -3,7 +3,7 @@
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { ROUTES } from '@/constants';
 import { resolveOrigin } from '@/lib/auth/resolve-origin';
-import { forgotPasswordSchema, type ForgotPasswordInput } from '@/lib/validations/auth.schema';
+import { forgotPasswordSchema, type ForgotPasswordInput } from '@/lib/schemas/auth.schema';
 import type { ActionResult } from '@/types/action-result';
 import { firstIssueMessage } from '@/lib/errors/first-issue-message';
 

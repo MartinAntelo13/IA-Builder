@@ -3,7 +3,7 @@
 
 import type { UseFormReturn } from 'react-hook-form';
 import { useWatch } from 'react-hook-form';
-import type { RequestFormValues } from '@/lib/validations/request.schema';
+import type { RequestFormValues } from '@/lib/schemas/request.schema';
 import type { Database } from '@/types/database.types';
 
 type RequestType = Pick<

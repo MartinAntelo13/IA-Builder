@@ -1,7 +1,7 @@
 'use server';
 
 import { createSupabaseServerClient } from '@/lib/supabase/server';
-import { signinSchema } from '@/lib/schemas/signin.schema';
+import { signinSchema } from '@/lib/schemas/auth.schema';
 import { mapSignInError } from '@/lib/auth/map-sign-in-error';
 import { firstIssueMessage } from '@/lib/errors/first-issue-message';
 
