@@ -8,21 +8,7 @@ import { TopbarSearch } from '@/components/dashboard/topbar-search';
 import { NotificationsDropdown } from '@/components/dashboard/notifications-dropdown';
 import { ROUTES } from '@/constants';
 import type { CurrentProfile } from '@/lib/supabase/server';
-
-/**
- * Iniciales del usuario (ej. "Martín Antelo" -> "MA").
- * Misma lógica que el avatar del footer de sidebar.tsx.
- */
-function getInitials(fullName: string | null, email: string | null): string {
-  const source = fullName?.trim() || email?.split('@')[0] || '';
-  if (!source) return 'U';
-  return source
-    .split(/\s+/)
-    .map((part) => part[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
-}
+import { getInitials } from '@/lib/initials';
 
 function getBreadcrumbTitle(pathname: string): string {
   if (pathname === '/' || pathname === '') return 'Resumen';

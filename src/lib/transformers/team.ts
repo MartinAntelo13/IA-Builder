@@ -1,5 +1,6 @@
 import type { Database } from '@/types/database.types';
 import { formatRelativeTime } from '@/lib/format-helpers';
+import { getInitials } from '@/lib/initials';
 
 type ProfileStatus = Database['public']['Enums']['profile_status'];
 
@@ -36,11 +37,7 @@ export function transformTeamMember(
   row: TeamMemberRow,
   extrasByUserId: Map<string, ProfileExtras>,
 ) {
-  const words = (row.full_name ?? '').trim().split(/\s+/).filter(Boolean);
-  const initials = words
-    .slice(0, 2)
-    .map((w) => (w[0] ?? '').toUpperCase())
-    .join('');
+  const initials = getInitials(row.full_name, row.email);
 
   const roleLabel = row.role_names[0] ?? null;
   const extraRoles = Math.max(0, row.role_names.length - 1);

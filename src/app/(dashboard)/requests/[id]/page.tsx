@@ -10,6 +10,7 @@ import { RequestActionsPanel } from '@/components/requests/request-actions-panel
 import { findChangesComment, findDecisionComment } from '@/lib/transformers/requests';
 import { RequestCancelMenu } from '@/components/requests/request-cancel-menu';
 import { DuplicateRequestButton } from '@/components/requests/duplicate-request-button';
+import { getInitials } from '@/lib/initials';
 
 export default async function RequestDetailPage({
   params,
@@ -35,12 +36,7 @@ export default async function RequestDetailPage({
   // Allowlist estricta: solo el valor exacto 'inbox' activa el flujo "vine de
   // la bandeja". Cualquier otro valor se ignora.
   const fromInbox = typeof sp.from === 'string' && sp.from === 'inbox';
-  const userInitials = profile.fullName
-    .split(' ')
-    .map((n) => n[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
+  const userInitials = getInitials(profile.fullName, profile.email);
 
   return (
     <div className="max-w-6xl mx-auto px-10 pt-6 pb-16 max-md:px-4 max-md:pt-5 max-md:pb-12">

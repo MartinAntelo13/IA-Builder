@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { LayoutDashboard, FileText, Inbox, Workflow, Users, Settings, Plus, ShieldCheck } from 'lucide-react';
 import { NAV_ITEMS, MANAGEMENT_NAV_ITEMS, ROUTES } from '@/constants';
 import { orderRoles } from '@/lib/user/order-roles';
+import { getInitials } from '@/lib/initials';
 import { SidebarSignOutButton } from '@/components/dashboard/sidebar-sign-out-button';
 import type { CurrentProfile } from '@/lib/supabase/server';
 
@@ -24,12 +25,7 @@ function isActive(itemHref: string, pathname: string): boolean {
 export function Sidebar({ user, canManageWorkflows = false, canManageTeam = false, className }: SidebarProps) {
   const pathname = usePathname();
 
-  const initials = user.fullName
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
+  const initials = getInitials(user.fullName, user.email);
 
   // Secondary line del footer: jobTitle manda; si no hay, se arma a partir de
   // los roles ordenados por prioridad fija (sin depender del orden de la DB).
