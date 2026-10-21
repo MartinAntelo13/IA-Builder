@@ -3,6 +3,7 @@
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { signinSchema } from '@/lib/schemas/signin.schema';
 import { mapSignInError } from '@/lib/auth/map-sign-in-error';
+import { firstIssueMessage } from '@/lib/errors/first-issue-message';
 
 export interface SignInResult {
   error?: string;
@@ -15,7 +16,7 @@ export async function signIn(formData: FormData): Promise<SignInResult> {
     password: formData.get('password'),
   });
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? 'Datos inválidos' };
+    return { error: firstIssueMessage(parsed.error) };
   }
 
   const supabase = await createSupabaseServerClient();

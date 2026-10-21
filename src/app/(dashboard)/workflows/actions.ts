@@ -9,6 +9,7 @@ import type { Database, Json } from '@/types/database.types';
 import type { ActionResult } from '@/types/action-result';
 import { UUID_RE } from '@/lib/validators/uuid';
 import { toUserError } from '@/lib/errors/to-user-error';
+import { firstIssueMessage } from '@/lib/errors/first-issue-message';
 
 // EXCEPTION (Regla 10): no existe RPC de activación de workflow.
 // grant update (tabla completa) en workflows; la policy exige workflow.manage.
@@ -76,7 +77,7 @@ export async function saveWorkflow(
 
   const parsed = buildWorkflowSchema(wfRow.is_active).safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Datos inválidos' };
+    return { ok: false, error: firstIssueMessage(parsed.error) };
   }
 
   // El RPC espera p_steps como jsonb: array ordenado de { id, label,

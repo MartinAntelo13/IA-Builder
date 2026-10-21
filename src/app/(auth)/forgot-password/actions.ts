@@ -5,6 +5,7 @@ import { ROUTES } from '@/constants';
 import { resolveOrigin } from '@/lib/auth/resolve-origin';
 import { forgotPasswordSchema, type ForgotPasswordInput } from '@/lib/validations/auth.schema';
 import type { ActionResult } from '@/types/action-result';
+import { firstIssueMessage } from '@/lib/errors/first-issue-message';
 
 // Mapeo de errores de supabase.auth.resetPasswordForEmail.
 //   over_email_send_rate_limit / status 429: Supabase devuelve rate limit.
@@ -20,7 +21,7 @@ export async function forgotPassword(input: ForgotPasswordInput): Promise<Action
   // La action nunca confía en el cliente: valida de nuevo con el mismo schema.
   const parsed = forgotPasswordSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Datos inválidos' };
+    return { ok: false, error: firstIssueMessage(parsed.error) };
   }
 
   const supabase = await createSupabaseServerClient();

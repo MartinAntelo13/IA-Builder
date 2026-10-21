@@ -14,6 +14,7 @@ import {
 import { isSupportedTimezone } from '@/lib/timezones';
 import type { Database } from '@/types/database.types';
 import type { ActionResult } from '@/types/action-result';
+import { firstIssueMessage } from '@/lib/errors/first-issue-message';
 
 // Mismas columnas del grant update(name, domain, description, currency_code,
 // currency_symbol, timezone, support_email) sobre organizations.
@@ -35,7 +36,7 @@ export async function updateWorkspace(
   //    de la pestaña).
   const parsed = workspaceSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Datos inválidos' };
+    return { ok: false, error: firstIssueMessage(parsed.error) };
   }
 
   // 2) Permiso: la Server Action re-chequea org.manage por si la pestaña fue

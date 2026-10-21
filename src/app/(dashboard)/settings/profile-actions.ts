@@ -10,6 +10,7 @@ import {
 import { isSupportedTimezone } from '@/lib/timezones';
 import type { Database } from '@/types/database.types';
 import type { ActionResult } from '@/types/action-result';
+import { firstIssueMessage } from '@/lib/errors/first-issue-message';
 
 // Columnas efectivamente editables desde el formulario (coinciden con el grant
 // update por columna de profiles: solo full_name y timezone del formulario).
@@ -21,7 +22,7 @@ type ProfileUpdate = Pick<
 export async function updateProfile(input: ProfileFormValues): Promise<ActionResult> {
   const parsed = profileSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Datos inválidos' };
+    return { ok: false, error: firstIssueMessage(parsed.error) };
   }
 
   const supabase = await createSupabaseServerClient();
