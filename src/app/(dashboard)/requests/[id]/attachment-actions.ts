@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { createSupabaseServerClient, getCurrentProfile } from '@/lib/supabase/server';
 import { uploadAttachmentFile } from '@/lib/storage/request-attachments';
 import { requestDetailHref } from '@/lib/routes';
-import { validateAttachmentFile } from '@/lib/validations/attachment-file';
+import { validateAttachmentFile } from '@/lib/validators/attachment-file';
 import type { ActionResult } from '@/types/action-result';
 import { UUID_RE } from '@/lib/validators/uuid';
 import { toUserError } from '@/lib/errors/to-user-error';

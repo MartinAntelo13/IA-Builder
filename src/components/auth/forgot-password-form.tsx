@@ -6,7 +6,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { forgotPasswordSchema, type ForgotPasswordInput } from '@/lib/validations/auth.schema';
+import { forgotPasswordSchema, type ForgotPasswordInput } from '@/lib/schemas/auth.schema';
 import { ROUTES } from '@/constants';
 import { forgotPassword } from '@/app/(auth)/forgot-password/actions';
 import { ArrowLeft, ArrowRight, CheckCircle2, Mail } from 'lucide-react';

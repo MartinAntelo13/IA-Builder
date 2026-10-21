@@ -5,7 +5,7 @@ import { useRef, useState, useTransition } from 'react';
 import { Paperclip, Download, Trash2, UploadCloud } from 'lucide-react';
 import { formatBytes } from '@/lib/format-helpers';
 import { ATTACHMENT_ACCEPT, ATTACHMENT_HINT } from '@/constants';
-import { validateAttachmentFile } from '@/lib/validations/attachment-file';
+import { validateAttachmentFile } from '@/lib/validators/attachment-file';
 import { addAttachment, removeAttachment } from '@/app/(dashboard)/requests/[id]/attachment-actions';
 import { requestAttachmentHref } from '@/lib/routes';
 

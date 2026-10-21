@@ -8,7 +8,7 @@ import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FileText, Loader2 } from 'lucide-react';
 import { requestDetailHref } from '@/lib/routes';
-import { requestSchema, type RequestFormValues } from '@/lib/validations/request.schema';
+import { requestSchema, type RequestFormValues } from '@/lib/schemas/request.schema';
 import { buildRequestFormData } from '@/lib/build-request-form-data';
 import { updateRequest } from '@/app/(dashboard)/requests/[id]/actions';
 import { RequestFormFields } from '@/components/requests/request-form-fields';

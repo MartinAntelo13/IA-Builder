@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { loginSchema } from '@/lib/validations/auth.schema';
+import { loginSchema } from '@/lib/schemas/auth.schema';
 import { ROUTES } from '@/constants';
 import { signIn } from '@/app/(auth)/login/actions';
 import { ArrowRight, Eye, EyeOff, Loader2 } from 'lucide-react';

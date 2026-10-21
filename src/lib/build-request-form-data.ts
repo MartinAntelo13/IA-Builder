@@ -1,4 +1,4 @@
-import type { RequestFormValues } from '@/lib/validations/request.schema';
+import type { RequestFormValues } from '@/lib/schemas/request.schema';
 
 export function buildRequestFormData(values: RequestFormValues): FormData {
   const fd = new FormData();

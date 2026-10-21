@@ -1,8 +1,8 @@
 // Validación de servidor compartida por createRequest, submitRequest y updateRequest.
 // La action nunca confía en el cliente: arma el input desde el FormData y lo valida
 // con editRequestSchema (los mismos campos que el formulario, sin attachments).
-import { editRequestSchema } from '@/lib/validations/request.schema';
-import type { EditRequestFormValues } from '@/lib/validations/request.schema';
+import { editRequestSchema } from '@/lib/schemas/request.schema';
+import type { EditRequestFormValues } from '@/lib/schemas/request.schema';
 import { firstIssueMessage } from '@/lib/errors/first-issue-message';
 
 type ParseOk = { ok: true; data: EditRequestFormValues };
