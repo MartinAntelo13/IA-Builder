@@ -1,7 +1,8 @@
 'use client';
 // Regla 3: 'use client' — useState para menuOpen/dialog, useTransition para acciones.
 
-import { useEffect, useRef, useState, useTransition } from 'react';
+import { useRef, useState, useTransition } from 'react';
+import { useDismissable } from '@/hooks/use-dismissable';
 import Link from 'next/link';
 import { Workflow, MoreHorizontal } from 'lucide-react';
 import { ROUTES } from '@/constants';
@@ -27,23 +28,7 @@ export function WorkflowList({ workflows, selectedId, usedByMap }: WorkflowListP
   const [dialogWorkflow, setDialogWorkflow] = useState<WorkflowItem | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!menuOpen) return;
-    function onClickOutside(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setMenuOpen(null);
-      }
-    }
-    function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') setMenuOpen(null);
-    }
-    document.addEventListener('mousedown', onClickOutside);
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('mousedown', onClickOutside);
-      document.removeEventListener('keydown', onKey);
-    };
-  }, [menuOpen]);
+  useDismissable({ open: menuOpen !== null, onDismiss: () => setMenuOpen(null), containerRef: menuRef });
 
   function handleToggle(wf: WorkflowItem) {
     setMenuOpen(null);
