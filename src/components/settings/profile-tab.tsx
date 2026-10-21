@@ -15,6 +15,7 @@ import { updateProfile } from '@/app/(dashboard)/settings/profile-actions';
 import { INPUT } from '@/lib/ui/form-classes';
 import { useSettingsSave } from '@/components/settings/save-context';
 import { TimezoneSelect } from '@/components/settings/timezone-select';
+import { getInitials } from '@/lib/initials';
 
 interface ProfileLite {
   id: string;
@@ -29,16 +30,6 @@ interface ProfileTabProps {
 }
 
 const FORM_ID = 'form-settings-profile';
-
-function initials(name: string, email: string): string {
-  const source = name.trim() || email.split('@')[0] || '';
-  return source
-    .split(/\s+/)
-    .map((p) => p[0] ?? '')
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
-}
 
 export function ProfileTab({ profile }: ProfileTabProps) {
   const router = useRouter();
@@ -67,7 +58,7 @@ export function ProfileTab({ profile }: ProfileTabProps) {
 
   const timezone = useWatch({ control, name: 'timezone' }) ?? '';
   const roleLabel = profile.roleNames.join(', ') || '—';
-  const avatarInitials = initials(profile.fullName, profile.email);
+  const avatarInitials = getInitials(profile.fullName, profile.email);
 
   // Registrar el estado de este form en el provider; limpiar al desmontar.
   useEffect(() => {

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { FileText, Clock, ChevronRight } from 'lucide-react';
+import { getInitials } from '@/lib/initials';
 
 interface RequestRowItemProps {
   code: string;
@@ -16,11 +17,7 @@ interface RequestRowItemProps {
 }
 
 function RequesterAvatar({ name }: { name: string }) {
-  const initials = name
-    .split(' ')
-    .slice(0, 2)
-    .map((w) => w[0]?.toUpperCase() ?? '')
-    .join('');
+  const initials = getInitials(name);
   return (
     <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary/15 text-primary text-2xs font-bold shrink-0">
       {initials}
