@@ -91,7 +91,7 @@ export async function setMemberStatus(
   const rolesResult =
     roleIds.length > 0
       ? await supabase.from('roles').select('code').in('id', roleIds)
-      : { data: [] as { code: string }[], error: null };
+      : { data: [], error: null };
   if (rolesResult.error) return { ok: false, error: toUserError(rolesResult.error, { label: 'toggleMemberStatus.read', fallback: 'No se pudo cargar el miembro.' }) };
 
   const roleCodes = (rolesResult.data ?? []).map((r) => r.code);

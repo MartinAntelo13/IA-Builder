@@ -1,7 +1,6 @@
 import { Workflow } from 'lucide-react';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { transformWorkflow } from '@/lib/transformers/workflows';
-import type { WorkflowFromQuery } from '@/lib/transformers/workflows';
 import { WorkflowList } from '@/components/workflows/workflow-list';
 import { WorkflowDetail } from '@/components/workflows/workflow-detail';
 import { UUID_RE } from '@/lib/validators/uuid';
@@ -52,7 +51,7 @@ export default async function WorkflowsPage({ searchParams }: PageProps) {
   if (profilesResult.error) throw new Error(profilesResult.error.message);
   if (userRolesResult.error) throw new Error(userRolesResult.error.message);
 
-  const rawWorkflows = (workflowsResult.data ?? []) as WorkflowFromQuery[];
+  const rawWorkflows = workflowsResult.data ?? [];
   const workflows = rawWorkflows.map(transformWorkflow);
   const requestTypes = requestTypesResult.data ?? [];
   const roleOptions = (rolesResult.data ?? []).map((r) => ({ id: r.id, name: r.name }));

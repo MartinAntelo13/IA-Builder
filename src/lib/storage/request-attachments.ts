@@ -2,8 +2,7 @@ import type { createSupabaseServerClient } from '@/lib/supabase/server';
 import type { Database } from '@/types/database.types';
 import { toUserError } from '@/lib/errors/to-user-error';
 
-// Mismo tipo inferido que el resto del proyecto: createServerClient sin generic
-// devuelve un cliente con tipado laxo que permite Pick<..., ...> en los inserts.
+// Tipo derivado del cliente servidor tipado con AppDatabase.
 type ServerClient = Awaited<ReturnType<typeof createSupabaseServerClient>>;
 
 type AttachmentInsertPayload = Pick<
