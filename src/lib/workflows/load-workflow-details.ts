@@ -1,6 +1,5 @@
 import type { createSupabaseServerClient } from '@/lib/supabase/server';
 import { transformWorkflowStep } from '@/lib/transformers/workflows';
-import type { WorkflowStepFromQuery } from '@/lib/transformers/workflows';
 
 type ServerClient = Awaited<ReturnType<typeof createSupabaseServerClient>>;
 type WorkflowStep = ReturnType<typeof transformWorkflowStep>;
@@ -25,17 +24,17 @@ export async function loadWorkflowDetails(
 
   if (stepsResult.error) throw new Error(stepsResult.error.message);
 
-  const rawSteps = (stepsResult.data ?? []) as WorkflowStepFromQuery[];
+  const rawSteps = stepsResult.data ?? [];
   const roleIds = [...new Set(rawSteps.flatMap((s) => (s.role_id ? [s.role_id] : [])))];
   const userIds = [...new Set(rawSteps.flatMap((s) => (s.user_id ? [s.user_id] : [])))];
 
   const [rolesResult, usersResult] = await Promise.all([
     roleIds.length > 0
       ? supabase.from('roles').select('id, name').in('id', roleIds)
-      : Promise.resolve({ data: [] as { id: string; name: string }[], error: null }),
+      : { data: [], error: null },
     userIds.length > 0
       ? supabase.from('profiles').select('id, full_name').in('id', userIds)
-      : Promise.resolve({ data: [] as { id: string; full_name: string }[], error: null }),
+      : { data: [], error: null },
   ]);
 
   if (rolesResult.error) throw new Error(rolesResult.error.message);
