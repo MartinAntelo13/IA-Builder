@@ -100,11 +100,12 @@ export const PERMISSIONS = {
   WORKFLOW_MANAGE: 'workflow.manage',
   TEAM_MANAGE: 'team.manage',
   ORG_MANAGE: 'org.manage',
+  REQUEST_VIEW_ALL: 'request.view_all',
 } as const;
 
 export const NAV_ITEMS = [
   { label: 'Resumen', href: ROUTES.DASHBOARD, icon: 'LayoutDashboard' },
-  { label: 'Mis solicitudes', href: ROUTES.REQUESTS, icon: 'FileText' },
+  { label: 'Solicitudes', href: ROUTES.REQUESTS, icon: 'FileText' },
   { label: 'Bandeja de entrada', href: ROUTES.INBOX, icon: 'Inbox' },
 ] as const;
 

@@ -34,7 +34,7 @@ export default async function NewRequestPage() {
   return (
     <div className="request-page-wrap">
       <div className="request-breadcrumb">
-        <Link href={ROUTES.REQUESTS}>Mis solicitudes</Link>
+        <Link href={ROUTES.REQUESTS}>Solicitudes</Link>
         <ChevronRight size={14} />
         <span>Nueva solicitud</span>
       </div>
