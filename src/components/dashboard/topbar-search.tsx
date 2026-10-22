@@ -38,8 +38,8 @@ export function TopbarSearch() {
         <input
           name="q"
           type="search"
-          aria-label="Buscar en mis solicitudes"
-          placeholder="Buscar en mis solicitudes..."
+          aria-label="Buscar en solicitudes"
+          placeholder="Buscar en solicitudes..."
           className="w-full h-8 pl-8 pr-3 text-2xs border border-border rounded-md outline-none focus:border-primary bg-card text-foreground placeholder:text-muted"
         />
       </Form>
@@ -48,7 +48,7 @@ export function TopbarSearch() {
       <button
         ref={buttonRef}
         type="button"
-        aria-label="Buscar en mis solicitudes"
+        aria-label="Buscar en solicitudes"
         aria-expanded={open}
         aria-controls={id}
         onClick={handleOpen}
@@ -71,8 +71,8 @@ export function TopbarSearch() {
             ref={inputRef}
             name="q"
             type="search"
-            aria-label="Buscar en mis solicitudes"
-            placeholder="Buscar en mis solicitudes..."
+            aria-label="Buscar en solicitudes"
+            placeholder="Buscar en solicitudes..."
             className="flex-1 h-8 pl-3 pr-3 text-2xs border border-border rounded-md outline-none focus:border-primary bg-card text-foreground placeholder:text-muted"
           />
           <button

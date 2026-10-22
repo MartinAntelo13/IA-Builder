@@ -5,8 +5,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Search, FileText } from 'lucide-react';
-import { REQUEST_STATUS_STYLES, ROUTES } from '@/constants';
-import { requestDetailHref } from '@/lib/routes';
+import { REQUEST_STATUS_STYLES } from '@/constants';
+import { requestDetailHref, requestsListHref } from '@/lib/routes';
 import { formatAmountOrFree, formatRelativeTime } from '@/lib/format-helpers';
 import type { RequestRow } from '@/lib/transformers/requests';
 import { RequestRowItem } from '@/components/requests/request-row';
@@ -17,6 +17,8 @@ interface RequestsSectionProps {
   variant?: 'dashboard' | 'list';
   // Valor actual de la búsqueda guiada por URL; sólo aplica a variant="list".
   q?: string;
+  // Alcance activo; sólo aplica a variant="list".
+  scope?: 'all';
 }
 
 const STATUS_TABS = [
@@ -40,7 +42,7 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-export function RequestsSection({ requests, variant = 'list', q = '' }: RequestsSectionProps) {
+export function RequestsSection({ requests, variant = 'list', q = '', scope }: RequestsSectionProps) {
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const isDashboard = variant === 'dashboard';
@@ -82,7 +84,7 @@ export function RequestsSection({ requests, variant = 'list', q = '' }: Requests
             />
           </div>
         ) : (
-          <RequestsSearch q={q} />
+          <RequestsSearch q={q} scope={scope} />
         )}
 
         {isDashboard && (
@@ -132,7 +134,7 @@ export function RequestsSection({ requests, variant = 'list', q = '' }: Requests
                 No se encontraron solicitudes para «{q}».
               </p>
               <Link
-                href={ROUTES.REQUESTS}
+                href={requestsListHref({ scope })}
                 className="mt-3 text-2xs font-medium text-primary hover:underline"
               >
                 Limpiar búsqueda

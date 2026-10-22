@@ -85,7 +85,7 @@ export function NotificationsPanel({
           onClick={onNavigate}
           className="text-muted hover:underline"
         >
-          Mis solicitudes
+          Solicitudes
         </Link>
       </div>
     </div>

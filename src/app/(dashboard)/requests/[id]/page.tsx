@@ -45,7 +45,7 @@ export default async function RequestDetailPage({
           href={fromInbox ? ROUTES.INBOX : ROUTES.REQUESTS}
           className="text-primary font-bold no-underline"
         >
-          {fromInbox ? 'Bandeja de entrada' : 'Mis solicitudes'}
+          {fromInbox ? 'Bandeja de entrada' : 'Solicitudes'}
         </Link>
         <span>/</span>
         <strong className="text-muted font-semibold">{detail.request.code}</strong>

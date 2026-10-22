@@ -12,7 +12,7 @@ import { getInitials } from '@/lib/initials';
 
 function getBreadcrumbTitle(pathname: string): string {
   if (pathname === '/' || pathname === '') return 'Resumen';
-  if (pathname === '/requests') return 'Mis solicitudes';
+  if (pathname === '/requests') return 'Solicitudes';
   if (pathname === '/requests/new') return 'Nueva solicitud';
   if (pathname.startsWith('/requests/') && pathname.endsWith('/edit')) return 'Editar solicitud';
   if (pathname.startsWith('/requests/')) return 'Detalle de solicitud';

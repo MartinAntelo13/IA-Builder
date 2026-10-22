@@ -9,6 +9,7 @@ import { Greeting } from '@/components/dashboard/greeting';
 import { ROUTES } from "@/constants";
 import { transformRequestRows } from "@/lib/transformers/requests";
 import { getDashboardKpis } from "@/lib/dashboard/get-dashboard-kpis";
+import { requestsListHref } from "@/lib/routes";
 
 export const metadata: Metadata = {
   title: "Dashboard - Flowdesk",
@@ -89,10 +90,10 @@ export default async function DashboardPage() {
             <RequestsSection requests={transformRequestRows(requestsData)} variant="dashboard" />
             <div className="mt-3 text-right">
               <Link
-                href={ROUTES.REQUESTS}
+                href={requestsListHref({ scope: 'all' })}
                 className="hero-button focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
-                Ver mis solicitudes
+                Ver todas las solicitudes
               </Link>
             </div>
           </>
