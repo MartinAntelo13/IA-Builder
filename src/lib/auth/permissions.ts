@@ -2,38 +2,28 @@ import { cache } from 'react';
 import { getCurrentProfile, createSupabaseServerClient } from '@/lib/supabase/server';
 
 // EXCEPTION (Regla 10): no existe RPC de permisos del usuario.
-// Dos queries: obtiene TODOS los permission_code de los roles del usuario.
-// Cadena de dependencias:
+// Una sola query con join embebido: user_roles → roles → role_permissions.
+// Los embeds nombran la FK de forma explícita porque son claves compuestas
+// (role_id + organization_id).
 //   A — getCurrentProfile() cacheado (auth + user_roles + roles ya resueltos)
-//   B — roles.id a partir de sus codes dentro de la organización
-//   C — role_permissions WHERE role_id IN ids (todos los permisos en una query)
+//   B — user_roles del usuario con los permission_code de cada rol
 export const getUserPermissions = cache(async (): Promise<Set<string>> => {
   const profile = await getCurrentProfile();
   if (!profile || profile.roles.length === 0) return new Set();
 
   const supabase = await createSupabaseServerClient();
-  const roleCodes = profile.roles.map((r) => r.code);
+  const { data, error } = await supabase
+    .from('user_roles')
+    .select('roles!user_roles_role_id_organization_id_fkey!inner(role_permissions!role_permissions_role_id_organization_id_fkey(permission_code))')
+    .eq('user_id', profile.id);
 
-  // B: IDs de los roles del usuario (filtrados por organización vía RLS)
-  const { data: roleRows, error: rolesError } = await supabase
-    .from('roles')
-    .select('id')
-    .eq('organization_id', profile.organizationId)
-    .in('code', roleCodes);
+  if (error) throw new Error(error.message);
 
-  if (rolesError) throw new Error(rolesError.message);
-  if (!roleRows || roleRows.length === 0) return new Set();
-
-  const roleIds = roleRows.map((r) => r.id);
-
-  // C: todos los permisos de esos roles en una query
-  const { data: perms, error: permsError } = await supabase
-    .from('role_permissions')
-    .select('permission_code')
-    .in('role_id', roleIds);
-
-  if (permsError) throw new Error(permsError.message);
-  return new Set((perms ?? []).map((p) => p.permission_code));
+  const codes = new Set<string>();
+  for (const row of data ?? []) {
+    for (const rp of row.roles.role_permissions) codes.add(rp.permission_code);
+  }
+  return codes;
 });
 
 export async function hasPermission(code: string): Promise<boolean> {
