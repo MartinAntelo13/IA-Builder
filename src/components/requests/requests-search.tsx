@@ -9,12 +9,17 @@ import { ROUTES } from '@/constants';
 interface RequestsSearchProps {
   q: string;
   scope?: 'all';
+  // Ruta destino del submit; por defecto /requests. El Resumen pasa ROUTES.DASHBOARD.
+  action?: string;
+  // Estado activo a conservar al buscar (sólo lo usa el Resumen).
+  status?: string;
 }
 
-export function RequestsSearch({ q, scope }: RequestsSearchProps) {
+export function RequestsSearch({ q, scope, action = ROUTES.REQUESTS, status }: RequestsSearchProps) {
   return (
-    <Form action={ROUTES.REQUESTS} className="relative flex-1 min-w-0">
+    <Form action={action} className="relative flex-1 min-w-0">
       {scope === 'all' && <input type="hidden" name="scope" value="all" />}
+      {status && <input type="hidden" name="status" value={status} />}
       <Search
         size={14}
         className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none"

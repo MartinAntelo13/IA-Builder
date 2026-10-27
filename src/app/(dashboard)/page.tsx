@@ -6,7 +6,7 @@ import { FileText, Plus } from "lucide-react";
 import { MetricsCards } from "@/components/dashboard/metrics-cards";
 import { RequestsSection } from "@/components/requests/requests-section";
 import { Greeting } from '@/components/dashboard/greeting';
-import { ROUTES } from "@/constants";
+import { ROUTES, DASHBOARD_REQUESTS_PAGE_SIZE, DASHBOARD_STATUS_FILTERS } from "@/constants";
 import { transformRequestRows } from "@/lib/transformers/requests";
 import { getDashboardKpis } from "@/lib/dashboard/get-dashboard-kpis";
 import { requestsListHref } from "@/lib/routes";
@@ -15,13 +15,26 @@ export const metadata: Metadata = {
   title: "Dashboard - Flowdesk",
 };
 
-export default async function DashboardPage() {
+interface PageProps {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
+
+function getString(val: string | string[] | undefined): string {
+  return typeof val === "string" ? val : "";
+}
+
+export default async function DashboardPage({ searchParams }: PageProps) {
   // Verificar sesión y obtener perfil
   const profile = await getCurrentProfile();
    
   if (!profile) {
     return redirect("/login");
   }
+
+  const params = await searchParams;
+  const q = getString(params.q).trim();
+  const rawStatus = getString(params.status);
+  const status = DASHBOARD_STATUS_FILTERS.find((s) => s === rawStatus) ?? null;
 
   const supabase = await createSupabaseServerClient();
 
@@ -30,16 +43,22 @@ export default async function DashboardPage() {
 
   if (kpisError) throw new Error(kpisError.message);
 
-  // Obtener solicitudes recientes (scope='visible', page_size=4)
+  // Solicitudes recientes (scope='visible'). p_status y p_search se omiten cuando no hay
+  // filtro (la RPC no acepta null; la clave ausente lo deja sin filtro).
   const { data: requestsData, error: requestsError } = await supabase
     .rpc('list_requests', {
       p_scope: 'visible',
-      p_page_size: 4
+      p_page_size: DASHBOARD_REQUESTS_PAGE_SIZE,
+      ...(status ? { p_status: [status] } : {}),
+      ...(q ? { p_search: q } : {}),
     });
 
   if (requestsError) {
     throw new Error(requestsError.message);
   }
+
+  const hasFilters = Boolean(status) || Boolean(q);
+  const showEmptyNoRequests = !hasFilters && (requestsData?.length ?? 0) === 0;
 
   return (
     <div className="page-wrap">
@@ -85,9 +104,14 @@ export default async function DashboardPage() {
       </section>
 
       <section>
-        {requestsData && requestsData.length > 0 ? (
+        {!showEmptyNoRequests ? (
           <>
-            <RequestsSection requests={transformRequestRows(requestsData)} variant="dashboard" />
+            <RequestsSection
+              requests={transformRequestRows(requestsData ?? [])}
+              variant="dashboard"
+              status={status}
+              q={q}
+            />
             <div className="mt-3 text-right">
               <Link
                 href={requestsListHref({ scope: 'all' })}
