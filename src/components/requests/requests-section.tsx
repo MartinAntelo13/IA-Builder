@@ -1,11 +1,6 @@
-'use client';
-// Regla 3: 'use client' — useState para el buscador y el filtro de estado en
-// variant="dashboard" (filtrado client-side sobre el set paginado del resumen).
-
-import { useState } from 'react';
 import Link from 'next/link';
-import { Search, FileText } from 'lucide-react';
-import { REQUEST_STATUS_STYLES } from '@/constants';
+import { FileText } from 'lucide-react';
+import { REQUEST_STATUS_STYLES, ROUTES, DASHBOARD_REQUESTS_PAGE_SIZE } from '@/constants';
 import { requestDetailHref, requestsListHref } from '@/lib/routes';
 import { formatAmountOrFree, formatRelativeTime } from '@/lib/format-helpers';
 import type { RequestRow } from '@/lib/transformers/requests';
@@ -19,6 +14,8 @@ interface RequestsSectionProps {
   q?: string;
   // Alcance activo; sólo aplica a variant="list".
   scope?: 'all';
+  // Estado activo (?status=) en variant="dashboard"; null = pestaña "Todas".
+  status?: string | null;
 }
 
 const STATUS_TABS = [
@@ -29,6 +26,15 @@ const STATUS_TABS = [
   { value: 'approved', label: 'Aprobadas' },
   { value: 'rejected', label: 'Rechazadas' },
 ];
+
+// Href de una pestaña del Resumen: conserva la búsqueda (q) y resetea el estado.
+function dashboardTabHref(status: string | null, q: string): string {
+  const params = new URLSearchParams();
+  if (status) params.set('status', status);
+  if (q) params.set('q', q);
+  const qs = params.toString();
+  return qs ? `${ROUTES.DASHBOARD}?${qs}` : ROUTES.DASHBOARD;
+}
 
 function StatusBadge({ status }: { status: string }) {
   const style = REQUEST_STATUS_STYLES[status];
@@ -42,23 +48,9 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-export function RequestsSection({ requests, variant = 'list', q = '', scope }: RequestsSectionProps) {
-  const [statusFilter, setStatusFilter] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
+export function RequestsSection({ requests, variant = 'list', q = '', scope, status = null }: RequestsSectionProps) {
   const isDashboard = variant === 'dashboard';
-
-  const rows = isDashboard
-    ? requests.filter((r) => {
-        const query = searchQuery.toLowerCase();
-        const matchesSearch =
-          !query ||
-          r.title.toLowerCase().includes(query) ||
-          r.code.toLowerCase().includes(query) ||
-          r.requesterName.toLowerCase().includes(query);
-        const matchesStatus = !statusFilter || r.status === statusFilter;
-        return matchesSearch && matchesStatus;
-      })
-    : requests;
+  const rows = requests;
 
   return (
     <div className="overflow-hidden bg-card border border-border rounded-lg shadow-sm">
@@ -66,23 +58,15 @@ export function RequestsSection({ requests, variant = 'list', q = '', scope }: R
         <h2 className="text-sm font-semibold text-foreground">Solicitudes recientes</h2>
         {isDashboard && (
           <p className="mt-0.5 text-2xs text-muted">
-            Gestiona y da seguimiento a las solicitudes de tu equipo.
+            Gestiona y da seguimiento a las solicitudes de tu equipo.{' '}
+            Se muestran las {DASHBOARD_REQUESTS_PAGE_SIZE} más recientes.
           </p>
         )}
       </div>
 
       <div className="px-4 pb-3 border-b border-border flex flex-wrap items-center gap-2.5">
         {isDashboard ? (
-          <div className="flex items-center gap-2 h-8 px-2.5 bg-surface border border-border rounded-md w-full sm:w-56">
-            <Search size={14} className="text-muted shrink-0" />
-            <input
-              type="text"
-              placeholder="Buscar por nombre o ID..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full border-0 outline-none bg-transparent text-2xs text-foreground placeholder:text-muted"
-            />
-          </div>
+          <RequestsSearch q={q} action={ROUTES.DASHBOARD} status={status ?? undefined} />
         ) : (
           <RequestsSearch q={q} scope={scope} />
         )}
@@ -90,20 +74,20 @@ export function RequestsSection({ requests, variant = 'list', q = '', scope }: R
         {isDashboard && (
           <div className="flex flex-wrap gap-1">
             {STATUS_TABS.map((tab) => {
-              const active = statusFilter === tab.value;
+              const active = status === tab.value;
               return (
-                <button
+                <Link
                   key={tab.value ?? 'all'}
-                  type="button"
-                  onClick={() => setStatusFilter(tab.value)}
-                  className={`text-2xs px-2.5 py-2 rounded-md border-0 transition-colors ${
+                  href={dashboardTabHref(tab.value, q)}
+                  aria-current={active ? 'page' : undefined}
+                  className={`text-2xs px-2.5 py-2 rounded-md transition-colors ${
                     active
                       ? 'text-primary bg-primary/10 font-bold'
                       : 'text-muted bg-transparent hover:text-foreground'
                   }`}
                 >
                   {tab.label}
-                </button>
+                </Link>
               );
             })}
           </div>

@@ -2,6 +2,8 @@
  * Constantes globales de la aplicación.
  */
 
+import type { Database } from '@/types/database.types';
+
 export const APP_NAME = 'Flowdesk';
 
 export const APP_DESCRIPTION =
@@ -91,6 +93,16 @@ export const PRIORITY_STYLES: Record<string, {
 export const INBOX_PAGE_SIZE = 10;
 export const TEAM_PAGE_SIZE = 10;
 export const REQUESTS_PAGE_SIZE = 20;
+export const DASHBOARD_REQUESTS_PAGE_SIZE = 4;
+
+// Estados filtrables en "Solicitudes recientes" del Resumen (?status=...).
+export const DASHBOARD_STATUS_FILTERS = [
+  'submitted',
+  'in_review',
+  'changes_requested',
+  'approved',
+  'rejected',
+] as const satisfies readonly Database['public']['Enums']['request_status'][];
 
 // Coincide con mime_type check en public.attachments y el bucket request-attachments.
 export const ATTACHMENT_ACCEPT = '.pdf,.xlsx,.xls,image/png,image/jpeg,image/webp';
