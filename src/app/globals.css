@@ -663,7 +663,8 @@ body {
   text-align: center;
 }
 
-.dropzone:hover {
+.dropzone:hover,
+.dropzone--dragging {
   border-color: #8178df;
   background: #f9f8ff;
 }
