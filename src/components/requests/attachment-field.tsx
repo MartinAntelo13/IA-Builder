@@ -3,6 +3,7 @@
 
 import { UploadCloud } from 'lucide-react';
 import { ATTACHMENT_ACCEPT, ATTACHMENT_HINT } from '@/constants';
+import { useFileDrop } from '@/hooks/use-file-drop';
 
 interface AttachmentFieldProps {
   files: File[];
@@ -11,10 +12,16 @@ interface AttachmentFieldProps {
 }
 
 export function AttachmentField({ files, error, onChange }: AttachmentFieldProps) {
+  const { isDragging, dropProps } = useFileDrop(onChange);
+
   return (
     <div className="field">
       <span className="field-label">Documentos adjuntos</span>
-      <label className="dropzone" htmlFor="req-files">
+      <label
+        className={`dropzone${isDragging ? ' dropzone--dragging' : ''}`}
+        htmlFor="req-files"
+        {...dropProps}
+      >
         <UploadCloud size={24} />
         <strong>
           {files.length > 0

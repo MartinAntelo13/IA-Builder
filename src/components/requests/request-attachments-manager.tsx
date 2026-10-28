@@ -8,6 +8,7 @@ import { ATTACHMENT_ACCEPT, ATTACHMENT_HINT } from '@/constants';
 import { validateAttachmentFile } from '@/lib/validators/attachment-file';
 import { addAttachment, removeAttachment } from '@/app/(dashboard)/requests/[id]/attachment-actions';
 import { requestAttachmentHref } from '@/lib/routes';
+import { useFileDrop } from '@/hooks/use-file-drop';
 
 interface Attachment {
   id: string;
@@ -47,6 +48,10 @@ export function RequestAttachmentsManager({ requestId, attachments, canEdit }: R
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  // El input se deshabilita mientras sube; el arrastre respeta lo mismo.
+  const { isDragging, dropProps } = useFileDrop((files) => {
+    if (!isPending) handleAdd(files);
+  });
 
   if (!canEdit && attachments.length === 0) return null;
 
@@ -133,7 +138,11 @@ export function RequestAttachmentsManager({ requestId, attachments, canEdit }: R
       )}
 
       {canEdit && (
-        <label className="dropzone mt-4" htmlFor="add-attachment">
+        <label
+          className={`dropzone mt-4${isDragging ? ' dropzone--dragging' : ''}`}
+          htmlFor="add-attachment"
+          {...dropProps}
+        >
           <UploadCloud size={20} />
           <strong>{isPending ? 'Subiendo…' : 'Agregar archivos'}</strong>
           <small>{ATTACHMENT_HINT}</small>
