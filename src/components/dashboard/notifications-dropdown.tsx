@@ -29,7 +29,7 @@ export function NotificationsDropdown({ awaitingMyReview }: NotificationsDropdow
       : 'Solicitudes pendientes de revisión';
 
   return (
-    <div ref={containerRef} className="relative">
+    <div ref={containerRef} className="relative inline-flex items-center">
       <button
         ref={buttonRef}
         type="button"
@@ -38,7 +38,7 @@ export function NotificationsDropdown({ awaitingMyReview }: NotificationsDropdow
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => setOpen((v) => !v)}
-        className="relative text-muted transition-colors hover:text-foreground cursor-pointer"
+        className="relative inline-flex items-center justify-center text-muted transition-colors hover:text-foreground cursor-pointer"
       >
         <Bell className="h-4.5 w-4.5" aria-hidden="true" />
         {awaitingMyReview > 0 && (
